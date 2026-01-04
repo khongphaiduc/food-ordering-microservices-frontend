@@ -1,0 +1,389 @@
+/* --- MODERN LUXURY FOOD THEME --- */
+:root {
+  /* BẢNG MÀU LUXURY (Vàng kim & Tối sâu) */
+  --l-gold-primary: #d4af37; /* Màu vàng cổ điển */
+  --l-gold-secondary: #f2d06b; /* Màu vàng sáng hơn cho gradient */
+  --l-dark-bg: #0a0a0a; /* Đen sâu */
+  --l-card-bg: rgba(20, 20, 20, 0.65); /* Nền thẻ tối và trong suốt */
+  --l-text-primary: #f8f5f0; /* Màu kem trắng, không phải trắng tinh */
+  --l-text-secondary: rgba(248, 245, 240, 0.6); /* Màu chữ phụ */
+  --l-input-bg: rgba(255, 255, 255, 0.03);
+  --l-border-color: rgba(212, 175, 55, 0.2); /* Viền vàng mờ */
+
+  /* ẢNH NỀN: HÃY THAY THẾ URL BẰNG ẢNH THỰC TẾ CỦA BẠN */
+  /* Gợi ý: Tìm kiếm "Dark Fine Dining Food Photography" */
+  --login-bg-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+}
+
+/* Cấu trúc chính */
+.login-root {
+  font-family: 'Montserrat', 'Inter', sans-serif; /* Ưu tiên font sang trọng hơn nếu có */
+  color: var(--l-text-primary);
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--l-dark-bg);
+  overflow: hidden;
+}
+
+/* Hình nền đồ ăn */
+.login-bg {
+  position: fixed;
+  inset: -20px; /* Mở rộng một chút để tránh viền trắng khi blur */
+  background-image: var(--login-bg-image);
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.6); /* Làm mờ và tối ảnh nền */
+  z-index: 0;
+  pointer-events: none;
+  transform: scale(1.05); /* Phóng to nhẹ để bù cho hiệu ứng blur */
+}
+
+/* Lớp phủ gradient để tạo chiều sâu thêm */
+.login-bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.4), rgba(10,10,10,0.9));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  z-index: 2;
+  position: relative;
+}
+
+/* --- THẺ ĐĂNG NHẬP (GLASSMORPHISM LUXURY) --- */
+.login-card {
+  width: 400px;
+  max-width: 94%;
+  background: var(--l-card-bg);
+  border-radius: 20px; /* Bo tròn mềm mại hơn */
+  padding: 40px 32px;
+  /* Viền vàng rất mờ */
+  border: 1px solid var(--l-border-color);
+  /* Đổ bóng sâu và sắc nét hơn */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 2px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(110%);
+  position: relative;
+  overflow: hidden; /* Quan trọng cho hiệu ứng shine */
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 0.3s;
+}
+
+/* Hiệu ứng ánh sáng quét qua (Shine Effect) - Tinh chỉnh lại */
+.login-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* Sử dụng ánh sáng vàng nhẹ */
+  background: radial-gradient(800px 800px at var(--login-shine-x, 50%) var(--login-shine-y, 50%), rgba(212, 175, 55, 0.08), transparent 40%);
+  mix-blend-mode: screen;
+}
+
+/* Header */
+.login-header {
+  text-align: center;
+  margin-bottom: 35px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px;
+  /* Logo style mới: Chữ vàng trên nền tối */
+  color: var(--l-gold-primary);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  border: 2px solid var(--l-border-color);
+  border-radius: 50%; /* Hình tròn */
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.2));
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.login-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--l-text-primary);
+  letter-spacing: -0.5px;
+  text-transform: uppercase; /* Chữ in hoa sang trọng */
+}
+
+.login-sub {
+  margin: 8px 0 0;
+  color: var(--l-text-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* Form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Tăng khoảng cách giữa các ô input */
+  position: relative;
+  z-index: 1;
+}
+
+.login-field {
+  position: relative;
+}
+
+/* Input Styles */
+.login-field input {
+  width: 100%;
+  padding: 16px 44px 16px 16px; /* Tăng padding */
+  border-radius: 12px;
+  /* Chỉ dùng viền dưới hoặc viền rất mờ */
+  border: 1px solid var(--l-input-bg);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  background: var(--l-input-bg);
+  color: var(--l-text-primary);
+  outline: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* Hiệu ứng Focus Input: Sáng màu vàng kim */
+.login-field input:focus {
+  background: rgba(212, 175, 55, 0.05);
+  border-color: var(--l-gold-primary);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Floating Label */
+.login-field label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--l-text-secondary);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Khi input có dữ liệu hoặc focus */
+.login-field.filled label,
+.login-field input:focus + label {
+  top: -10px; /* Đưa lên cao hơn hẳn */
+  left: 12px;
+  transform: none;
+  font-size: 12px;
+  color: var(--l-gold-secondary); /* Đổi màu label khi focus */
+  background: var(--l-dark-bg); /* Tạo nền giả để che viền */
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Icon bên phải */
+.login-field .login-field-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--l-text-secondary);
+  pointer-events: none;
+  transition: color 0.3s;
+}
+/* Đổi màu icon khi focus */
+.login-field input:focus ~ .login-field-icon {
+    color: var(--l-gold-primary);
+}
+
+/* Thông báo lỗi */
+.login-error {
+  color: #ff8a8a;
+  background: rgba(255, 77, 77, 0.1);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Hàng "Ghi nhớ" và "Quên mật khẩu" */
+.login-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: var(--l-text-secondary);
+  margin-top: -5px;
+}
+
+.login-remember {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+/* Tùy chỉnh checkbox (cơ bản) */
+.login-remember input {
+    accent-color: var(--l-gold-primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.login-link-forgot {
+  background: none;
+  border: none;
+  color: var(--l-text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.login-link-forgot:hover {
+  color: var(--l-gold-secondary);
+  text-decoration: underline;
+}
+
+/* Nút Submit - Điểm nhấn chính */
+.login-submit {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: var(--l-dark-bg); /* Chữ màu tối trên nền vàng */
+  /* Gradient vàng kim loại */
+  background: linear-gradient(135deg, var(--l-gold-secondary) 0%, var(--l-gold-primary) 100%);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); /* Bóng màu vàng */
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.login-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+    filter: brightness(1.1);
+}
+.login-submit:active {
+  transform: translateY(1px);
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.login-submit.loading {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+/* Divider "HOẶC" */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 10px 0;
+  color: var(--l-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.login-divider::before, .login-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--l-border-color), transparent);
+}
+
+/* Social Buttons */
+.login-socials {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.login-social {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--l-border-color);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--l-text-primary);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.login-social:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--l-gold-secondary);
+}
+
+/* Footer */
+.login-footer {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--l-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.login-link-register {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 6px;
+    color: var(--l-gold-primary);
+    font-weight: 700;
+    cursor: pointer;
+}
+.login-link-register:hover {
+    text-decoration: underline;
+}
+
+.login-back-link {
+    color: var(--l-text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.login-back-link:hover {
+    color: var(--l-gold-secondary);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 32px 24px;
+  }
+  .login-title {
+    font-size: 22px;
+  }
+  .login-field input {
+      padding-right: 40px; /* Giảm padding phải trên mobile */
+  }
+  .login-socials {
+      grid-template-columns: 1fr; /* Xếp chồng nút social trên màn hình nhỏ */
+  }
+}
