@@ -8,12 +8,12 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   // Khởi tạo state dựa vào token trong localStorage
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return !!localStorage.getItem("token"); // true nếu có token, false nếu không
+    return !!localStorage.getItem("AccessToken"); // true nếu có token, false nếu không
   });
 
   // Hàm login (gọi sau khi backend trả token)
-  const loginfood = (token, userName, idUser) => {
-    localStorage.setItem("token", token);       //  lưu token 
+  const loginfood = (accessToken, userName, idUser) => {
+    localStorage.setItem("AccessToken", accessToken);       //  lưu token 
     localStorage.setItem("userName", userName);   // lưu tên thằng user 
     localStorage.setItem("idUser", idUser); 
     setIsAuthenticated(true);
@@ -21,15 +21,16 @@ export const AuthProvider = ({ children }) => {
 
   // Hàm logout
   const logoutfood = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("AccessToken");
     localStorage.removeItem("userName");
     localStorage.removeItem("idUser");
     setIsAuthenticated(false);
+    removeRefreshToken ();
   };
 
    // lưu refresh token
-  const saveRefreshToken = (token) => {
-    localStorage.setItem("refreshToken", token);
+  const saveRefreshToken = (Refreshtoken) => {
+    localStorage.setItem("refreshToken", Refreshtoken);
   };
 
 

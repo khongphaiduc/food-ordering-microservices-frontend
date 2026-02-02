@@ -61,9 +61,9 @@ export default function Login() {
     try {
       setLoading(true);
       const res = await LogInUser(email, password);
-      const accessToken = res.data.accessToken.token;
-      const refreshToken = res.data.refreshToken.token;
-      const userName = res.data.account;
+      const accessToken = res.data.accessToken.tokenValue;
+      const refreshToken = res.data.refreshToken.tokenValue;
+      const userName = res.data.email;
       const idUser = res.data.id;
 
       loginfood(accessToken, userName, idUser);
