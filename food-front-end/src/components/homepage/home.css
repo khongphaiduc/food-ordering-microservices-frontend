@@ -2,118 +2,141 @@
 
 :root {
   --primary: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-  --bg: #070b14;
-  --card: rgba(255, 255, 255, 0.03);
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-  --radius-lg: 24px;
-  --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  --bg: #fdfdfd;
+  --card: #ffffff;
+  --glass: rgba(255, 255, 255, 0.9);
+  --glass-border: #edf2f7;
+  --text-main: #2d3748;
+  --text-muted: #718096;
+  --radius-lg: 20px;
+  --transition: all 0.3s ease;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
 }
 
 * { box-sizing: border-box; scroll-behavior: smooth; }
+
 body {
-  margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--bg); color: var(--text-main);
+  margin: 0; 
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg); 
+  color: var(--text-main);
   line-height: 1.6;
+  overflow-x: hidden; /* Ngăn chặn thanh cuộn ngang khi animation chạy */
 }
 
-/* Header mượt mà */
+/* Animations Definition */
+@keyframes slideFromLeft {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideFromRight {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeInText {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Header */
 .topbar {
   position: sticky; top: 0; z-index: 1000; padding: 15px 6%;
-  backdrop-filter: blur(20px); background: rgba(7, 11, 20, 0.8);
+  backdrop-filter: blur(15px); 
+  background: rgba(255, 255, 255, 0.8);
   border-bottom: 1px solid var(--glass-border);
   display: flex; justify-content: space-between; align-items: center;
 }
-.logo { font-size: 24px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.logo { 
+  font-size: 24px; font-weight: 800; 
+  background: var(--primary); 
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+}
+
+/* Hero Section & Animations */
+.hero { 
+  text-align: center; 
+  padding: 100px 6% 60px; 
+  background: radial-gradient(circle at center, rgba(255, 107, 107, 0.05), transparent 70%);
+  overflow: hidden;
+}
+
+.hero h1 { 
+  font-size: clamp(2.5rem, 6vw, 3.5rem); 
+  line-height: 1.2; 
+  margin-bottom: 20px; 
+  color: #1a202c;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slide-left {
+  display: block;
+  animation: slideFromLeft 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.slide-right {
+  display: block;
+  animation: slideFromRight 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.fade-in {
+  animation: fadeInText 2s ease-in forwards;
+}
+
+/* Các phần CSS còn lại của bạn giữ nguyên */
 .nav-links { display: flex; gap: 25px; align-items: center; }
-.nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
+.nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
 .nav-links a:hover { color: #ff6b6b; }
 
-/* Section Base */
-section { padding: 80px 6%; }
-.section-title { font-size: 32px; font-weight: 800; margin-bottom: 40px; text-align: center; }
+section { padding: 60px 6%; }
+.section-title { font-size: 32px; font-weight: 800; margin-bottom: 40px; text-align: center; color: #1a202c; }
 
-/* Hero */
-.hero { text-align: center; padding: 120px 6% 80px; background: radial-gradient(circle at center, rgba(255, 107, 107, 0.08), transparent 70%); }
-.hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1.1; margin-bottom: 20px; }
-
-/* Featured Section - Món nổi bật */
 .featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 .featured-card {
   display: flex; background: var(--card); border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border); overflow: hidden; height: 300px;
-  transition: var(--transition);
+  border: 1px solid var(--glass-border); overflow: hidden; height: 320px;
+  transition: var(--transition); box-shadow: var(--shadow-sm);
 }
-.featured-card:hover { transform: translateY(-10px); border-color: #ff6b6b; }
+.featured-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); border-color: #ff6b6b; }
 .featured-img { width: 45%; object-fit: cover; }
 .featured-content { padding: 30px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-/* Menu Grid */
+.badge-bestseller {
+  background: #fff5f5; color: #ff6b6b; padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 800; width: fit-content; margin-bottom: 12px;
+}
+
+.price-tag { font-size: 22px; font-weight: 800; color: #ff6b6b; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
 
-/* Buttons */
 .btn-primary {
   background: var(--primary); color: white; border: none; padding: 12px 28px;
   border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s;
 }
-.btn-login { border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px 20px; border-radius: 12px; text-decoration: none; font-size: 14px; }
+.btn-login { 
+  border: 1.5px solid #ff6b6b; color: #ff6b6b; padding: 8px 22px; 
+  border-radius: 12px; text-decoration: none; font-size: 14px; font-weight: 700;
+}
+.btn-show-more-link {
+  display: inline-block; padding: 14px 45px; background: var(--primary);
+  color: #fff; text-decoration: none; font-weight: 700; border-radius: 50px;
+}
 
-/* Cart Drawer */
 .cart-drawer {
-  position: fixed; right: 0; top: 0; height: 100vh; width: 420px;
-  background: #0b1120; z-index: 2000; transform: translateX(100%);
+  position: fixed; right: 0; top: 0; height: 100vh; width: 400px;
+  background: #ffffff; z-index: 2000; transform: translateX(100%);
   transition: var(--transition); border-left: 1px solid var(--glass-border);
-  display: flex; flex-direction: column;
 }
 .cart-drawer.open { transform: translateX(0); }
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1500; }
 
 @media (max-width: 900px) {
   .featured-grid { grid-template-columns: 1fr; }
   .featured-card { height: auto; flex-direction: column; }
-  .featured-img { width: 100%; height: 200px; }
-}
-
-.show-more-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 50px;
-  margin-bottom: 30px;
-}
-
-.btn-show-more-link {
-  display: inline-block;
-  padding: 14px 40px;
-  background-color: #ff6b6b; /* Màu cam đỏ chủ đạo */
-  color: #fff;
-  text-decoration: none; /* Bỏ gạch chân của thẻ a */
-  font-weight: 700;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-}
-
-.btn-show-more-link:hover {
-  background-color: #fa5252;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-  color: white;
-}
-
-/* Thêm một chút căn chỉnh cho header user */
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 14px;
-}
-
-.btn-logout {
-  color: #ff6b6b;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-weight: 800;
+  .featured-img { width: 100%; height: 220px; }
 }

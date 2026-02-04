@@ -20,12 +20,11 @@ export default function Home() {
         const response = await fetch("https://localhost:7150/products");
         const data = await response.json();
         
-        // Kiểm tra đúng cấu trúc { list: [...] }
         if (data && Array.isArray(data.list)) {
           const mapped = data.list.map(f => ({
             id: f.id,
             name: f.name,
-            desc: f.decriptions || f.description, // Đề phòng sai chính tả từ backend
+            desc: f.decriptions || f.description,
             price: f.price,
             img: f.urlImageMain,
             featured: f.featured
@@ -38,7 +37,6 @@ export default function Home() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -72,8 +70,10 @@ export default function Home() {
           <a href="#intro">Giới thiệu</a>
           <a href="#menu">Thực đơn</a>
           {isAuthenticated ? (
-            <div className="user-info" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span style={{ fontSize: '14px' }}>Hi, <strong>{userName}</strong></span>
+            <div className="user-info">
+              <span style={{ fontSize: '14px', color: '#4a5568' }}>
+                Hi, <strong style={{ color: '#2d3748' }}>{userName}</strong>
+              </span>
               <button onClick={logoutfood} className="btn-logout">Thoát</button>
             </div>
           ) : (
@@ -83,8 +83,13 @@ export default function Home() {
       </header>
 
       <section className="hero">
-        <h1>Ăn Ngon Mỗi Ngày,<br />Giao Hàng <span style={{ color: '#ff6b6b' }}>Tốc Biến</span></h1>
-        <p>Hệ thống đặt món thông minh giúp bạn tiết kiệm thời gian.</p>
+        <h1>
+          <span className="slide-left">Ăn Ngon Mỗi Ngày,</span>
+          <span className="slide-right">
+            Giao Hàng <span style={{ color: '#ff6b6b' }}>Tốc Biến</span>
+          </span>
+        </h1>
+        <p className="fade-in">Hệ thống đặt món thông minh giúp bạn tiết kiệm thời gian.</p>
       </section>
 
       {/* Featured Section */}
@@ -98,8 +103,8 @@ export default function Home() {
                 <div className="featured-content">
                   <span className="badge-bestseller">BEST SELLER</span>
                   <h3>{food.name}</h3>
-                  <p>{food.desc}</p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p style={{ color: '#718096', fontSize: '14px' }}>{food.desc}</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
                     <span className="price-tag">${food.price}</span>
                     <button className="btn-primary" onClick={() => addToCart(food)}>Đặt ngay</button>
                   </div>
@@ -114,7 +119,7 @@ export default function Home() {
       <section id="menu">
         <h2 className="section-title">Thực đơn của chúng tôi</h2>
         {loading ? (
-          <p style={{ textAlign: 'center' }}>Đang tải dữ liệu...</p>
+          <p style={{ textAlign: 'center', color: '#718096' }}>Đang tải dữ liệu...</p>
         ) : (
           <div className="grid">
             {foods.length > 0 ? (
@@ -122,7 +127,7 @@ export default function Home() {
                 <FoodCard key={food.id} food={food} onAdd={() => addToCart(food)} />
               ))
             ) : (
-              <p style={{ textAlign: 'center', gridColumn: '1/-1' }}>Không tìm thấy sản phẩm nào.</p>
+              <p style={{ textAlign: 'center', gridColumn: '1/-1', color: '#718096' }}>Không tìm thấy sản phẩm nào.</p>
             )}
           </div>
         )}
@@ -142,7 +147,7 @@ export default function Home() {
         total={total}
       />
 
-      <footer style={{ padding: '60px', textAlign: 'center', opacity: 0.6 }}>
+      <footer style={{ padding: '60px', textAlign: 'center', color: '#a0aec0', fontSize: '14px' }}>
         © 2026 Foodly — Nền tảng giao hàng dành cho tương lai
       </footer>
     </div>

@@ -1,0 +1,120 @@
+.food-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #edf2f7;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  height: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.food-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+}
+
+.food-card-img-container {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.food-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.food-card:hover .food-card-img {
+  transform: scale(1.1);
+}
+
+.food-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.food-card-title {
+  margin: 0 0 6px 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.food-card-price {
+  font-weight: 800;
+  color: #ff6b6b;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.food-card-desc {
+  font-size: 0.88rem;
+  color: #718096;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  /* Giới hạn 2 dòng chữ mổ tả */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.7em;
+}
+
+.food-card-actions {
+  margin-top: auto; /* Luôn đẩy cụm nút xuống đáy */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Nút Chi tiết - Sửa lỗi độ dài và căn giữa chữ */
+.btn-outline {
+  flex: 1;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  background: transparent;
+  color: #4a5568;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  background: #f7fafc;
+  border-color: #cbd5e1;
+}
+
+/* Nút Thêm - Đồng bộ với nút Chi tiết */
+.btn-primary-sm {
+  flex: 1.4; /* Cho nút Thêm dài hơn một chút */
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e67e22; /* Màu cam thương hiệu */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary-sm:hover {
+  background: #d35400;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+}

@@ -82,7 +82,7 @@ export default function ViewListProductFood() {
           setShowSuggestions(true);
         }
       } catch (err) { console.error(err); }
-    }, 200);
+    }, 100);
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 

@@ -1,18 +1,29 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import "./foodcard.css";
 
 export default function FoodCard({ food, onAdd }) {
   return (
-    <div className="food-card" style={{ background: 'var(--card)', borderRadius: '24px', border: '1px solid var(--glass-border)', overflow: 'hidden', transition: '0.3s' }}>
-      <div style={{ height: '200px', overflow: 'hidden' }}>
-        <img src={food.img} alt={food.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+    <div className="food-card">
+      <div className="food-card-img-container">
+        <img src={food.img} alt={food.name} className="food-card-img" />
       </div>
-      <div style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-          <h3 style={{ margin: 0, fontSize: '18px' }}>{food.name}</h3>
-          <span style={{ fontWeight: '800', color: '#ff6b6b' }}>${food.price}</span>
+      
+      <div className="food-card-body">
+        <h3 className="food-card-title">{food.name}</h3>
+        <div className="food-card-price">{food.price?.toLocaleString('vi-VN')}đ</div>
+        <p className="food-card-desc">{food.desc}</p>
+        
+        <div className="food-card-actions">
+          
+          <Link to={`/detail/${food.id}`} className="btn-outline">
+            Chi tiết
+          </Link>
+          
+          <button className="btn-primary-sm" onClick={() => onAdd(food)}>
+            + Thêm
+          </button>
         </div>
-        <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '20px', height: '40px', overflow: 'hidden' }}>{food.desc}</p>
-        <button className="btn-primary" style={{ width: '100%' }} onClick={onAdd}>Thêm vào giỏ</button>
       </div>
     </div>
   );
