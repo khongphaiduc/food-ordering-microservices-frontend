@@ -7,6 +7,7 @@
   --text-main: #1A1A1A;
   --text-muted: #717171;
   --glass-bg: rgba(255, 255, 255, 0.8);
+  --success: #22C55E;
 }
 
 .modern-detail-wrapper {
@@ -14,11 +15,94 @@
   min-height: 100vh;
   padding: 40px 20px;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .container { max-width: 1200px; margin: 0 auto; }
 
-/* Nút quay lại kiểu Glassmorphism */
+/* --- MODERN TOAST SYSTEM --- */
+.modern-toast {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 9999;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  transform: translateX(120%);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modern-toast.show {
+  transform: translateX(0);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.toast-icon-circle {
+  background: var(--success);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.toast-title {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--text-main);
+}
+
+.toast-body {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--success);
+  width: 100%;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  animation: progress 3s linear forwards;
+}
+
+@keyframes progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* --- NAVIGATION & BUTTONS --- */
 .glass-back-btn {
   display: flex;
   align-items: center;
@@ -169,54 +253,239 @@
   .main-content-card { grid-template-columns: 1fr; }
   .info-section { padding: 30px; }
   .hero-image { height: 400px; }
+  .modern-toast { right: 20px; left: 20px; bottom: 30px; top: auto; min-width: auto; }
 }
-
 
 /* --- Suggestions Section --- */
-.suggestions-section {
-  margin-top: 60px;
-  padding-bottom: 40px;
+.suggestions-section { margin-top: 60px; padding-bottom: 40px; }
+.section-header { margin-bottom: 30px; }
+.section-title { font-size: 28px; font-weight: 700; color: #1a1a1a; }
+.title-underline { width: 50px; height: 4px; background: #FF6B00; margin-top: 8px; border-radius: 2px; }
+.suggestions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+
+/* Loader */
+.modern-loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; gap: 10px; }
+.spinner { animation: spin 1s linear infinite; color: #FF6B00; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Floating Cart Group */
+.fixed-nav-group {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 900;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.section-header {
-  margin-bottom: 30px;
+.fixed-nav-group.hidden {@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+  /* Chuyển sang tông Đỏ và Vàng Kim chủ đạo của Tết */
+  --primary: #B91C1C; 
+  --primary-hover: #991B1B;
+  --gold: #D4AF37;
+  --bg-body: #FFFBF5; /* Nền trắng kem ấm áp */
+  --text-main: #1A1A1A;
+  --text-muted: #717171;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --success: #22C55E;
 }
 
-.section-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1a1a1a;
+.modern-detail-wrapper {
+  background-color: var(--bg-body);
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  /* Thêm họa tiết mây chìm nhẹ */
+  background-image: radial-gradient(var(--gold) 0.5px, transparent 0.5px);
+  background-size: 30px 30px;
+  background-alpha: 0.05;
 }
 
-.title-underline {
-  width: 50px;
-  height: 4px;
-  background: #FF6B00;
-  margin-top: 8px;
-  border-radius: 2px;
-}
+.container { max-width: 1200px; margin: 0 auto; position: relative; }
 
-.suggestions-grid {
+/* --- TRANG TRÍ CÀNH ĐÀO & ĐÈN LỒNG --- */
+.main-content-card {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1.1fr 0.9fr;
+  background: #FFF;
+  border-radius: 32px;
+  overflow: visible; /* Để cành đào vươn ra ngoài */
+  box-shadow: 0 25px 50px -12px rgba(185, 28, 28, 0.15);
+  border: 4px double var(--gold); /* Viền kép sang trọng */
+  position: relative;
 }
 
-/* Spinner loading */
-.modern-loader {
+/* Cành đào uốn ở góc trên bên phải */
+.main-content-card::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -30px;
+  width: 180px;
+  height: 180px;
+  background-image: url('https://img.icons8.com/color/200/cherry-blossoms.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 20;
+  pointer-events: none;
+  filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.1));
+}
+
+/* Đèn lồng đung đưa ở góc dưới bên trái */
+.main-content-card::after {
+  content: "🏮";
+  position: absolute;
+  bottom: 20px;
+  left: -25px;
+  font-size: 3.5rem;
+  z-index: 20;
+  animation: lanternSwing 3s ease-in-out infinite;
+  filter: drop-shadow(0 5px 15px rgba(185, 28, 28, 0.3));
+}
+
+@keyframes lanternSwing {
+  0%, 100% { transform: rotate(-8deg) translateX(-5px); }
+  50% { transform: rotate(10deg) translateX(5px); }
+}
+
+/* --- TOAST & NOTIFICATION --- */
+.modern-toast {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 9999;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
-  gap: 10px;
+  min-width: 320px;
+  transform: translateX(120%);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-left: 6px solid var(--primary);
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
-  color: #FF6B00;
+.modern-toast.show { transform: translateX(0); }
+
+.toast-icon-circle {
+  background: var(--primary);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
 }
 
-@keyframes spin {
-  100% { transform: rotate(360deg); }
+/* --- IMAGE & INFO SECTION --- */
+.image-section { position: relative; padding: 25px; }
+
+.hero-image {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 2px solid #f0f0f0;
+}
+
+.badge-overlay {
+  position: absolute;
+  top: 45px;
+  left: 45px;
+  background: linear-gradient(135deg, #FFD700, var(--gold));
+  color: #B91C1C;
+  padding: 8px 22px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  border: 1px solid #B91C1C;
+}
+
+.info-section { padding: 50px; }
+
+.modern-title { 
+  font-size: 42px; 
+  font-weight: 800; 
+  color: var(--primary); 
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.price-tag-wrapper { margin-bottom: 30px; color: var(--gold); }
+.currency { font-size: 24px; font-weight: 700; }
+.amount { font-size: 48px; font-weight: 800; }
+
+.variant-chip.active { 
+  border-color: var(--primary); 
+  background: #FFF5F5; 
+}
+.variant-chip.active .size-name { color: var(--primary); }
+
+/* --- BUTTONS --- */
+.primary-buy-btn {
+  flex: 1;
+  background: linear-gradient(90deg, var(--primary), #ef4444);
+  color: white;
+  border: 2px solid var(--gold);
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; cursor: pointer; transition: 0.3s;
+  box-shadow: 0 8px 20px rgba(185, 28, 28, 0.2);
+}
+
+.primary-buy-btn:hover { 
+  transform: translateY(-3px); 
+  box-shadow: 0 12px 25px rgba(185, 28, 28, 0.4);
+  filter: brightness(1.1);
+}
+
+.glass-back-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--gold);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* --- SUGGESTIONS --- */
+.section-title { color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+.title-underline { background: var(--gold); width: 80px; }
+
+.nav-floating-btn.cart {
+  background: var(--primary);
+  border: 2px solid var(--gold);
+  box-shadow: 0 10px 25px rgba(185, 28, 28, 0.4);
+}
+
+@media (max-width: 992px) {
+  .main-content-card { grid-template-columns: 1fr; border-radius: 20px; }
+  .main-content-card::before { width: 100px; height: 100px; top: -20px; right: -10px; }
+}
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.5) translateY(20px);
+}
+
+.nav-floating-btn.cart {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(255, 107, 0, 0.4);
+}
+
+.nav-floating-btn.cart .badge {
+    background: white;
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
 }

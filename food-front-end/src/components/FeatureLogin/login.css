@@ -1,0 +1,185 @@
+:root {
+    --tet-red: #d32f2f;
+    --tet-gold: #ffc107;
+    --tet-dark-red: #b71c1c;
+    --tet-bg: #fffbf0;
+}
+
+.tet-theme {
+    background-color: var(--tet-bg);
+    background-image: radial-gradient(#ffc107 0.5px, transparent 0.5px);
+    background-size: 30px 30px; /* Họa tiết chấm bi nhỏ kiểu truyền thống */
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Container cho hiệu ứng rơi */
+.li-xi-container {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.li-xi {
+    position: absolute;
+    user-select: none;
+    animation: fall linear infinite;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+}
+
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+.login-card-custom {
+    max-width: 1000px;
+    width: 100%;
+    height: 600px;
+    background: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(211, 47, 47, 0.2);
+    display: flex;
+    overflow: hidden;
+    border: 3px solid var(--tet-gold);
+    position: relative;
+    z-index: 10;
+}
+
+.login-image-section {
+    flex: 1.2;
+    position: relative;
+}
+
+.login-image-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px;
+    background: linear-gradient(transparent, rgba(183, 28, 28, 0.9));
+    color: white;
+}
+
+.login-form-section {
+    flex: 1;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-logo {
+    color: var(--tet-red);
+    font-weight: 900;
+    font-size: 3rem;
+    margin-bottom: 0;
+    letter-spacing: -1px;
+}
+
+.tet-greeting {
+    color: var(--tet-gold);
+    font-weight: bold;
+    background-color: var(--tet-dark-red);
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.custom-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #fce4ec;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+    border-color: var(--tet-red);
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
+.btn-foodly {
+    background: linear-gradient(45deg, var(--tet-red), #ff5252);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-weight: 700;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-bottom: 4px solid var(--tet-dark-red);
+}
+
+.btn-foodly:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+}
+
+.signup-link {
+    color: var(--tet-red);
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--tet-red);
+}
+
+/* Phụ kiện trang trí */
+.cherry-blossom-top {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2rem;
+    animation: pulse 2s infinite;
+}
+
+.lantern-bottom {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 3rem;
+    filter: drop-shadow(0 0 10px var(--tet-gold));
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@media (max-width: 768px) {
+    .login-image-section { display: none; }
+    .login-card-custom { height: auto; margin: 20px; }
+    .login-form-section { padding: 30px; }
+}

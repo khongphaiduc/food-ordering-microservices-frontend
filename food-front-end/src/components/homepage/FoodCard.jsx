@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import "./foodcard.css";
 
-export default function FoodCard({ food, onAdd }) {
+export default function FoodCard({ food }) {
   return (
     <div className="food-card">
       <div className="food-card-img-container">
@@ -15,14 +15,10 @@ export default function FoodCard({ food, onAdd }) {
         <p className="food-card-desc">{food.desc}</p>
         
         <div className="food-card-actions">
-          
+          {/* Chỉ giữ lại nút Chi tiết và cho nó chiếm toàn bộ chiều rộng */}
           <Link to={`/detail/${food.id}`} className="btn-outline">
-            Chi tiết
+            Xem chi tiết món ăn
           </Link>
-          
-          <button className="btn-primary-sm" onClick={() => onAdd(food)}>
-            + Thêm
-          </button>
         </div>
       </div>
     </div>

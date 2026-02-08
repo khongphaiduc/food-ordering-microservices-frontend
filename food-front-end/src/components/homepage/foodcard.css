@@ -1,35 +1,65 @@
 .food-card {
   background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #edf2f7;
+  /* Bo góc đặc trưng: tạo cảm giác mềm mại hơn ở các góc có hoa */
+  border-radius: 40px 10px 40px 10px; 
+  border: 3px solid #d4af37; 
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s ease;
   height: 100%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Cành đào góc trên bên phải - Tạo bằng màu sắc và hình khối CSS */
+.food-card::before {
+  content: "🌸"; /* Dùng tạm Emoji nếu ảnh không load, bạn sẽ thấy ngay */
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #ffb7b7 0%, transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  z-index: 10;
+  transform: rotate(15deg);
+}
+
+/* Góc viền hoa văn Tết ở dưới */
+.food-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  /* Tạo hình tam giác hoa văn góc */
+  background: linear-gradient(135deg, #b91c1c 50%, transparent 50%);
+  z-index: 5;
 }
 
 .food-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-10px) scale(1.02);
+  border-color: #b91c1c;
+  box-shadow: 0 15px 30px rgba(185, 28, 28, 0.2);
 }
 
 .food-card-img-container {
   width: 100%;
   height: 180px;
   overflow: hidden;
+  /* Tạo đường cắt lượn sóng nhẹ giữa ảnh và thân bài */
+  clip-path: ellipse(100% 100% at 50% 0%);
 }
 
 .food-card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.food-card:hover .food-card-img {
-  transform: scale(1.1);
 }
 
 .food-card-body {
@@ -37,84 +67,57 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  background: #fffcf5; /* Nền kem vàng nhẹ */
 }
 
 .food-card-title {
-  margin: 0 0 6px 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #1a202c;
+  margin: 10px 0 6px 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #b91c1c; /* Màu đỏ đậm */
+  text-align: center;
 }
 
 .food-card-price {
   font-weight: 800;
-  color: #ff6b6b;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+  color: #d4af37;
+  font-size: 1.3rem;
+  text-align: center;
+  margin-bottom: 15px;
 }
 
 .food-card-desc {
-  font-size: 0.88rem;
-  color: #718096;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
   margin-bottom: 20px;
-  line-height: 1.5;
-  /* Giới hạn 2 dòng chữ mổ tả */
-  display: -webkit-box;
   -webkit-line-clamp: 2;
+  display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.7em;
 }
 
 .food-card-actions {
-  margin-top: auto; /* Luôn đẩy cụm nút xuống đáy */
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
+  margin-top: auto;
 }
 
-/* Nút Chi tiết - Sửa lỗi độ dài và căn giữa chữ */
 .btn-outline {
-  flex: 1;
-  height: 42px;
+  width: 100%;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  background: transparent;
-  color: #4a5568;
+  border: none;
+  border-radius: 25px;
+  /* Gradient màu đỏ Tết rực rỡ */
+  background: linear-gradient(90deg, #b91c1c, #ef4444);
+  color: white;
   font-weight: 700;
-  font-size: 0.9rem;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .btn-outline:hover {
-  background: #f7fafc;
-  border-color: #cbd5e1;
-}
-
-/* Nút Thêm - Đồng bộ với nút Chi tiết */
-.btn-primary-sm {
-  flex: 1.4; /* Cho nút Thêm dài hơn một chút */
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e67e22; /* Màu cam thương hiệu */
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-primary-sm:hover {
-  background: #d35400;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+  filter: brightness(1.2);
+  letter-spacing: 1px;
 }

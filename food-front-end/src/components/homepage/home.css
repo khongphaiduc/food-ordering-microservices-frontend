@@ -1,142 +1,198 @@
+/* FOODLY - TET EDITION 2026 🧧 
+  Tệp CSS hoàn thiện: Kết hợp Layout gốc và Hiệu ứng Tết 
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
 
 :root {
-  --primary: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-  --bg: #fdfdfd;
-  --card: #ffffff;
-  --glass: rgba(255, 255, 255, 0.9);
-  --glass-border: #edf2f7;
-  --text-main: #2d3748;
-  --text-muted: #718096;
-  --radius-lg: 20px;
-  --transition: all 0.3s ease;
-  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    /* Bảng màu gốc & Tết */
+    --primary: linear-gradient(135deg, #d32f2f 0%, #ff4d4d 100%);
+    --tet-red: #d32f2f;
+    --tet-gold: #b8860b;
+    --bg-tet: #fffaf0;
+    --bg-default: #fdfdfd;
+    --card: #ffffff;
+    --glass: rgba(255, 255, 255, 0.9);
+    --glass-border: #edf2f7;
+    --text-main: #2d3748;
+    --text-muted: #718096;
+    --radius-lg: 20px;
+    --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 15px -3px rgba(211, 47, 47, 0.1);
 }
 
 * { box-sizing: border-box; scroll-behavior: smooth; }
 
+/* --- Cấu trúc nền --- */
 body {
-  margin: 0; 
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--bg); 
-  color: var(--text-main);
-  line-height: 1.6;
-  overflow-x: hidden; /* Ngăn chặn thanh cuộn ngang khi animation chạy */
+    margin: 0; 
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-default); 
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
-/* Animations Definition */
-@keyframes slideFromLeft {
-  0% { transform: translateX(-100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+.tet-mode {
+    background-color: var(--bg-tet);
 }
 
-@keyframes slideFromRight {
-  0% { transform: translateX(100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeInText {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Header */
+/* --- Header & Logo --- */
 .topbar {
-  position: sticky; top: 0; z-index: 1000; padding: 15px 6%;
-  backdrop-filter: blur(15px); 
-  background: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid var(--glass-border);
-  display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 1000; padding: 15px 6%;
+    backdrop-filter: blur(15px); 
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex; justify-content: space-between; align-items: center;
 }
 
 .logo { 
-  font-size: 24px; font-weight: 800; 
-  background: var(--primary); 
-  -webkit-background-clip: text; 
-  -webkit-text-fill-color: transparent; 
+    font-size: 24px; font-weight: 800; 
+    color: var(--tet-red);
 }
 
-/* Hero Section & Animations */
+.tet-sub {
+    font-size: 14px; font-style: italic;
+    color: var(--tet-gold); margin-left: 4px;
+}
+
+.nav-links { display: flex; gap: 25px; align-items: center; }
+.nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
+.nav-links a:hover { color: var(--tet-red); }
+
+/* --- Hero & Animations --- */
 .hero { 
-  text-align: center; 
-  padding: 100px 6% 60px; 
-  background: radial-gradient(circle at center, rgba(255, 107, 107, 0.05), transparent 70%);
-  overflow: hidden;
+    text-align: center; 
+    padding: 100px 6% 60px; 
+    background: radial-gradient(circle at center, rgba(211, 47, 47, 0.05), transparent 70%);
+    overflow: hidden;
 }
 
 .hero h1 { 
-  font-size: clamp(2.5rem, 6vw, 3.5rem); 
-  line-height: 1.2; 
-  margin-bottom: 20px; 
-  color: #1a202c;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    font-size: clamp(2.5rem, 6vw, 3.5rem); 
+    line-height: 1.2; margin-bottom: 20px; color: #1a202c;
+    display: flex; flex-direction: column; gap: 10px;
 }
 
-.slide-left {
-  display: block;
-  animation: slideFromLeft 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+@keyframes slideFromLeft {
+    0% { transform: translateX(-100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideFromRight {
+    0% { transform: translateX(100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
 }
 
-.slide-right {
-  display: block;
-  animation: slideFromRight 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+.slide-left { animation: slideFromLeft 1.2s forwards; }
+.slide-right { animation: slideFromRight 1.2s forwards; }
+
+/* --- Hiệu ứng Hoa Đào rơi --- */
+.tet-decoration-layer {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 9999;
 }
 
-.fade-in {
-  animation: fadeInText 2s ease-in forwards;
+.flower {
+    position: absolute; top: -20px;
+    animation: flowerFall 10s linear infinite; opacity: 0.7;
 }
 
-/* Các phần CSS còn lại của bạn giữ nguyên */
-.nav-links { display: flex; gap: 25px; align-items: center; }
-.nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
-.nav-links a:hover { color: #ff6b6b; }
+@keyframes flowerFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
 
+.flower:nth-child(1) { left: 10%; animation-duration: 7s; }
+.flower:nth-child(2) { left: 30%; animation-duration: 12s; animation-delay: 2s; }
+.flower:nth-child(3) { left: 60%; animation-duration: 9s; animation-delay: 4s; }
+.flower:nth-child(4) { left: 90%; animation-duration: 11s; animation-delay: 1s; }
+
+/* --- Grid & Cards --- */
 section { padding: 60px 6%; }
-.section-title { font-size: 32px; font-weight: 800; margin-bottom: 40px; text-align: center; color: #1a202c; }
+.section-title { font-size: 32px; font-weight: 800; margin-bottom: 40px; text-align: center; color: var(--tet-red) !important; }
 
 .featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 .featured-card {
-  display: flex; background: var(--card); border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border); overflow: hidden; height: 320px;
-  transition: var(--transition); box-shadow: var(--shadow-sm);
+    display: flex; background: var(--card); border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border); overflow: hidden; height: 320px;
+    transition: var(--transition); box-shadow: var(--shadow-sm);
 }
-.featured-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); border-color: #ff6b6b; }
+.featured-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); border-color: var(--tet-red); }
+
 .featured-img { width: 45%; object-fit: cover; }
 .featured-content { padding: 30px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-.badge-bestseller {
-  background: #fff5f5; color: #ff6b6b; padding: 4px 12px; border-radius: 20px;
-  font-size: 11px; font-weight: 800; width: fit-content; margin-bottom: 12px;
-}
-
-.price-tag { font-size: 22px; font-weight: 800; color: #ff6b6b; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
 
-.btn-primary {
-  background: var(--primary); color: white; border: none; padding: 12px 28px;
-  border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s;
-}
-.btn-login { 
-  border: 1.5px solid #ff6b6b; color: #ff6b6b; padding: 8px 22px; 
-  border-radius: 12px; text-decoration: none; font-size: 14px; font-weight: 700;
-}
-.btn-show-more-link {
-  display: inline-block; padding: 14px 45px; background: var(--primary);
-  color: #fff; text-decoration: none; font-weight: 700; border-radius: 50px;
+/* --- Components & Buttons --- */
+.badge-bestseller {
+    background: #fff5f5; color: var(--tet-red) !important; 
+    padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; 
+    width: fit-content; margin-bottom: 12px;
 }
 
+.price-tag { font-size: 22px; font-weight: 800; color: var(--tet-red) !important; }
+
+.btn-primary {
+    background: var(--primary) !important; color: white; border: none; padding: 12px 28px;
+    border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.2);
+}
+
+.btn-login { 
+    border: 1.5px solid var(--tet-red) !important; color: var(--tet-red) !important; 
+    padding: 8px 22px; border-radius: 12px; text-decoration: none; font-size: 14px; font-weight: 700;
+}
+
+/* Nút Xem thêm món ăn */
+.btn-show-more-link {
+    display: inline-block; padding: 14px 45px; 
+    background: var(--tet-red); color: #fff;
+    text-decoration: none; font-weight: 700; border-radius: 50px;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+}
+
+.btn-show-more-link:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+    background: #b71c1c; color: #fff;
+}
+
+/* --- Floating Cart & Drawer --- */
+.fixed-nav-group {
+    position: fixed; right: 30px; bottom: 30px; 
+    display: flex; flex-direction: column; gap: 12px; z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fixed-nav-group.hidden { opacity: 0; visibility: hidden; transform: scale(0.8) translateY(20px); }
+
+.nav-floating-btn.cart {
+    background: var(--tet-red) !important; color: white; border: none;
+    padding: 12px 22px; border-radius: 50px; display: flex; align-items: center; gap: 10px;
+    font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(211, 47, 47, 0.3);
+}
+
+.cart-header-btn {
+    background: none; border: none; cursor: pointer; position: relative;
+    padding: 8px; display: flex; align-items: center; transition: all 0.3s ease;
+}
+.cart-header-btn.hidden { opacity: 0; transform: translateX(10px); pointer-events: none; }
+
 .cart-drawer {
-  position: fixed; right: 0; top: 0; height: 100vh; width: 400px;
-  background: #ffffff; z-index: 2000; transform: translateX(100%);
-  transition: var(--transition); border-left: 1px solid var(--glass-border);
+    position: fixed; right: 0; top: 0; height: 100vh; width: 400px;
+    background: #ffffff; z-index: 2000; transform: translateX(100%);
+    transition: var(--transition); border-left: 1px solid var(--glass-border);
 }
 .cart-drawer.open { transform: translateX(0); }
 
+/* --- Responsive --- */
 @media (max-width: 900px) {
-  .featured-grid { grid-template-columns: 1fr; }
-  .featured-card { height: auto; flex-direction: column; }
-  .featured-img { width: 100%; height: 220px; }
+    .featured-grid { grid-template-columns: 1fr; }
+    .featured-card { height: auto; flex-direction: column; }
+    .featured-img { width: 100%; height: 220px; }
 }
