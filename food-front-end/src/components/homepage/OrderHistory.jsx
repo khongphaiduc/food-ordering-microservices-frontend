@@ -8,7 +8,10 @@ export default function OrderHistory() {
     const [pageIndex, setPageIndex] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     
-    // Ưu tiên lấy từ localStorage, nếu không có dùng ID mặc định
+    // State cho chi tiết đơn hàng
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [detailLoading, setDetailLoading] = useState(false);
+
     const userId = localStorage.getItem("userId") || "22EBC352-0CA9-4CB6-AC82-3CEA7C8099B2";
 
     useEffect(() => {
@@ -19,9 +22,7 @@ export default function OrderHistory() {
         setLoading(true);
         fetch(`https://localhost:7150/orders/histories`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 IdUser: userId,
                 PageIndex: page
@@ -39,6 +40,27 @@ export default function OrderHistory() {
         });
     };
 
+    const handleViewDetail = (orderId) => {
+        setDetailLoading(true);
+        fetch(`https://localhost:7150/orders/detail`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                IdUser: userId,
+                IdOrder: orderId
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            setSelectedOrder(data);
+            setDetailLoading(false);
+        })
+        .catch(err => {
+            console.error("Lỗi lấy chi tiết:", err);
+            setDetailLoading(false);
+        });
+    };
+
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPageIndex(newPage);
@@ -48,7 +70,6 @@ export default function OrderHistory() {
 
     return (
         <div className="order-page-wrapper">
-            {/* Nút quay về trang chủ - Đã chuyển vị trí trong CSS */}
             <Link to="/home" className="back-to-home-fixed">
                 <span className="icon">🔙</span>
                 <span className="text">Trang chủ</span>
@@ -75,9 +96,10 @@ export default function OrderHistory() {
                                 <thead>
                                     <tr>
                                         <th>Mã Đơn</th>
-                                        <th>Thời Gian Đặt</th>
+                                        <th>Thời Gian</th>
                                         <th>Giá Tiền</th>
                                         <th>Trạng Thái</th>
+                                        <th>Hành Động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -106,6 +128,11 @@ export default function OrderHistory() {
                                                     {order.orderStatus === 1 ? "Đang xử lý" : "Hoàn thành"}
                                                 </span>
                                             </td>
+                                            <td>
+                                                <button className="view-detail-btn" onClick={() => handleViewDetail(order.idOrder)}>
+                                                    Xem chi tiết📜
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -117,6 +144,7 @@ export default function OrderHistory() {
                                 </div>
                             )}
 
+                            {/* PHÂN TRANG */}
                             {totalPages > 1 && (
                                 <div className="tet-pagination fade-in">
                                     <button 
@@ -142,6 +170,65 @@ export default function OrderHistory() {
                     )}
                 </div>
             </main>
+
+            {/* Modal Chi Tiết Đơn Hàng */}
+            {selectedOrder && (
+                <div className="tet-modal-overlay" onClick={() => setSelectedOrder(null)}>
+                    <div className="tet-modal-content" onClick={e => e.stopPropagation()}>
+                        <button className="close-modal" onClick={() => setSelectedOrder(null)}>✖</button>
+                        <h3 className="modal-title">📜 Chi Tiết Đơn Hàng</h3>
+                        
+                        <div className="order-info-summary">
+                            <p>Thanh toán: <b className="payment-highlight">
+                                {selectedOrder.paymentMethod === 1 ? "Chuyển khoản 💳" : "Tiền mặt 💵"}
+                            </b></p>
+                            <p>Trạng thái: <b>{selectedOrder.orderStatus === 1 ? "Đang xử lý" : "Hoàn thành"}</b></p>
+                        </div>
+
+                        <div className="items-list">
+                            {selectedOrder.orderItems.map((item, idx) => (
+                                <div key={idx} className="item-detail-row">
+                                    <div className="item-name">
+                                        <b>{item.productName}</b>
+                                        {item.variantname && <span className="variant-text">({item.variantname})</span>}
+                                    </div>
+                                    <div className="item-qty">x{item.quantity}</div>
+                                    <div className="item-price">{item.totalPrice.toLocaleString()}đ</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="order-total-section">
+                            <div className="total-row">
+                                <span>Phí vận chuyển:</span>
+                                <span>{selectedOrder.shippingFee.toLocaleString()}đ</span>
+                            </div>
+                            <div className="total-row">
+                                <span>Giảm giá:</span>
+                                <span>-{selectedOrder.discountAmount.toLocaleString()}đ</span>
+                            </div>
+                            <div className="total-row grand-total">
+                                <span>Tổng cộng:</span> 
+                                <span>{selectedOrder.totalPrice.toLocaleString()}đ</span>
+                            </div>
+                        </div>
+
+                        <div className="modal-footer">
+                            <p>Cung Chúc Tân Xuân - Cảm ơn quý khách! 🧧</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            {/* Loading cho chi tiết nếu cần */}
+            {detailLoading && (
+                <div className="tet-modal-overlay">
+                    <div className="loading-state">
+                        <p className="spinning-flower">🌸</p>
+                        <p className="loading-text" style={{color: 'white'}}>Đang mở sớ...</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

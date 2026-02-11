@@ -191,3 +191,221 @@
         padding: 8px 15px;
     }
 }
+
+/* --- NÚT XEM CHI TIẾT TRONG BẢNG --- */
+.view-detail-btn {
+    background: #b8860b;
+    color: #fffaf0;
+    border: 2px solid #ffd700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s;
+}
+
+.view-detail-btn:hover {
+    background: #d32f2f;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+}
+
+/* --- MODAL OVERLAY --- */
+.tet-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+    padding: 20px;
+}
+
+/* --- NỘI DUNG MODAL (PHONG CÁCH SỚ) --- */
+.tet-modal-content {
+    background: #fffaf0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 30px;
+    border: 6px double #d32f2f;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+    animation: tetPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes tetPop {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: #d32f2f;
+    color: white;
+    border: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-title {
+    text-align: center;
+    color: #d32f2f;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px dashed #ffd700;
+    padding-bottom: 10px;
+}
+
+.order-info-summary {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #fdf2f2;
+    border-radius: 8px;
+    border-left: 4px solid #d32f2f;
+}
+
+.item-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.variant-text {
+    display: block;
+    font-size: 0.8rem;
+    color: #718096;
+    font-weight: normal;
+}
+
+.order-total-section {
+    margin-top: 25px;
+    padding-top: 15px;
+}
+
+.grand-total {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #d32f2f;
+    color: #d32f2f;
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.modal-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-family: 'Dancing Script', cursive; /* Nếu bạn có font nghệ thuật */
+    color: #b8860b;
+    font-weight: bold;
+}
+/* Thêm các thuộc tính này vào file CSS hiện có của bạn */
+
+.payment-highlight {
+    color: #d32f2f;
+    background: #fff5f5;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* MODAL OVERLAY */
+.tet-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+    padding: 20px;
+}
+
+/* NỘI DUNG MODAL */
+.tet-modal-content {
+    background: #fffaf0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 30px;
+    border: 6px double #d32f2f;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+    animation: tetPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes tetPop {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: #d32f2f;
+    color: white;
+    border: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-title {
+    text-align: center;
+    color: #d32f2f;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px dashed #ffd700;
+    padding-bottom: 10px;
+}
+
+.order-info-summary {
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #fdf2f2;
+    border-radius: 10px;
+    border-left: 5px solid #d32f2f;
+}
+
+.item-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #fee2e2;
+}
+
+.variant-text {
+    display: block;
+    font-size: 0.85rem;
+    color: #718096;
+    font-weight: normal;
+}
+
+.order-total-section {
+    margin-top: 25px;
+    background: #fffaf0;
+    padding: 15px;
+    border: 1px solid #ffd700;
+    border-radius: 12px;
+}
+
+.grand-total {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #d32f2f;
+    color: #d32f2f !important;
+    font-size: 1.4rem !important;
+}
