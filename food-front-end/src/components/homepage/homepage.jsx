@@ -41,13 +41,10 @@ export default function Home() {
 
   return (
     <div className="page-root tet-mode">
-      
-      {/* Hiệu ứng hoa đào rơi */}
       <div className="tet-decoration-layer">
         {[...Array(6)].map((_, i) => <span key={i} className="flower">🌸</span>)}
       </div>
 
-      {/* Nút nổi Bao Lì Xì */}
       <div className={`fixed-nav-group ${isDrawerActive ? 'hidden' : ''}`}>
         <button className="nav-floating-btn cart" onClick={handleOpenCart} style={{backgroundColor: '#d32f2f'}}>
           <span className="icon">🧧</span>
@@ -58,13 +55,15 @@ export default function Home() {
       <header className="topbar">
         <div className="logo" style={{color: '#d32f2f'}}>TRUNGDUCFOODLY<span className="tet-sub">.Tết Đoàn Viên</span></div>
         <nav className="nav-links">
-          <a href="/menu">Thực đơn Tết</a>
+          <a href="/menu">Thực đơn ngày Tết</a>
           <button className={`cart-header-btn ${isDrawerActive ? 'hidden' : ''}`} onClick={handleOpenCart}>
             <span className="cart-icon">🧧</span>
           </button>
           {userName ? (
             <div className="user-info">
               <span>Hi, <strong>{userName}</strong> 🧧</span>
+              {/* NÚT MỚI: ĐƠN CỦA BẠN */}
+              <Link to="/orders" className="btn-orders-nav">🛍️ Đơn của bạn</Link>
               <button onClick={() => { localStorage.clear(); window.location.reload(); }} className="btn-logout">Thoát</button>
             </div>
           ) : (
@@ -105,7 +104,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Menu Section - Luôn hiện nút Xem thêm ở đây */}
+      {/* Menu Section */}
       <section id="menu">
         <h2 className="section-title">Ngày Tết bạn ăn gì </h2>
         {loading ? ( <p style={{ textAlign: 'center' }}>Đang chuẩn bị mâm cỗ...</p> ) : (
@@ -115,8 +114,6 @@ export default function Home() {
                 <FoodCard key={food.id} food={food} onAdd={handleOpenCart} />
               ))}
             </div>
-            
-            {/* Nút Xem thêm đặt bên ngoài Grid để không bị nhảy layout */}
             <div style={{ textAlign: 'center', marginTop: '50px', marginBottom: '20px' }}>
               <Link to="/menu" className="btn-show-more-link">
                 Xem thêm món ăn 🧧
