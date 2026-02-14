@@ -12,23 +12,32 @@ export default function OrderHistory() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [detailLoading, setDetailLoading] = useState(false);
 
+    // Lấy UserId và Token từ localStorage
     const userId = localStorage.getItem("userId") || "22EBC352-0CA9-4CB6-AC82-3CEA7C8099B2";
+    const token = localStorage.getItem("accessToken");
 
     useEffect(() => {
         fetchOrders(pageIndex);
     }, [pageIndex, userId]);
 
+    // 1. Gọi API danh sách đơn hàng có Token
     const fetchOrders = (page) => {
         setLoading(true);
         fetch(`https://localhost:7150/orders/histories`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : '' // THÊM TOKEN
+            },
             body: JSON.stringify({
                 IdUser: userId,
                 PageIndex: page
             })
         })
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 401) throw new Error("Unauthorized");
+            return res.json();
+        })
         .then(data => {
             setOrders(data.orderHistory || []);
             setTotalPages(data.totalPages || 1);
@@ -40,17 +49,24 @@ export default function OrderHistory() {
         });
     };
 
+    // 2. Gọi API chi tiết đơn hàng có Token
     const handleViewDetail = (orderId) => {
         setDetailLoading(true);
         fetch(`https://localhost:7150/orders/detail`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : '' // THÊM TOKEN
+            },
             body: JSON.stringify({
                 IdUser: userId,
                 IdOrder: orderId
             })
         })
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 401) throw new Error("Unauthorized");
+            return res.json();
+        })
         .then(data => {
             setSelectedOrder(data);
             setDetailLoading(false);
@@ -88,7 +104,7 @@ export default function OrderHistory() {
                     {loading ? (
                         <div className="loading-state">
                             <p className="spinning-flower">🌸</p>
-                            <p className="loading-text">Đang tra cứu sớ cũ...</p>
+                            <p className="loading-text">Đang tra cứu hóa đơn cũ...</p>
                         </div>
                     ) : (
                         <div className="order-table-container">
@@ -220,12 +236,11 @@ export default function OrderHistory() {
                 </div>
             )}
             
-            {/* Loading cho chi tiết nếu cần */}
             {detailLoading && (
                 <div className="tet-modal-overlay">
                     <div className="loading-state">
                         <p className="spinning-flower">🌸</p>
-                        <p className="loading-text" style={{color: 'white'}}>Đang mở sớ...</p>
+                        <p className="loading-text" style={{color: 'white'}}>Đang mở hóa đơn...</p>
                     </div>
                 </div>
             )}

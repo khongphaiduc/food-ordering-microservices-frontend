@@ -1,5 +1,6 @@
 :root {
     --primary-color: #d32f2f;
+    --success-color: #00b894;
     --bg-light: #f9f9f9;
     --text-dark: #2d3436;
     --border-color: #eee;
@@ -26,34 +27,21 @@
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.85rem;
     transition: 0.2s;
 }
 
-.btn-back:hover {
-    background: #f0f0f0;
-}
+.btn-back:hover { background: #f0f0f0; }
 
-/* Layout Chia Cột */
 .confirm-content {
     display: flex;
     gap: 30px;
-    align-items: flex-start;
 }
 
-@media (max-width: 992px) {
-    .confirm-content {
-        flex-direction: column;
-    }
-}
-
-/* Danh sách món */
 .items-list {
     flex: 1;
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    overflow: hidden;
 }
 
 .confirm-item {
@@ -61,12 +49,6 @@
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid var(--border-color);
-    transition: opacity 0.3s;
-}
-
-.item-loading {
-    opacity: 0.6;
-    pointer-events: none;
 }
 
 .item-img {
@@ -77,28 +59,9 @@
     margin-right: 20px;
 }
 
-.item-info {
-    flex: 1;
-}
+.item-info { flex: 1; }
+.item-price { font-weight: 600; color: var(--primary-color); }
 
-.item-name {
-    font-size: 1.1rem;
-    margin: 0 0 4px 0;
-    color: var(--text-dark);
-}
-
-.item-variant {
-    font-size: 0.9rem;
-    color: #636e72;
-    margin-bottom: 4px;
-}
-
-.item-price {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-/* Control số lượng */
 .quantity-controls {
     display: flex;
     align-items: center;
@@ -115,66 +78,42 @@
     border: none;
     background: white;
     cursor: pointer;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.quantity-controls button:disabled {
-    background: #e0e0e0;
-    cursor: not-allowed;
-}
+.item-subtotal { font-weight: 700; width: 120px; text-align: right; }
 
-.qty-number {
-    padding: 0 15px;
-    font-weight: 700;
-    min-width: 40px;
-    text-align: center;
-}
-
-.item-subtotal {
-    font-weight: 700;
-    font-size: 1.1rem;
-    width: 120px;
-    text-align: right;
-}
-
-/* Tổng kết sidebar */
 .order-summary {
     width: 350px;
     background: white;
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    position: sticky;
-    top: 20px;
+    height: fit-content;
 }
 
-@media (max-width: 992px) {
-    .order-summary {
-        width: 100%;
-    }
-}
-
-.summary-details .summary-row {
+.payment-methods {
     display: flex;
-    justify-content: space-between;
-    margin: 15px 0;
-    color: #636e72;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.summary-row.total {
-    margin-top: 20px;
-    color: var(--text-dark);
-    font-weight: 800;
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
-.price-big {
-    font-size: 1.6rem;
-    color: var(--primary-color);
+.payment-option.active {
+    border-color: var(--primary-color);
+    background: #fff5f5;
 }
+
+.price-big { font-size: 1.6rem; color: var(--primary-color); font-weight: 800; }
 
 .btn-checkout-final {
     width: 100%;
@@ -183,137 +122,97 @@
     border: none;
     padding: 16px;
     border-radius: 10px;
-    font-size: 1rem;
     font-weight: 700;
-    margin-top: 25px;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-.btn-checkout-final:hover {
-    background: #b71c1c;
-    transform: translateY(-2px);
-}
-
-.confirm-empty {
-    text-align: center;
-    padding: 100px 20px;
-}
-
-/* Payment Methods */
-.payment-methods {
-    margin: 20px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.payment-option {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    border: 2px solid #eee;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.payment-option input {
-    margin-right: 12px;
-    accent-color: var(--primary-color);
-}
-
-.payment-option.active {
-    border-color: var(--primary-color);
-    background-color: #fff5f5;
-}
-
-.payment-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    color: var(--text-dark);
-}
-
-.payment-info .icon {
-    font-size: 1.2rem;
-}
-
-.btn-checkout-final:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-
-/* QR Modal Styles */
+/* MODAL OVERLAY */
 .qr-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
 }
 
 .qr-modal-content {
     background: white;
-    padding: 30px;
-    border-radius: 12px;
+    padding: 40px;
+    border-radius: 20px;
     text-align: center;
     position: relative;
-    max-width: 350px;
+    max-width: 400px;
     width: 90%;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* SUCCESS CONTENT ANIMATION */
+.success-checkmark {
+    width: 100px;
+    margin: 0 auto 20px;
+}
+
+.checkmark-circle {
+    stroke: var(--success-color);
+    stroke-width: 4;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    animation: circleAnim 0.6s ease-in-out forwards;
+}
+
+.checkmark-check {
+    stroke: var(--success-color);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: checkAnim 0.4s 0.5s ease-in-out forwards;
+}
+
+@keyframes circleAnim { to { stroke-dashoffset: 0; } }
+@keyframes checkAnim { to { stroke-dashoffset: 0; } }
+
+.success-title { color: #2d3436; margin-bottom: 10px; }
+.success-msg { color: #636e72; font-size: 0.9rem; line-height: 1.5; margin-bottom: 25px; }
+
+.btn-confirm-success {
+    background: var(--success-color);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
 }
 
 .modal-close-x {
     position: absolute;
-    top: 10px;
-    right: 15px;
+    top: 15px;
+    right: 20px;
     background: none;
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #666;
 }
 
 .qr-code-wrapper {
     margin: 20px auto;
-    background: white;
-    padding: 10px;
-    display: inline-block;
+    padding: 15px;
     border: 1px solid #eee;
+    display: inline-block;
 }
 
 .btn-done {
     width: 100%;
-    background-color: #ff4757;
-    color: white;
+    background: #f1f2f6;
     border: none;
-    padding: 15px;
+    padding: 14px;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s;
-}
-
-.btn-done:hover {
-    background-color: #e84118;
-}
-
-.qr-note {
-    font-size: 12px;
-    color: #777;
-    margin-top: 15px;
-}
-
-.item-loading {
-    opacity: 0.5;
-    pointer-events: none;
+    margin-top: 10px;
 }

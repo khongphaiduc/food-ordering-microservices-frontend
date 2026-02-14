@@ -1,0 +1,200 @@
+/* PROFILE PAGE - TET STYLE 🧧 */
+.profile-page {
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    background-color: #fffaf0;
+}
+
+.profile-container {
+    width: 100%;
+    max-width: 850px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #d32f2f;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(211, 47, 47, 0.08);
+    border: 1px solid #fee2e2;
+}
+
+/* --- USER INFO --- */
+.user-info-section {
+    padding: 40px;
+    text-align: center;
+    background: linear-gradient(to bottom, #fffaf0, #ffffff);
+    border-bottom: 1px solid #fee2e2;
+}
+
+.avatar-circle {
+    width: 80px; height: 80px;
+    background: #fff;
+    border: 3px solid #d32f2f;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 40px;
+}
+
+.meta-tag {
+    background: #fff5f5;
+    color: #d32f2f;
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-size: 13px;
+    border: 1px solid #fee2e2;
+}
+
+/* --- ADDRESS LIST FIX (1 DÒNG) --- */
+.address-section { padding: 30px 40px; }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.btn-add-address {
+    background: white;
+    border: 2px dashed #d32f2f;
+    color: #d32f2f;
+    padding: 8px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.address-item-card {
+    padding: 18px 25px;
+    border: 2px solid #edf2f7;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    transition: 0.3s;
+    gap: 15px;
+}
+
+.address-item-card.active {
+    border-color: #d32f2f;
+    background: #fffafa;
+}
+
+.address-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+    overflow: hidden; /* Quan trọng để không tràn dòng */
+}
+
+.addr-phone { margin: 0; font-size: 15px; }
+
+/* FIX: ÉP HIỂN THỊ CÙNG 1 DÒNG */
+.addr-full-line {
+    margin: 0;
+    color: #4a5568;
+    font-size: 14.5px;
+    white-space: nowrap;      /* Không xuống dòng */
+    overflow: hidden;         /* Ẩn phần dư */
+    text-overflow: ellipsis;  /* Hiện dấu ... nếu quá dài */
+}
+
+.default-badge {
+    background: #d32f2f;
+    color: white;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* --- MODAL FIX (KHÔNG TRÀN Ô) --- */
+.address-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center; justify-content: center;
+    z-index: 9999;
+}
+
+.address-modal {
+    background: white;
+    width: 90%;
+    max-width: 480px;
+    padding: 30px;
+    border-radius: 24px;
+    border: 3px solid #d32f2f;
+    box-sizing: border-box; /* Fix lỗi tràn modal */
+}
+
+.modal-address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-row {
+    display: flex; /* Dùng flex để chia cột input */
+    gap: 10px;
+    width: 100%;
+}
+
+.input-row input {
+    flex: 1;
+    min-width: 0; /* Ngăn ô input đẩy bung modal */
+}
+
+.modal-address-form input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-sizing: border-box; /* Đảm bảo padding không làm tăng width */
+}
+
+.modal-footer-actions {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.btn-cancel, .btn-submit {
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-cancel { border: 1px solid #e2e8f0; background: #f8fafc; color: #64748b; }
+.btn-submit { background: #d32f2f; color: white; border: none; }
+
+.scale-in { animation: scaleIn 0.3s ease-out; }
+@keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.loading-screen { height: 100vh; display: flex; align-items: center; justify-content: center; color: #d32f2f; font-weight: 700; }

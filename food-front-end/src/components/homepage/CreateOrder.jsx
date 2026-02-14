@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { QRCodeCanvas } from 'qrcode.react'; // Thư viện tạo QR từ String
+import { QRCodeCanvas } from 'qrcode.react';
+import * as signalR from '@microsoft/signalr';
 import './CreateOrder.css';
 
 export default function ConfirmMenu() {
@@ -9,21 +10,48 @@ export default function ConfirmMenu() {
     const navigate = useNavigate();
     const [cartData, setCartData] = useState(location.state?.cartData || null);
     const [updatingId, setUpdatingId] = useState(null);
-    const [paymentMethod, setPaymentMethod] = useState(1); // 1: Chuyển khoản, 2: Tiền mặt
+    const [paymentMethod, setPaymentMethod] = useState(1); // 1: PayOS, 2: Tiền mặt
     const [isSubmitting, setIsSubmitting] = useState(false);
     
-    // State cho QR Code
+    // States cho xử lý kết quả
     const [qrCodeValue, setQrCodeValue] = useState(""); 
     const [showQRModal, setShowQRModal] = useState(false);
+    const [showCashSuccess, setShowCashSuccess] = useState(false); // Thông báo cho tiền mặt
+    const [isPaid, setIsPaid] = useState(false); // Trạng thái cho PayOS
+    const [connection, setConnection] = useState(null);
 
     const token = localStorage.getItem("accessToken");
 
-    // Hàm cập nhật số lượng
+    // --- 1. Khởi tạo SignalR (Chỉ dành cho PayOS) ---
+    useEffect(() => {
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7251/notificationPayOS", { 
+                accessTokenFactory: () => token 
+            })
+            .withAutomaticReconnect()
+            .build();
+        setConnection(newConnection);
+        return () => { if (newConnection) newConnection.stop(); };
+    }, [token]);
+
+    useEffect(() => {
+        if (connection) {
+            connection.start()
+                .then(() => {
+                    connection.on("mynofication", (message) => {
+                        setIsPaid(true);
+                        setTimeout(() => navigate('/order-success'), 3000);
+                    });
+                })
+                .catch(err => console.error("❌ SignalR Error: ", err));
+        }
+    }, [connection, navigate]);
+
+    // --- 2. Hàm cập nhật số lượng ---
     const updateQuantity = async (productId, variantId, newQuantity) => {
         if (newQuantity < 0) return;
         const loadingKey = variantId ? `${productId}-${variantId}` : productId;
         setUpdatingId(loadingKey);
-
         try {
             const payload = {
                 IdCart: cartData.idCart,
@@ -33,35 +61,22 @@ export default function ConfirmMenu() {
                     Quantity: (item.idProduct === productId && item.idVariant === variantId) ? newQuantity : item.quantity
                 }))
             };
-
             await axios.post(`https://localhost:7150/cart/update-cart`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
-            let updatedItems;
-            if (newQuantity === 0) {
-                updatedItems = cartData.cartItems.filter(item => !(item.idProduct === productId && item.idVariant === variantId));
-            } else {
-                updatedItems = cartData.cartItems.map(item => {
-                    if (item.idProduct === productId && item.idVariant === variantId) {
-                        return { ...item, quantity: newQuantity };
-                    }
-                    return item;
-                });
-            }
-
+            let updatedItems = newQuantity === 0 
+                ? cartData.cartItems.filter(item => !(item.idProduct === productId && item.idVariant === variantId))
+                : cartData.cartItems.map(item => (item.idProduct === productId && item.idVariant === variantId) ? { ...item, quantity: newQuantity } : item);
+            
             const newTotal = updatedItems.reduce((sum, it) => sum + (it.price * it.quantity), 0);
             setCartData({ ...cartData, cartItems: updatedItems, totalCart: newTotal });
             window.dispatchEvent(new Event('cartUpdated'));
-
         } catch (error) {
             alert("Lỗi cập nhật số lượng!");
-        } finally {
-            setUpdatingId(null);
-        }
+        } finally { setUpdatingId(null); }
     };
 
-    // Hàm xử lý đặt hàng & Hiển thị QR
+    // --- 3. Hàm xử lý đặt hàng chính ---
     const handleCheckout = async () => {
         setIsSubmitting(true);
         try {
@@ -70,42 +85,40 @@ export default function ConfirmMenu() {
                 PaymentMethod: paymentMethod 
             };
 
-            // Gọi API Order
             const response = await axios.post(`https://localhost:7150/orders`, orderPayload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Lấy string QR từ API trả về (Giả sử response.data chứa chuỗi QR)
-            const qrString = response.data; 
+            const result = response.data; 
 
-            if (paymentMethod === 1 && qrString) {
-                // Nếu chọn chuyển khoản -> Hiện QR Modal
-                setQrCodeValue(qrString);
+            if (paymentMethod === 1) {
+                // TRƯỜNG HỢP PAYOS
+                setQrCodeValue(result);
+                setIsPaid(false);
                 setShowQRModal(true);
                 window.dispatchEvent(new Event('cartUpdated')); 
-            } else {
-                // Nếu là tiền mặt hoặc thanh toán khác
-                alert("Đặt hàng thành công!");
+            } 
+            else if (paymentMethod === 2 && result === "Success") {
+                // TRƯỜNG HỢP TIỀN MẶT THÀNH CÔNG
+                setShowCashSuccess(true); // Hiện thông báo thành công
                 window.dispatchEvent(new Event('cartUpdated'));
-                navigate('/order-success');
+                
+                // Đợi 2 giây để user thấy thông báo rồi mới chuyển trang
+                setTimeout(() => {
+                    navigate('/order-success');
+                }, 2000);
+            } else {
+                alert("Lỗi hệ thống: " + result);
             }
-
         } catch (error) {
-            console.error("Order error:", error);
             alert("Đặt hàng thất bại, vui lòng thử lại.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    // Kiểm tra giỏ hàng trống
     if (!cartData || cartData.cartItems.length === 0) {
-        return (
-            <div className="confirm-empty">
-                <p>Giỏ hàng của bạn đang trống.</p>
-                <button className="btn-back" onClick={() => navigate('/')}>Quay lại cửa hàng</button>
-            </div>
-        );
+        return <div className="confirm-empty"><p>Giỏ hàng trống.</p><button onClick={() => navigate('/')}>Quay lại</button></div>;
     }
 
     return (
@@ -119,32 +132,21 @@ export default function ConfirmMenu() {
                 <div className="items-list">
                     {cartData.cartItems.map((item) => {
                         const itemKey = item.idVariant ? `${item.idProduct}-${item.idVariant}` : item.idProduct;
-                        const isLoading = updatingId === itemKey;
-
                         return (
-                            <div key={itemKey} className={`confirm-item ${isLoading ? 'item-loading' : ''}`}>
+                            <div key={itemKey} className="confirm-item">
                                 <img src={item.urlImage} alt={item.nameProduct} className="item-img" />
                                 <div className="item-info">
-                                    <h3 className="item-name">{item.nameProduct}</h3>
-                                    {item.nameVariant && <p className="item-variant">{item.nameVariant}</p>}
+                                    <h3>{item.nameProduct}</h3>
                                     <p className="item-price">{item.price.toLocaleString('vi-VN')}đ</p>
                                 </div>
                                 <div className="quantity-controls">
-                                    <button 
-                                        disabled={isLoading}
-                                        onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity - 1)}
-                                    >
+                                    <button onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity - 1)}>
                                         {item.quantity === 1 ? '🗑️' : '−'}
                                     </button>
-                                    <span className="qty-number">{item.quantity}</span>
-                                    <button 
-                                        disabled={isLoading}
-                                        onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity + 1)}
-                                    >+</button>
+                                    <span>{item.quantity}</span>
+                                    <button onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity + 1)}>+</button>
                                 </div>
-                                <div className="item-subtotal">
-                                    {(item.price * item.quantity).toLocaleString('vi-VN')}đ
-                                </div>
+                                <div className="item-subtotal">{(item.price * item.quantity).toLocaleString('vi-VN')}đ</div>
                             </div>
                         );
                     })}
@@ -152,78 +154,62 @@ export default function ConfirmMenu() {
 
                 <div className="order-summary">
                     <h3>Thanh toán</h3>
-                    
                     <div className="payment-methods">
                         <label className={`payment-option ${paymentMethod === 1 ? 'active' : ''}`}>
-                            <input 
-                                type="radio" 
-                                name="payment" 
-                                checked={paymentMethod === 1}
-                                onChange={() => setPaymentMethod(1)}
-                            />
-                            <div className="payment-info">
-                                <span className="icon">💳</span>
-                                <span>Chuyển khoản</span>
-                            </div>
+                            <input type="radio" checked={paymentMethod === 1} onChange={() => setPaymentMethod(1)} />
+                            <span>💳 Chuyển khoản (PayOS)</span>
                         </label>
-
                         <label className={`payment-option ${paymentMethod === 2 ? 'active' : ''}`}>
-                            <input 
-                                type="radio" 
-                                name="payment" 
-                                checked={paymentMethod === 2}
-                                onChange={() => setPaymentMethod(2)}
-                            />
-                            <div className="payment-info">
-                                <span className="icon">💵</span>
-                                <span>Thanh toán khi nhận hàng</span>
-                            </div>
+                            <input type="radio" checked={paymentMethod === 2} onChange={() => setPaymentMethod(2)} />
+                            <span>💵 Tiền mặt khi nhận hàng</span>
                         </label>
                     </div>
-
-                    <div className="summary-details">
-                        <div className="summary-row">
-                            <span>Tạm tính:</span>
-                            <span>{cartData.totalCart.toLocaleString('vi-VN')}đ</span>
-                        </div>
-                        <div className="summary-row total">
-                            <span>Tổng cộng:</span>
-                            <span className="price-big">{cartData.totalCart.toLocaleString('vi-VN')}đ</span>
-                        </div>
+                    <div className="summary-row total">
+                        <span>Tổng cộng:</span>
+                        <span className="price-big">{cartData.totalCart.toLocaleString('vi-VN')}đ</span>
                     </div>
-
-                    <button 
-                        className="btn-checkout-final" 
-                        onClick={handleCheckout}
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? "ĐANG XỬ LÝ..." : "XÁC NHẬN THANH TOÁN"}
+                    <button className="btn-checkout-final" onClick={handleCheckout} disabled={isSubmitting}>
+                        {isSubmitting ? "ĐANG XỬ LÝ..." : "XÁC NHẬN ĐẶT HÀNG"}
                     </button>
                 </div>
             </div>
 
-            {/* --- MODAL HIỂN THỊ QR CODE --- */}
+            {/* --- MODAL HIỂN THỊ QR (CHO PAYOS) --- */}
             {showQRModal && (
                 <div className="qr-modal-overlay">
                     <div className="qr-modal-content">
-                        <button className="modal-close-x" onClick={() => setShowQRModal(false)}>×</button>
-                        <h2>Mã QR Thanh Toán</h2>
-                        <p>Mở ứng dụng Ngân hàng hoặc Ví điện tử để quét mã bên dưới</p>
-                        
-                        <div className="qr-code-wrapper">
-                            <QRCodeCanvas 
-                                value={qrCodeValue} 
-                                size={220}
-                                level={"H"}
-                                includeMargin={true}
-                            />
-                        </div>
+                        {!isPaid ? (
+                            <>
+                                <button className="modal-close-x" onClick={() => setShowQRModal(false)}>×</button>
+                                <h2>Quét mã thanh toán</h2>
+                                <div className="qr-code-wrapper">
+                                    <QRCodeCanvas value={qrCodeValue} size={220} />
+                                </div>
+                                <p>🔔 Đang chờ xác nhận giao dịch...</p>
+                            </>
+                        ) : (
+                            <div className="success-anim">
+                                <h2>Thanh toán thành công!</h2>
+                                <p>Đang chuyển hướng...</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
-                        <div className="qr-modal-actions">
-                            <button className="btn-done" onClick={() => navigate('/order-success')}>
-                                TÔI ĐÃ THANH TOÁN XONG
-                            </button>
-                            <p className="qr-note">Hệ thống sẽ xác nhận đơn hàng sau khi nhận được tiền.</p>
+            {/* --- THÔNG BÁO THÀNH CÔNG (CHO TIỀN MẶT) --- */}
+            {showCashSuccess && (
+                <div className="qr-modal-overlay">
+                    <div className="qr-modal-content">
+                        <div className="payment-success-content">
+                            <div className="success-checkmark">
+                                <svg className="checkmark-svg" viewBox="0 0 100 100">
+                                    <circle className="checkmark-circle" cx="50" cy="50" r="45" fill="none"/>
+                                    <path className="checkmark-check" fill="none" d="M30 50 L45 65 L70 35"/>
+                                </svg>
+                            </div>
+                            <h2 className="success-title">Đặt hàng thành công!</h2>
+                            <p className="success-msg">Đơn hàng của bạn đã được ghi nhận. Vui lòng chuẩn bị tiền mặt khi nhận hàng.</p>
                         </div>
                     </div>
                 </div>
