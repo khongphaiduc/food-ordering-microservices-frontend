@@ -17,8 +17,9 @@ export default function ViewListProductFood() {
     const [cartCount, setCartCount] = useState(0);
     const dropdownRef = useRef(null);
 
-    const userId = "9f3c2e7a-4b8d-4a6f-9c21-6f8d2a1b7c54";
+    const userId = localStorage.getItem("userId") || "9f3c2e7a-4b8d-4a6f-9c21-6f8d2a1b7c54";
 
+    // 1. CẬP NHẬT BADGE GIỎ HÀNG
     const updateCartBadge = useCallback(async () => {
         try {
             const res = await fetch(`https://localhost:7150/cart/user-cart/${userId}`);
@@ -36,6 +37,7 @@ export default function ViewListProductFood() {
         return () => window.removeEventListener('cartUpdated', updateCartBadge);
     }, [updateCartBadge]);
 
+    // 2. CLICK RA NGOÀI ĐỂ ĐÓNG GỢI Ý
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -46,6 +48,7 @@ export default function ViewListProductFood() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // 3. HÀM FETCH DATA CHÍNH - XỬ LÝ ĐA CẤU TRÚC PAYLOAD
     const fetchData = useCallback(async (isMounted) => {
         try {
             setLoading(true);
@@ -58,18 +61,41 @@ export default function ViewListProductFood() {
             const data = await res.json();
 
             if (isMounted) {
-                const rawItems = data.list || data.items || data || [];
-                const total = data.totalProduct || data.totalCount || 0;
-                setFoods(rawItems.map(f => ({
-                    id: f.idProduct || f.id,
-                    name: f.description || f.name || "Món ăn",
-                    desc: f.decriptions || f.description || "",
-                    price: f.price || 0,
-                    img: f.urlImageMain || (f.productImageDTOs?.[0]?.urlImage) || "https://via.placeholder.com/150",
-                })));
+                let rawItems = [];
+                let total = 0;
+
+                // Kiểm tra xem API trả về Mảng (Search) hay Object (List)
+                if (Array.isArray(data)) {
+                    rawItems = data;
+                    total = data.length; 
+                } else {
+                    rawItems = data.list || data.items || [];
+                    total = data.totalProduct || data.totalCount || rawItems.length;
+                }
+
+                const mappedFoods = rawItems.map(f => {
+                    // Ưu tiên các loại field ảnh khác nhau từ 2 API
+                    const images = f.productImageInternalDTOs || f.imageFoods || f.productImageDTOs || [];
+                    const mainImage = images.find(img => img.isMain)?.urlImage 
+                                    || images[0]?.urlImage 
+                                    || "https://via.placeholder.com/300";
+
+                    return {
+                        id: f.id,
+                        name: f.name,
+                        // Xử lý typo decriptions từ API List và description từ API Search
+                        desc: f.description || f.decriptions || "Mỹ vị ngày Tết",
+                        price: f.price || 0,
+                        img: mainImage,
+                        isAvailable: f.isAvailable ?? true
+                    };
+                });
+
+                setFoods(mappedFoods);
                 setTotalItems(total);
             }
         } catch (err) {
+            console.error("Lỗi Fetch:", err);
             if (isMounted) setFoods([]);
         } finally {
             if (isMounted) setLoading(false);
@@ -83,6 +109,7 @@ export default function ViewListProductFood() {
         return () => { isMounted = false; };
     }, [fetchData]);
 
+    // 4. GỢI Ý TÌM KIẾM (SUGGEST)
     useEffect(() => {
         if (!searchTerm.trim()) {
             setSuggestions([]);
@@ -115,8 +142,8 @@ export default function ViewListProductFood() {
         setSuggestions([]);
     };
 
+    // 5. PHÂN TRANG
     const totalPages = Math.ceil(totalItems / pageSize) || 1;
-
     const renderPageNumbers = () => {
         const pages = [];
         const maxVisible = 4;
@@ -140,11 +167,9 @@ export default function ViewListProductFood() {
 
     return (
         <div className="menu-page-container">
-            {/* Trang trí */}
             <div className="tet-decoration left-branch"></div>
             <div className="tet-decoration right-branch"></div>
 
-            {/* NHÓM NÚT ĐIỀU HƯỚNG NỔI (FIXED) */}
             <div className="fixed-nav-group">
                 <button className="nav-floating-btn cart" onClick={() => window.dispatchEvent(new Event('openCart'))}>
                     <span className="icon">🧧</span>
@@ -198,17 +223,21 @@ export default function ViewListProductFood() {
                 <>
                     <div className="food-grid">
                         {foods.length > 0 ? (
-                            foods.map(food => <FoodCard key={food.id} food={food} />)
+                            foods.map(food => (
+                                <FoodCard 
+                                    key={food.id} 
+                                    food={food} 
+                                    onAdd={() => navigate(`/detail/${food.id}`)}
+                                />
+                            ))
                         ) : (
-                            <div className="no-results">Không tìm thấy món ngon nào khớp với "{query}"</div>
+                            <div className="no-results">Không tìm thấy món "{query}"</div>
                         )}
                     </div>
 
                     <div className="pagination-modern">
                         <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="p-nav">&laquo;</button>
-                        <div className="p-numbers-group">
-                            {renderPageNumbers()}
-                        </div>
+                        <div className="p-numbers-group">{renderPageNumbers()}</div>
                         <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)} className="p-nav">&raquo;</button>
                     </div>
                 </>

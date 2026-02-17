@@ -1,0 +1,118 @@
+/* Layout chính */
+.mgmt-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f9fafb; /* gray-50 */
+}
+
+.mgmt-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header Styles */
+.mgmt-header {
+  height: 64px; /* 4rem */
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+/* Thanh tìm kiếm */
+.search-container {
+  position: relative;
+  width: 24rem; /* w-96 */
+}
+
+.search-icon {
+  position: absolute;
+  inset-y: 0;
+  left: 0;
+  padding-left: 0.75rem;
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.search-input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+  font-size: 0.875rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  border-color: #f97316; /* orange-500 */
+  box-shadow: 0 0 0 1px #f97316;
+}
+
+/* Thông báo và Profile */
+.mgmt-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.notification-btn {
+  position: relative;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.notification-btn:hover {
+  color: #f97316;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  background-color: #ef4444;
+  color: white;
+  font-size: 10px;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-left: 1px solid #e5e7eb;
+  padding-left: 1.25rem;
+}
+
+.avatar-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+/* Main Area */
+.mgmt-main {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 1.5rem;
+}

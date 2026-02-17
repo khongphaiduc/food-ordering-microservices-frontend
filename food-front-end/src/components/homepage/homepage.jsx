@@ -9,10 +9,10 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [isDrawerActive, setIsDrawerActive] = useState(false);
   
-  // State quản lý Menu User thả xuống
+  // State quản lý Menu User
   const [showUserMenu, setShowUserMenu] = useState(false);
   
-  // State quản lý Modal địa chỉ tự động
+  // State quản lý Modal địa chỉ
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [submittingAddress, setSubmittingAddress] = useState(false);
   const [addressData, setAddressData] = useState({
@@ -34,7 +34,7 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showUserMenu]);
 
-  // 1. Kiểm tra địa chỉ ngay khi vào trang nếu đã đăng nhập
+  // 1. Kiểm tra địa chỉ khi vào trang
   useEffect(() => {
     const checkUserAddress = async () => {
       if (!token || !userId) return;
@@ -59,7 +59,7 @@ export default function Home() {
     checkUserAddress();
   }, [token, userId]);
 
-  // 2. Lấy danh sách sản phẩm từ API
+  // 2. Lấy danh sách sản phẩm (Đã sửa theo payload mới)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -74,15 +74,24 @@ export default function Home() {
         if (!response.ok) throw new Error("API Error");
 
         const data = await response.json();
+        
         if (data?.list && Array.isArray(data.list)) {
-          setFoods(data.list.map(f => ({
-            id: f.id, 
-            name: f.name,
-            desc: f.decriptions || f.description,
-            price: f.price || 0,
-            img: f.urlImageMain,
-            featured: f.featured
-          })));
+          const mappedFoods = data.list.map(f => {
+            // Lấy URL ảnh chính từ mảng imageFoods
+            const mainImg = f.imageFoods?.find(img => img.isMain)?.urlImage 
+                          || f.imageFoods?.[0]?.urlImage 
+                          || 'https://via.placeholder.com/300';
+
+            return {
+              id: f.id, 
+              name: f.name,
+              desc: f.decriptions, // Map đúng key 'decriptions' từ API
+              price: f.price || 0,
+              img: mainImg,
+              featured: f.price >= 100000 // Ví dụ: Gán nhãn Nổi bật cho món > 100k
+            };
+          });
+          setFoods(mappedFoods);
         }
       } catch (err) { 
         console.error("Lỗi kết nối API:", err); 
@@ -93,7 +102,7 @@ export default function Home() {
     fetchProducts();
   }, [token]);
 
-  // 3. Xử lý gửi địa chỉ mới
+  // 3. Xử lý cập nhật địa chỉ
   const handleUpdateAddress = async (e) => {
     e.preventDefault();
     setSubmittingAddress(true);
@@ -125,7 +134,7 @@ export default function Home() {
     }
   };
 
-  // 4. Lắng nghe sự kiện giỏ hàng
+  // 4. Sự kiện giỏ hàng
   useEffect(() => {
     const handleCartState = (e) => setIsDrawerActive(e.detail.isOpen);
     window.addEventListener('cartStateChanged', handleCartState);
@@ -133,12 +142,13 @@ export default function Home() {
   }, []);
 
   const handleOpenCart = () => window.dispatchEvent(new Event('openCart'));
-  const featured = foods.filter(f => f.featured);
+  
+  const featuredFoods = foods.filter(f => f.featured);
 
   return (
     <div className="page-root tet-mode">
       
-      {/* MODAL CẬP NHẬT ĐỊA CHỈ TỰ ĐỘNG */}
+      {/* MODAL CẬP NHẬT ĐỊA CHỈ */}
       {showAddressModal && (
         <div className="address-overlay">
           <div className="address-modal">
@@ -163,7 +173,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hiệu ứng hoa đào rơi */}
+      {/* Hiệu ứng hoa đào */}
       <div className="tet-decoration-layer">
         {[...Array(8)].map((_, i) => <span key={i} className="flower">🌸</span>)}
       </div>
@@ -206,7 +216,6 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* HERO SECTION */}
       <section className="hero">
         <h1>
           <span className="slide-left">Tết Trọn Vị Ngon,</span>
@@ -219,19 +228,20 @@ export default function Home() {
         </p>
       </section>
 
-      {/* MÓN ĂN NỔI BẬT */}
-      {featured.length > 0 && (
+      {/* MÓN NỔI BẬT */}
+      {featuredFoods.length > 0 && (
         <section id="featured">
           <h2 className="section-title">🔥 Món ăn nổi bật</h2>
           <div className="featured-grid">
-            {featured.map(food => (
+            {featuredFoods.map(food => (
               <div key={food.id} className="featured-card">
                 <img src={food.img} className="featured-img" alt={food.name} />
                 <div className="featured-content">
-                  <span className="badge-bestseller" style={{background: '#fff5f5', color: '#d32f2f'}}>LỘC XUÂN</span>
+                  <span className="badge-bestseller" style={{background: '#fff5f5', color: '#d32f2f', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', width: 'fit-content'}}>LỘC XUÂN</span>
                   <h3>{food.name}</h3>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'auto' }}>
-                    <span className="price-tag" style={{color: '#d32f2f'}}>{food.price?.toLocaleString()}đ</span>
+                  <p style={{fontSize: '14px', color: '#666'}}>{food.desc}</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'auto', alignItems: 'center' }}>
+                    <span className="price-tag" style={{color: '#d32f2f', fontWeight: 'bold', fontSize: '20px'}}>{food.price?.toLocaleString()}đ</span>
                     <button className="btn-primary" onClick={handleOpenCart} style={{background: '#d32f2f'}}>Đặt ngay</button>
                   </div>
                 </div>
@@ -262,7 +272,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* NÚT GIỎ HÀNG FLOATING */}
       <div className={`fixed-nav-group ${isDrawerActive || showAddressModal ? 'hidden' : ''}`}>
         <button className="nav-floating-btn cart" onClick={handleOpenCart} style={{backgroundColor: '#d32f2f'}}>
           <span className="icon">🧧</span>

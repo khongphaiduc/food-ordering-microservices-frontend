@@ -1,0 +1,112 @@
+/* Sidebar Container */
+.sidebar-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #0f172a; /* slate-900 */
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.sidebar-expanded {
+    width: 256px; /* w-64 */
+}
+
+.sidebar-collapsed {
+    width: 80px; /* w-20 */
+}
+
+/* Logo Section */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    border-bottom: 1px solid #1e293b;
+}
+
+.logo-text {
+    font-weight: 900;
+    color: #f97316; /* orange-500 */
+    font-size: 1.5rem;
+}
+
+/* Collapse Button */
+.toggle-btn {
+    position: absolute;
+    right: -12px;
+    top: 40px;
+    background-color: #f97316;
+    border-radius: 9999px;
+    padding: 4px;
+    border: 2px solid white;
+    cursor: pointer;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+/* Navigation Menu */
+.sidebar-nav {
+    flex: 1;
+    margin-top: 1.5rem;
+    padding: 0 0.75rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+}
+
+.menu-item:hover {
+    background-color: #1e293b;
+}
+
+.menu-icon {
+    color: #94a3b8; /* slate-400 */
+    transition: color 0.2s;
+}
+
+.menu-item:hover .menu-icon {
+    color: #f97316;
+}
+
+.menu-label {
+    margin-left: 0.75rem;
+    font-weight: 500;
+    color: #cbd5e1; /* slate-300 */
+    white-space: nowrap;
+}
+
+.menu-item:hover .menu-label {
+    color: white;
+}
+
+/* Footer Section (Logout) */
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid #1e293b;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    color: #f87171; /* red-400 */
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+    background-color: rgba(127, 29, 29, 0.2);
+}
