@@ -10,19 +10,17 @@ import CreateOrder from "./components/homepage/CreateOrder";
 import Profile from "./components/homepage/Profile";
 import OrderHistory from "./components/homepage/OrderHistory"; 
 
-// Import các component Management
+// Import Management
 import ManagementLayout from "./components/Management/ManagementLayout";
 import DashboardOverview from "./components/Management/Dashboard";
 import MenuManagement from "./components/Management/MenuManagement"; 
-// === DÒNG MỚI THÊM: Import trang chi tiết quản lý ===
 import ProductDetailManagement from "./components/Management/ProductDetailManagement"; 
+import AddProduct from "./components/Management/AddProduct"; // Đảm bảo tạo file này
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
-
   const hideCartPaths = ["/login", "/signup", "/confirm-menu", "/orders"];
   const isManagementPath = location.pathname.startsWith("/management");
-  
   const showCart = !hideCartPaths.includes(location.pathname) && !isManagementPath;
 
   return (
@@ -38,7 +36,7 @@ function App() {
     <BrowserRouter>
       <LayoutWrapper>
         <Routes>
-          {/* ================= GIAO DIỆN KHÁCH HÀNG ================= */}
+          {/* GIAO DIỆN KHÁCH HÀNG */}
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -49,47 +47,18 @@ function App() {
           <Route path="/menu" element={<ViewListProductFood />} />
           <Route path="/detail/:id" element={<ProductDetail />} />
 
-          {/* ================= GIAO DIỆN QUẢN LÝ (MANAGEMENT) ================= */}
+          {/* GIAO DIỆN QUẢN LÝ */}
           <Route path="/management" element={<ManagementLayout><Navigate to="/management/dashboard" replace /></ManagementLayout>} />
           
-          <Route 
-            path="/management/dashboard" 
-            element={
-              <ManagementLayout>
-                <DashboardOverview />
-              </ManagementLayout>
-            } 
-          />
-          
-          <Route 
-            path="/management/orders" 
-            element={
-              <ManagementLayout>
-                <div className="p-4 bg-white rounded shadow">Quản lý đơn hàng (Staff View)</div>
-              </ManagementLayout>
-            } 
-          />
+          <Route path="/management/dashboard" element={<ManagementLayout><DashboardOverview /></ManagementLayout>} />
+          <Route path="/management/menu" element={<ManagementLayout><MenuManagement /></ManagementLayout>} />
 
-          <Route 
-            path="/management/menu" 
-            element={
-              <ManagementLayout>
-                <MenuManagement />
-              </ManagementLayout>
-            } 
-          />
+          {/* Route thêm mới (Đặt trước route :id) */}
+          <Route path="/management/product/add" element={<ManagementLayout><AddProduct /></ManagementLayout>} />
 
-          {/* === ROUTE MỚI: Chi tiết sản phẩm dành cho Admin === */}
-          <Route 
-            path="/management/product/:id" 
-            element={
-              <ManagementLayout>
-                <ProductDetailManagement />
-              </ManagementLayout>
-            } 
-          />
+          {/* Route sửa sản phẩm */}
+          <Route path="/management/product/:id" element={<ManagementLayout><ProductDetailManagement /></ManagementLayout>} />
 
-          {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </LayoutWrapper>
