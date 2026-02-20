@@ -15,11 +15,14 @@ import ManagementLayout from "./components/Management/ManagementLayout";
 import DashboardOverview from "./components/Management/Dashboard";
 import MenuManagement from "./components/Management/MenuManagement"; 
 import ProductDetailManagement from "./components/Management/ProductDetailManagement"; 
-import AddProduct from "./components/Management/AddProduct"; // Đảm bảo tạo file này
+import AddProduct from "./components/Management/AddProduct";
+// IMPORT THÊM STAFF MANAGEMENT
+import StaffManagement from "./components/Management/StaffManagement"; 
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   const hideCartPaths = ["/login", "/signup", "/confirm-menu", "/orders"];
+  // Kiểm tra nếu là đường dẫn quản lý thì không hiện Giỏ hàng
   const isManagementPath = location.pathname.startsWith("/management");
   const showCart = !hideCartPaths.includes(location.pathname) && !isManagementPath;
 
@@ -48,12 +51,17 @@ function App() {
           <Route path="/detail/:id" element={<ProductDetail />} />
 
           {/* GIAO DIỆN QUẢN LÝ */}
-          <Route path="/management" element={<ManagementLayout><Navigate to="/management/dashboard" replace /></ManagementLayout>} />
+          <Route path="/management" element={
+            <ManagementLayout><Navigate to="/management/dashboard" replace /></ManagementLayout>
+          } />
           
           <Route path="/management/dashboard" element={<ManagementLayout><DashboardOverview /></ManagementLayout>} />
           <Route path="/management/menu" element={<ManagementLayout><MenuManagement /></ManagementLayout>} />
+          
+          {/* ROUTE QUẢN LÝ NHÂN VIÊN MỚI THÊM */}
+          <Route path="/management/staff" element={<ManagementLayout><StaffManagement /></ManagementLayout>} />
 
-          {/* Route thêm mới (Đặt trước route :id) */}
+          {/* Route thêm mới sản phẩm */}
           <Route path="/management/product/add" element={<ManagementLayout><AddProduct /></ManagementLayout>} />
 
           {/* Route sửa sản phẩm */}

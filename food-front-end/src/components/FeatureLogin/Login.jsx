@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; // Thư viện giải mã token
 import axios from 'axios';
 import './login.css';
 
@@ -9,15 +11,16 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [envelopes, setEnvelopes] = useState([]);
+    
+    const navigate = useNavigate();
 
-    // Tạo hiệu ứng bao lì xì rơi khi component mount
     useEffect(() => {
         const items = Array.from({ length: 20 }).map((_, i) => ({
             id: i,
-            left: Math.random() * 100, // Vị trí ngang ngẫu nhiên
-            delay: Math.random() * 8,   // Delay để không rơi cùng lúc
-            duration: 6 + Math.random() * 6, // Tốc độ rơi khác nhau
-            size: 1.5 + Math.random() * 2 // Kích thước to nhỏ khác nhau
+            left: Math.random() * 100,
+            delay: Math.random() * 8,
+            duration: 6 + Math.random() * 6,
+            size: 1.5 + Math.random() * 2
         }));
         setEnvelopes(items);
     }, []);
@@ -36,13 +39,29 @@ const Login = () => {
             const data = response.data;
 
             if (data.isLoginSuccessful) {
+                const token = data.accessToken.tokenValue;
+                
+                // --- GIẢI MÃ TOKEN ĐỂ LẤY ROLE ---
+                const decoded = jwtDecode(token);
+                console.log("Dữ liệu trong Token:", decoded); // Xem cấu trúc token tại đây
+                
+                // Tùy vào Backend mà field này có thể là 'role' hoặc link dài của Microsoft
+                const userRole = decoded["role"] || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+                // Lưu vào LocalStorage
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("userId", data.id);
                 localStorage.setItem("userName", data.email);
-                localStorage.setItem("accessToken", data.accessToken.tokenValue);
+                localStorage.setItem("userRole", userRole); 
+                localStorage.setItem("accessToken", token);
                 localStorage.setItem("refreshToken", data.refreshToken.tokenValue);
 
-                window.location.href = '/home';
+         
+                if (userRole === 'Admin') {
+                    navigate('/management/dashboard');
+                } else {
+                    navigate('/home');
+                }
             } else {
                 setError(data.message || "Đăng nhập không thành công.");
             }
@@ -55,26 +74,19 @@ const Login = () => {
 
     return (
         <div className="login-wrapper tet-theme">
-            {/* Hiệu ứng Lì xì rơi */}
             <div className="li-xi-container">
                 {envelopes.map(env => (
-                    <div 
-                        key={env.id} 
-                        className="li-xi" 
+                    <div key={env.id} className="li-xi" 
                         style={{ 
                             left: `${env.left}%`, 
                             animationDelay: `${env.delay}s`,
                             animationDuration: `${env.duration}s`,
                             fontSize: `${env.size}rem`
-                        }}
-                    >
-                        🧧
-                    </div>
+                        }}>🧧</div>
                 ))}
             </div>
 
             <div className="login-card-custom shadow-lg">
-                {/* Góc trang trí hoa đào */}
                 <div className="cherry-blossom-top">🌸</div>
                 
                 <div className="login-image-section d-none d-md-block">
@@ -96,41 +108,37 @@ const Login = () => {
                     <form onSubmit={handleSubmit} className="mt-4">
                         <div className="mb-3">
                             <label className="small fw-bold mb-1 text-danger">Email</label>
-                            <div className="input-group-custom">
-                                <input 
-                                    type="email" 
-                                    className="custom-input" 
-                                    placeholder="name@example.com"
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required 
-                                />
-                            </div>
+                            <input 
+                                type="email" 
+                                className="custom-input w-100" 
+                                placeholder="name@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required 
+                            />
                         </div>
                         <div className="mb-4">
                             <label className="small fw-bold mb-1 text-danger">Mật khẩu</label>
-                            <div className="input-group-custom">
-                                <input 
-                                    type="password" 
-                                    className="custom-input" 
-                                    placeholder="••••••••"
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required 
-                                />
-                            </div>
+                            <input 
+                                type="password" 
+                                className="custom-input w-100" 
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required 
+                            />
                         </div>
 
                         <button type="submit" className="btn-foodly" disabled={loading}>
-                            {loading ? <Loader2 className="spinner" /> : <>KHAI XUÂN NGAY <ArrowRight size={20} /></>}
+                            {loading ? <Loader2 className="spinner animate-spin" /> : <>KHAI XUÂN NGAY <ArrowRight size={20} /></>}
                         </button>
                     </form>
                     
                     <div className="text-center mt-4">
-                        <small className="text-muted">Chưa có tài khoản? <a href="/signup" className="signup-link">Đăng ký hái lộc</a></small>
+                        <small className="text-muted">Chưa có tài khoản? <a href="/signup" className="signup-link fw-bold">Đăng ký hái lộc</a></small>
                     </div>
                 </div>
             </div>
-            
-            {/* Đèn lồng trang trí dưới góc */}
             <div className="lantern-bottom">🏮</div>
         </div>
     );

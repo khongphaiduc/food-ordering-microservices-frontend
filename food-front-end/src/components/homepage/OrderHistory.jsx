@@ -114,7 +114,7 @@ export default function OrderHistory() {
                                         <th>Mã Đơn</th>
                                         <th>Thời Gian</th>
                                         <th>Giá Tiền</th>
-                                        <th>Trạng Thái</th>
+                                        <th>Trạng Thái Thanh Toán</th>
                                         <th>Hành Động</th>
                                     </tr>
                                 </thead>

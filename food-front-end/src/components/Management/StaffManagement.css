@@ -1,0 +1,208 @@
+:root {
+    --primary-food: #ff4757;
+    --bg-color: #f8f9fa;
+    --dark-text: #2d3436;
+    --gray-text: #636e72;
+}
+
+.staff-container {
+    padding: 2.5rem;
+    background-color: var(--bg-color);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.staff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.title-group h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--dark-text);
+}
+
+.title-group p {
+    color: var(--gray-text);
+    margin-top: 5px;
+}
+
+.btn-add-food-style {
+    background: var(--primary-food);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    transition: 0.3s;
+}
+
+.btn-add-food-style:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+}
+
+/* Staff Grid */
+.staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.staff-card {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid #eee;
+    transition: 0.3s;
+}
+
+.staff-card:hover {
+    border-color: var(--primary-food);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.avatar-wrapper {
+    width: 80px;
+    height: 80px;
+    background: #fff5f5;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+}
+
+.staff-info h3 {
+    margin: 0 0 5px;
+    color: var(--dark-text);
+}
+
+.staff-email {
+    font-size: 0.9rem;
+    color: var(--gray-text);
+    margin-bottom: 20px;
+}
+
+/* Tags */
+.role-tag {
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.role-staff { background: #e3f2fd; color: #1976d2; }
+.role-shipper { background: #fff3e0; color: #f57c00; }
+
+/* MODAL FIXED */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.food-modal-content {
+    background: white;
+    width: 95%;
+    max-width: 420px;
+    padding: 35px;
+    border-radius: 30px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.close-x {
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    color: var(--gray-text);
+}
+
+.form-item {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.label-small {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--dark-text);
+}
+
+.food-input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 2px solid #f1f2f6;
+    background: #f8f9fa;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.food-input:focus {
+    outline: none;
+    border-color: var(--primary-food);
+    background: white;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-cancel {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #f1f2f6;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-submit-active {
+    flex: 2;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--primary-food);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 50px;
+    color: var(--gray-text);
+    font-weight: 600;
+}
