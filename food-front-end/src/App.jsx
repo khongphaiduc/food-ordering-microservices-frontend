@@ -16,12 +16,16 @@ import DashboardOverview from "./components/Management/Dashboard";
 import MenuManagement from "./components/Management/MenuManagement"; 
 import ProductDetailManagement from "./components/Management/ProductDetailManagement"; 
 import AddProduct from "./components/Management/AddProduct";
-// IMPORT THÊM STAFF MANAGEMENT
 import StaffManagement from "./components/Management/StaffManagement"; 
+
+// IMPORT THÊM QUẢN LÝ HÓA ĐƠN
+import OrderManagement from "./components/Management/OrderManagement"; 
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
+  // Thêm /management/orders vào danh sách ẩn giỏ hàng (nếu cần thiết)
   const hideCartPaths = ["/login", "/signup", "/confirm-menu", "/orders"];
+  
   // Kiểm tra nếu là đường dẫn quản lý thì không hiện Giỏ hàng
   const isManagementPath = location.pathname.startsWith("/management");
   const showCart = !hideCartPaths.includes(location.pathname) && !isManagementPath;
@@ -58,7 +62,9 @@ function App() {
           <Route path="/management/dashboard" element={<ManagementLayout><DashboardOverview /></ManagementLayout>} />
           <Route path="/management/menu" element={<ManagementLayout><MenuManagement /></ManagementLayout>} />
           
-          {/* ROUTE QUẢN LÝ NHÂN VIÊN MỚI THÊM */}
+          {/* ROUTE QUẢN LÝ HÓA ĐƠN MỚI THÊM */}
+          <Route path="/management/orders" element={<ManagementLayout><OrderManagement /></ManagementLayout>} />
+
           <Route path="/management/staff" element={<ManagementLayout><StaffManagement /></ManagementLayout>} />
 
           {/* Route thêm mới sản phẩm */}

@@ -1,0 +1,268 @@
+:root {
+    --p-600: #4f46e5;
+    --p-700: #4338ca;
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-500: #64748b;
+    --slate-900: #0f172a;
+    
+    /* Status Colors */
+    --green-bg: #f0fdf4; --green-text: #166534;
+    --red-bg: #fef2f2; --red-text: #991b1b;
+    --orange-bg: #fff7ed; --orange-text: #9a3412;
+    --blue-bg: #eff6ff; --blue-text: #1e40af;
+}
+
+.order-container {
+    padding: 2.5rem;
+    background-color: var(--slate-50);
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--slate-900);
+}
+
+/* --- STATS GRID --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--slate-200);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+}
+
+.stat-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--slate-500);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.stat-icon-box {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+/* Card Themes */
+.stat-card.blue .stat-icon-box { background: #e0e7ff; color: #4338ca; }
+.stat-card.blue .stat-value { color: #1e40af; }
+
+.stat-card.orange .stat-icon-box { background: #ffedd5; color: #ea580c; }
+.stat-card.orange .stat-value { color: #9a3412; }
+
+.stat-card.green .stat-icon-box { background: #dcfce7; color: #16a34a; }
+.stat-card.green .stat-value { color: #166534; }
+
+.stat-card.red .stat-icon-box { background: #fee2e2; color: #dc2626; }
+.stat-card.red .stat-value { color: #991b1b; }
+
+/* --- FILTER SECTION --- */
+.filter-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--slate-200);
+    margin-bottom: 1.5rem;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.25rem;
+    align-items: flex-end;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--slate-500);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--slate-200);
+    border-radius: 10px;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.filter-input:focus {
+    border-color: var(--p-600);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn-search-main {
+    background: var(--p-600);
+    color: white;
+    border: none;
+    height: 46px;
+    border-radius: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-search-main:hover { background: var(--p-700); }
+
+/* --- TABLE --- */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--slate-200);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table th {
+    background: var(--slate-50);
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--slate-500);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--slate-200);
+}
+
+.custom-table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--slate-100);
+    font-size: 0.9rem;
+}
+
+.cust-cell { display: flex; flex-direction: column; }
+.cust-name { font-weight: 600; color: var(--slate-900); }
+.cust-date { font-size: 0.75rem; color: var(--slate-500); margin-top: 2px; }
+
+.method-tag {
+    background: var(--slate-100);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Status Select Overhaul */
+.status-dropdown {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+    cursor: pointer;
+    outline: none;
+}
+
+.st-0 { background: #fef3c7; color: #92400e; } /* Chờ xử lý */
+.st-4 { background: var(--green-bg); color: var(--green-text); } /* Hoàn thành */
+.st-5 { background: var(--red-bg); color: var(--red-text); } /* Hủy */
+
+.pay-status {
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.pay-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.pay-done { color: #16a34a; } .pay-done::before { background: #16a34a; }
+.pay-wait { color: #d97706; } .pay-wait::before { background: #d97706; }
+
+.action-view {
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-view:hover {
+    background: var(--p-600);
+    color: white;
+}
+
+/* Pagination */
+.pagination {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--slate-50);
+}
+
+.page-btns button {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--slate-200);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-btns button:disabled { opacity: 0.4; }
+
+/* Helpers */
+.text-right { text-align: right; }
+.font-bold { font-weight: 700; }
+.font-extrabold { font-weight: 800; color: var(--p-600); }
