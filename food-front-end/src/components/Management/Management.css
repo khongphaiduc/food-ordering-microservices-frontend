@@ -2,117 +2,173 @@
 .mgmt-container {
   display: flex;
   height: 100vh;
-  background-color: #f9fafb; /* gray-50 */
+  width: 100vw;
+  background-color: #f8fafc;
+  overflow: hidden;
 }
 
 .mgmt-content-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-width: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Header Styles */
 .mgmt-header {
-  height: 64px; /* 4rem */
+  height: 64px;
   background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
+  z-index: 10;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  gap: 2rem;
 }
 
-/* Thanh tìm kiếm */
-.search-container {
-  position: relative;
-  width: 24rem; /* w-96 */
+/* Hiệu ứng chữ chạy (Marquee) */
+.marquee-container {
+  flex: 1;
+  overflow: hidden;
+  background-color: #fff7ed; /* Màu nền cam nhạt */
+  padding: 8px 0;
+  border-radius: 8px;
+  white-space: nowrap;
 }
 
-.search-icon {
-  position: absolute;
-  inset-y: 0;
-  left: 0;
-  padding-left: 0.75rem;
-  display: flex;
-  align-items: center;
-  color: #9ca3af;
-  pointer-events: none;
+.marquee-text {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ea580c; /* Màu cam thương hiệu */
+  padding-left: 100%;
+  animation: marquee-scroll 15s linear infinite;
 }
 
-.search-input {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
-  background-color: #f9fafb;
-  font-size: 0.875rem;
-  outline: none;
-  transition: all 0.2s;
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }
 
-.search-input:focus {
-  border-color: #f97316; /* orange-500 */
-  box-shadow: 0 0 0 1px #f97316;
+/* Tạm dừng khi di chuột vào dòng chữ */
+.marquee-container:hover .marquee-text {
+  animation-play-state: paused;
+  cursor: default;
 }
 
-/* Thông báo và Profile */
+/* Actions & Profile */
 .mgmt-actions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
+  flex-shrink: 0;
 }
 
 .notification-btn {
   position: relative;
-  color: #6b7280;
-  transition: color 0.2s;
+  padding: 8px;
+  border-radius: 50%;
+  color: #64748b;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .notification-btn:hover {
+  background-color: #f1f5f9;
   color: #f97316;
 }
 
 .notification-badge {
   position: absolute;
-  top: -0.25rem;
-  right: -0.25rem;
+  top: 6px;
+  right: 6px;
   background-color: #ef4444;
   color: white;
   font-size: 10px;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 9999px;
+  font-weight: bold;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 10px;
+  border: 2px solid #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.profile-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e2e8f0;
+  margin: 0 4px;
 }
 
 .profile-section {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  border-left: 1px solid #e5e7eb;
-  padding-left: 1.25rem;
+  gap: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.profile-section:hover {
+  background-color: #f8fafc;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.profile-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.profile-role {
+  font-size: 0.75rem;
+  color: #64748b;
 }
 
 .avatar-circle {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 9999px;
-  background-color: #f97316;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
 }
 
 /* Main Area */
 .mgmt-main {
   flex: 1;
-  overflow-x: hidden;
   overflow-y: auto;
   padding: 1.5rem;
+  scroll-behavior: smooth;
+}
+
+.mgmt-page-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Custom Scrollbar */
+.mgmt-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mgmt-main::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
 }

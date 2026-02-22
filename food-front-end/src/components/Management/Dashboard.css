@@ -1,80 +1,366 @@
-/* Container tổng */
+/* Dashboard.css - Full Version */
+
+:root {
+  --primary-orange: #f97316;
+  --primary-blue: #2563eb;
+  --primary-green: #10b981;
+  --bg-light: #f8fafc;
+  --border-color: #e2e8f0;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --white: #ffffff;
+}
+
+/* Container chính */
 .dashboard-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  padding: 1.5rem;
+  background-color: var(--bg-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Header Dashboard */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Khung Card trắng dùng chung */
+.dashboard-card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Grid cho 4 thẻ StatCard */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 cột đều nhau */
-    gap: 1.5rem;
+/* Header Section */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-/* Responsive cho mobile/tablet */
+.title-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.subtitle-text {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Nút Refresh & Export */
+.refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--text-main);
+  color: var(--white);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-button:hover {
+  background: #000000;
+}
+
+.refresh-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Filter Bar */
+.filter-group-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.filter-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f1f5f9;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.filter-box input, .filter-box select {
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+  outline: none;
+}
+
+/* --- Stats Grid (3 Cột) --- */
+.stats-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.stat-item-card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-blue { background: #eff6ff; color: var(--primary-blue); }
+.bg-orange { background: #fff7ed; color: var(--primary-orange); }
+.bg-green { background: #ecfdf5; color: var(--primary-green); }
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.stat-main-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.stat-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+/* Trend Indicator (Lên/Xuống) */
+.trend-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+  width: fit-content;
+  margin-top: 0.25rem;
+}
+
+.trend-indicator.up { background: #dcfce7; color: #15803d; }
+.trend-indicator.down { background: #fee2e2; color: #b91c1c; }
+
+/* Progress Bar Mini */
+.mini-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  margin-top: 0.75rem;
+  overflow: hidden;
+}
+
+.mini-progress-bar .fill {
+  height: 100%;
+  background: var(--primary-green);
+  border-radius: 10px;
+  transition: width 0.8s ease-out;
+}
+
+/* --- Chart Section --- */
+.chart-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.chart-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Toggle Bar/Line */
+.chart-type-toggle {
+  display: flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-color);
+}
+
+.chart-type-toggle button {
+  border: none;
+  background: transparent;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.chart-type-toggle button.active {
+  background: var(--white);
+  color: var(--primary-orange);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.chart-selectors {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chart-selectors select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* Loading State */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Biểu đồ wrapper */
+.bar-chart-wrapper {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Responsive */
 @media (max-width: 1024px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .stats-grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .chart-header-row {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .chart-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 @media (max-width: 640px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Style cho từng StatCard */
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-}
-
-.stat-card-header {
-    display: flex;
-    justify-content: space-between;
+  .stats-grid-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .header-content {
+    flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+
+  .refresh-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-.icon-wrapper {
-    padding: 0.75rem;
+/* Thêm vào Dashboard.css */
+
+.chart-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
     border-radius: 0.5rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* Grid nội dung phía dưới (Biểu đồ và Đơn hàng) */
-.content-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr; /* Biểu đồ chiếm 2 phần, đơn hàng 1 phần */
-    gap: 1.5rem;
+.tab-btn.active {
+    background: #fff;
+    border-color: var(--border-color);
+    color: var(--text-main);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-@media (max-width: 1024px) {
-    .content-grid {
-        grid-template-columns: 1fr;
-    }
+.tab-btn:hover:not(.active) {
+    background: #f1f5f9;
 }
 
-.chart-section, .orders-section {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    border: 1px solid #f1f5f9;
-    min-height: 400px;
+/* Tùy chỉnh màu khi active cụ thể */
+.tab-btn.active svg {
+    color: var(--primary-orange);
+}
+
+.tab-btn:nth-child(2).active svg {
+    color: var(--primary-blue);
 }
