@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './StaffManagement.css';
 
 const StaffManagement = () => {
+    const navigate = useNavigate(); // Sử dụng hook để điều hướng
     const [staffs, setStaffs] = useState([]);
     const [roles, setRoles] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +21,7 @@ const StaffManagement = () => {
     const API_STAFF = 'https://localhost:7150/auth/admin/staff';
     const API_ROLES = 'https://localhost:7150/auth/admin/roles';
 
-    // Cấu hình Header chứa Token lấy từ localStorage
+    // Cấu hình Header chứa Token
     const getAuthHeader = () => {
         const token = localStorage.getItem("accessToken");
         return { 
@@ -30,7 +31,7 @@ const StaffManagement = () => {
         };
     };
 
-    // Cấu hình Toast (thông báo nhỏ góc màn hình)
+    // Cấu hình Toast cho các thông báo nhẹ
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -46,7 +47,6 @@ const StaffManagement = () => {
     const loadInitialData = async () => {
         setLoading(true);
         try {
-            // Gửi kèm token cho cả 2 yêu cầu GET
             const [staffRes, roleRes] = await Promise.all([
                 axios.get(API_STAFF, getAuthHeader()),
                 axios.get(API_ROLES, getAuthHeader())
@@ -60,11 +60,28 @@ const StaffManagement = () => {
             }
         } catch (error) {
             console.error("Lỗi kết nối API:", error);
-            if (error.response?.status === 401) {
-                Toast.fire({ icon: 'error', title: 'Phiên đăng nhập hết hạn hoặc không có quyền!' });
-                   Navigate('/login');
+            
+            // Xử lý thông báo KHÔNG CHO PHÉP TẮT khi thiếu quyền (401 hoặc 403)
+            if (error.response?.status === 401 || error.response?.status === 403) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Truy cập bị từ chối',
+                    text: 'Bạn chưa được phân quyền cho tính năng này!',
+                    allowOutsideClick: false, // Không cho phép đóng khi click ra ngoài
+                    allowEscapeKey: false,    // Không cho phép đóng bằng phím Esc
+                    showConfirmButton: true,
+                    confirmButtonText: 'Quay lại trang chủ',
+                    confirmButtonColor: '#ff4757',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/management/dashboard'); // Điều hướng về trang chủ
+                    }
+                });
             } else {
-                Toast.fire({ icon: 'error', title: 'Không thể tải dữ liệu nhân sự' });
+                Toast.fire({ 
+                    icon: 'error', 
+                    title: 'Không thể tải dữ liệu nhân sự' 
+                });
             }
         } finally {
             setLoading(false);
@@ -82,7 +99,6 @@ const StaffManagement = () => {
         });
 
         try {
-            // Gửi POST kèm token
             await axios.post(API_STAFF, formData, getAuthHeader());
             
             Swal.fire({
@@ -130,7 +146,7 @@ const StaffManagement = () => {
                     {staffs.map((s) => (
                         <div key={s.idStaff} className="staff-card">
                             <div className="avatar-wrapper">
-                                {s.role.includes('Shipper') ? '🛵' : '👨‍🍳'}
+                                {s.role.some(r => r.includes('Shipper')) ? '🛵' : '👨‍🍳'}
                             </div>
                             <div className="staff-info">
                                 <h3>{s.name}</h3>
@@ -148,7 +164,6 @@ const StaffManagement = () => {
                 </div>
             )}
 
-            {/* Modal Overlay nổi trên cùng */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="food-modal-content">
