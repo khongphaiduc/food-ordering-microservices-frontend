@@ -21,9 +21,12 @@ export const AuthProvider = ({ children }) => {
 
   // Hàm logout
   const logoutfood = () => {
-    localStorage.removeItem("AccessToken");
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("userName");
-    localStorage.removeItem("idUser");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("sessionId");
+    localStorage.removeItem("userRole");
     setIsAuthenticated(false);
     removeRefreshToken ();
   };

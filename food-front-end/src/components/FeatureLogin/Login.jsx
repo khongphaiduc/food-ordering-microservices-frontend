@@ -55,7 +55,7 @@ const Login = () => {
                 localStorage.setItem("userRole", userRole); 
                 localStorage.setItem("accessToken", token);
                 localStorage.setItem("refreshToken", data.refreshToken.tokenValue);
-
+                localStorage.setItem("sessionId", data.idSession);
          
                 if (userRole === 'Admin' || userRole == "Staff") {
                     navigate('/management/dashboard');

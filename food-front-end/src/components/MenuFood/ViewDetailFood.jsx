@@ -63,6 +63,55 @@ const ProductDetail = () => {
     window.dispatchEvent(new Event('openCart'));
   };
 
+  // --- LOGIC TRACKING DÙNG CHUNG (ĐÃ CẬP NHẬT THỜI GIAN) ---
+  const trackUserAction = async (eventType, productId) => {
+    const sessionId = localStorage.getItem("sessionId");
+    const currentUserId = localStorage.getItem("userId"); // Lấy lại để đảm bảo fresh data
+    
+    // Lấy ngày và giờ hiện tại
+    const today = new Date();
+    const day = today.getDate().toString().padStart(2, '0');
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const year = today.getFullYear();
+    const hours = today.getHours().toString().padStart(2, '0');
+    const minutes = today.getMinutes().toString().padStart(2, '0');
+    const seconds = today.getSeconds().toString().padStart(2, '0');
+
+    // Format theo chuẩn: dd/MM/yyyy HH:mm:ss
+    const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+    // Tạo event payload
+    const newEvent = {
+      EventType: eventType, 
+      IdProduct: productId,
+      CreateAt: formattedDate
+    };
+
+    // Lấy queue hiện tại từ localStorage và thêm event mới
+    let trackingQueue = JSON.parse(localStorage.getItem('trackingQueue') || '[]');
+    trackingQueue.push(newEvent);
+
+    // Lưu lại queue mới vào localStorage ngay lập tức
+    localStorage.setItem('trackingQueue', JSON.stringify(trackingQueue));
+
+    // Kiểm tra nếu đủ 5 item thì gửi API
+    if (trackingQueue.length >= 5) {
+      const payload = {
+        IdSession: sessionId || "", 
+        IdUser: currentUserId || null, 
+        PayLoad: trackingQueue
+      };
+
+      try {
+        await axios.post('https://localhost:7150/tracking', payload);
+        // Gửi thành công thì clear queue trong localStorage
+        localStorage.removeItem('trackingQueue');
+      } catch (error) {
+        console.error("Lỗi gửi tracking data:", error);
+      }
+    }
+  };
+
   // --- FETCH DATA (CHÍNH & GỢI Ý) ---
   useEffect(() => {
     const handleCartStateChange = (e) => setIsCartOpen(e.detail.isOpen);
@@ -83,7 +132,11 @@ const ProductDetail = () => {
           setSelectedVariant(productData.productVariantDTOs[0]);
         }
 
-        // 2. Lấy danh sách gợi ý (Xử lý Payload imageFoods mới)
+        // --- GỌI TRACKING VIEW SẢN PHẨM (EventType = 1) ---
+        const productIdToTrack = productData.idProduct || id;
+        trackUserAction(1, productIdToTrack);
+
+        // 2. Lấy danh sách gợi ý
         if (productData.idCategory) {
           try {
             const suggestedRes = await axios.get(`https://localhost:7150/products/recommendation/${productData.idCategory}`);
@@ -96,7 +149,6 @@ const ProductDetail = () => {
                   id: item.id,
                   name: item.name,
                   price: item.price,
-                  // Lấy ảnh main từ imageFoods
                   img: item.imageFoods?.find(img => img.isMain)?.urlImage 
                        || item.imageFoods?.[0]?.urlImage 
                        || 'https://via.placeholder.com/300',
@@ -123,6 +175,7 @@ const ProductDetail = () => {
       window.removeEventListener('cartStateChanged', handleCartStateChange);
       window.removeEventListener('cartUpdated', updateCartBadge);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, updateCartBadge]);
 
   // --- THÊM VÀO GIỎ HÀNG ---
@@ -163,6 +216,9 @@ const ProductDetail = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       
+      // --- GỌI TRACKING THÊM GIỎ HÀNG (EventType = 3) ---
+      trackUserAction(3, product.idProduct || id);
+
       window.dispatchEvent(new Event('cartUpdated'));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -179,7 +235,6 @@ const ProductDetail = () => {
 
   return (
     <div className="modern-detail-wrapper">
-      {/* Toast & Floating Cart Button (Giữ nguyên như code cũ) */}
       <div className={`modern-toast ${showToast ? 'show' : ''}`}>
         <div className="toast-content">
           <div className="toast-icon-circle"><CheckCircle2 size={20} color="#fff" /></div>
@@ -245,7 +300,6 @@ const ProductDetail = () => {
             <div className="price-tag-wrapper">
               <span className="currency">đ</span>
               <span className="amount">{totalPrice.toLocaleString('vi-VN')}</span>
-
             </div>
             
             <div className="benefit-icons">           

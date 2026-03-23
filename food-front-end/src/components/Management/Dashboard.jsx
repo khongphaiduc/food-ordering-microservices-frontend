@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   DollarSign, ShoppingBag, CheckCircle, TrendingUp, 
   ArrowUpRight, ArrowDownRight, Loader2, Calendar, Filter, RefreshCw,
-  BarChart2, LineChart as LineIcon, Coins
+  BarChart2, LineChart as LineIcon, Coins, AlertCircle, ShieldAlert
 } from 'lucide-react';
 import { 
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell 
@@ -12,40 +12,53 @@ import './Dashboard.css';
 const DashboardOverview = () => {
   const today = new Date();
   
-  // State quản lý filter Stats (API 1)
   const [filters, setFilters] = useState({
     fromDate: new Date(new Date().setDate(today.getDate() - 1)).toISOString().split('T')[0],
     toDate: today.toISOString().split('T')[0],
     compareType: 1
   });
 
-  // State quản lý Biểu đồ (API 2 & API 3)
   const [chartDate, setChartDate] = useState({
     year: today.getFullYear(),
     month: today.getMonth() + 1
   });
 
-  // 'order' hoặc 'profit'
   const [activeDataType, setActiveDataType] = useState('order'); 
-  // 'bar' hoặc 'line'
   const [chartType, setChartType] = useState('bar');
-
   const [statsData, setStatsData] = useState(null);
   const [orderChartData, setOrderChartData] = useState([]);
   const [profitChartData, setProfitChartData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const formatVND = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
 
   const loadDashboardData = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
+      const token = localStorage.getItem("accessToken");
+      
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
+      };
+
       const [statsRes, orderRes, profitRes] = await Promise.all([
-        fetch(`https://localhost:7150/orders/statistic?FromDate=${filters.fromDate}&ToDate=${filters.toDate}&CompareType=${filters.compareType}`),
-        fetch(`https://localhost:7150/orders/statistic/order?year=${chartDate.year}&month=${chartDate.month}`),
-        fetch(`https://localhost:7150/orders/statistic/prefit?year=${chartDate.year}&month=${chartDate.month}`)
+        fetch(`https://localhost:7150/orders/statistic?FromDate=${filters.fromDate}&ToDate=${filters.toDate}&CompareType=${filters.compareType}`, { headers }),
+        fetch(`https://localhost:7150/orders/statistic/order?year=${chartDate.year}&month=${chartDate.month}`, { headers }),
+        fetch(`https://localhost:7150/orders/statistic/prefit?year=${chartDate.year}&month=${chartDate.month}`, { headers })
       ]);
       
+      // KIỂM TRA QUYỀN TRUY CẬP (401: Chưa đăng nhập, 403: Không có quyền)
+      if (statsRes.status === 403 || orderRes.status === 403 || statsRes.status === 401) {
+        throw new Error("Bạn không có quyền truy cập tính năng này.");
+      }
+
+      if (!statsRes.ok || !orderRes.ok || !profitRes.ok) {
+        throw new Error("Đã xảy ra lỗi khi kết nối với máy chủ.");
+      }
+
       const statsJson = await statsRes.json();
       const orderJson = await orderRes.json();
       const profitJson = await profitRes.json();
@@ -54,23 +67,51 @@ const DashboardOverview = () => {
       setOrderChartData(orderJson.data || []);
       setProfitChartData(profitJson.data || []);
     } catch (err) {
-      console.error("Lỗi kết nối API:", err);
+      setError(err.message);
+      console.error("Dashboard Error:", err);
     } finally {
       setLoading(false);
     }
   }, [filters, chartDate]);
 
-  useEffect(() => { loadDashboardData(); }, [loadDashboardData]);
+  useEffect(() => { 
+    loadDashboardData(); 
+  }, [loadDashboardData]);
 
-  // Lấy data và cấu hình dựa trên loại biểu đồ đang chọn
   const currentData = activeDataType === 'order' ? orderChartData : profitChartData;
   const dataKey = activeDataType === 'order' ? 'orderCount' : 'amount';
   const chartColor = activeDataType === 'order' ? '#f97316' : '#2563eb';
 
+  // Nếu bị lỗi quyền truy cập, hiển thị giao diện thông báo toàn màn hình (Tùy chọn)
+  if (error === "Bạn không có quyền truy cập tính năng này.") {
+    return (
+      <div className="access-denied-container">
+        <ShieldAlert size={64} color="#ef4444" />
+        <h2>Truy cập bị từ chối</h2>
+        <p>{error}</p>
+        <button onClick={() => window.history.back()}>Quay lại</button>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-container">
+      {/* Loading Overlay khi làm mới dữ liệu */}
+      {loading && statsData && <div className="refresh-loader"><Loader2 className="animate-spin" /></div>}
+
       {/* HEADER SECTION */}
       <div className="dashboard-card header-section">
+        <div className="header-content">
+          <div>
+            <h1 className="title-text">Tổng quan kinh doanh</h1>
+            <p className="subtitle-text">Theo dõi doanh thu và hiệu suất bán hàng</p>
+          </div>
+          <button className="refresh-button" onClick={loadDashboardData} disabled={loading}>
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            Làm mới
+          </button>
+        </div>
+
         <div className="filter-group-row">
           <div className="filter-box">
             <Calendar size={16} />
@@ -89,6 +130,15 @@ const DashboardOverview = () => {
         </div>
       </div>
 
+      {/* ERROR BANNER (Nếu có lỗi khác quyền truy cập) */}
+      {error && (
+        <div className="error-banner">
+          <AlertCircle size={20} />
+          <span>{error}</span>
+          <button onClick={loadDashboardData}>Thử lại</button>
+        </div>
+      )}
+
       {/* STATS GRID */}
       <div className="stats-grid-layout">
         <div className="stat-item-card">
@@ -97,7 +147,7 @@ const DashboardOverview = () => {
             <span className="stat-label">Doanh thu hiện tại</span>
             <h2 className="stat-main-value">{formatVND(statsData?.currentRevenue)}</h2>
             <div className={`trend-indicator ${statsData?.revenueGrowthPercent >= 0 ? 'up' : 'down'}`}>
-              {statsData?.revenueGrowthPercent}% {statsData?.revenueGrowthPercent >= 0 ? <ArrowUpRight size={14}/> : <ArrowDownRight size={14}/>}
+              {statsData?.revenueGrowthPercent || 0}% {statsData?.revenueGrowthPercent >= 0 ? <ArrowUpRight size={14}/> : <ArrowDownRight size={14}/>}
             </div>
             <p className="stat-sub">Chênh lệch: {formatVND(statsData?.revenueDifference)}</p>
           </div>
@@ -107,8 +157,8 @@ const DashboardOverview = () => {
           <div className="stat-icon bg-orange"><ShoppingBag /></div>
           <div className="stat-info">
             <span className="stat-label">Số đơn hàng</span>
-            <h2 className="stat-main-value">{statsData?.currentOrderCount} đơn</h2>
-            <p className="stat-sub">Kỳ trước: {statsData?.compareOrderCount} đơn</p>
+            <h2 className="stat-main-value">{statsData?.currentOrderCount || 0} đơn</h2>
+            <p className="stat-sub">Kỳ trước: {statsData?.compareOrderCount || 0} đơn</p>
           </div>
         </div>
 
@@ -116,9 +166,9 @@ const DashboardOverview = () => {
           <div className="stat-icon bg-green"><CheckCircle /></div>
           <div className="stat-info">
             <span className="stat-label">Tỉ lệ hoàn thành</span>
-            <h2 className="stat-main-value">{statsData?.percentComplation}%</h2>
+            <h2 className="stat-main-value">{statsData?.percentComplation || 0}%</h2>
             <div className="mini-progress-bar">
-              <div className="fill" style={{width: `${statsData?.percentComplation}%`}}></div>
+              <div className="fill" style={{width: `${statsData?.percentComplation || 0}%`}}></div>
             </div>
           </div>
         </div>
@@ -129,16 +179,10 @@ const DashboardOverview = () => {
         <div className="chart-header-row">
           <div>
             <div className="chart-tabs">
-                <button 
-                    className={`tab-btn ${activeDataType === 'order' ? 'active' : ''}`}
-                    onClick={() => setActiveDataType('order')}
-                >
+                <button className={`tab-btn ${activeDataType === 'order' ? 'active' : ''}`} onClick={() => setActiveDataType('order')}>
                     <ShoppingBag size={16} /> Đơn hàng
                 </button>
-                <button 
-                    className={`tab-btn ${activeDataType === 'profit' ? 'active' : ''}`}
-                    onClick={() => setActiveDataType('profit')}
-                >
+                <button className={`tab-btn ${activeDataType === 'profit' ? 'active' : ''}`} onClick={() => setActiveDataType('profit')}>
                     <Coins size={16} /> Lợi nhuận
                 </button>
             </div>
@@ -160,6 +204,7 @@ const DashboardOverview = () => {
                 {Array.from({length: 12}, (_, i) => <option key={i+1} value={i+1}>Tháng {i+1}</option>)}
               </select>
               <select value={chartDate.year} onChange={(e) => setChartDate({...chartDate, year: parseInt(e.target.value)})}>
+                <option value={2024}>2024</option>
                 <option value={2025}>2025</option>
                 <option value={2026}>2026</option>
               </select>
