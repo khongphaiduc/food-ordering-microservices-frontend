@@ -63,7 +63,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("https://localhost:7150/products", {
+        const response = await fetch(`https://localhost:7150/products/ai`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -228,32 +228,10 @@ export default function Home() {
         </p>
       </section>
 
-      {/* MÓN NỔI BẬT */}
-      {featuredFoods.length > 0 && (
-        <section id="featured">
-          <h2 className="section-title">🔥 Món ăn nổi bật</h2>
-          <div className="featured-grid">
-            {featuredFoods.map(food => (
-              <div key={food.id} className="featured-card">
-                <img src={food.img} className="featured-img" alt={food.name} />
-                <div className="featured-content">
-                  <span className="badge-bestseller" style={{background: '#fff5f5', color: '#d32f2f', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', width: 'fit-content'}}>LỘC XUÂN</span>
-                  <h3>{food.name}</h3>
-                  <p style={{fontSize: '14px', color: '#666'}}>{food.desc}</p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'auto', alignItems: 'center' }}>
-                    <span className="price-tag" style={{color: '#d32f2f', fontWeight: 'bold', fontSize: '20px'}}>{food.price?.toLocaleString()}đ</span>
-                    <button className="btn-primary" onClick={handleOpenCart} style={{background: '#d32f2f'}}>Đặt ngay</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* THỰC ĐƠN CHÍNH */}
       <section id="menu">
-        <h2 className="section-title">Ngày Tết bạn ăn gì?</h2>
+        <h2 className="section-title">Top món ăn gợi ý dành riêng cho bạn .</h2>
         {loading ? ( 
           <p style={{ textAlign: 'center' }}>Đang chuẩn bị mâm cỗ...</p> 
         ) : (
