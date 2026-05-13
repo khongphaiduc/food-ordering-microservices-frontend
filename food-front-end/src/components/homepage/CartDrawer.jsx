@@ -12,12 +12,12 @@ export default function ShoppingCart() {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("accessToken");
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const fetchCart = useCallback(async () => {
     if (!userId || !token) return;
     setSyncStatus('loading');
     try {
-      const response = await axios.get(`https://localhost:7150/cart/user-cart/${userId}`, {
+      const response = await axios.get(`${apiUrl}/cart/user-cart/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = response.data;
@@ -43,7 +43,7 @@ export default function ShoppingCart() {
         }))
       };
 
-      await axios.post(`https://localhost:7150/cart/update-cart`, payload, {
+      await axios.post(`${apiUrl}/cart/update-cart`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -80,7 +80,7 @@ export default function ShoppingCart() {
   const handleCheckout = async () => {
     if (!userId || items.length === 0) return;
     setIsOpen(false);
-    const response = await axios.get(`https://localhost:7150/cart/user-cart/${userId}`, {
+    const response = await axios.get(`${apiUrl}/cart/user-cart/${userId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     navigate('/confirm-menu', { state: { cartData: response.data } });

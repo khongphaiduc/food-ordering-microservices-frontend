@@ -30,7 +30,7 @@ const DashboardOverview = () => {
   const [profitChartData, setProfitChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+ const apiUrl = import.meta.env.VITE_API_URL;
   const formatVND = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
 
   const loadDashboardData = useCallback(async () => {
@@ -45,9 +45,9 @@ const DashboardOverview = () => {
       };
 
       const [statsRes, orderRes, profitRes] = await Promise.all([
-        fetch(`https://localhost:7150/orders/statistic?FromDate=${filters.fromDate}&ToDate=${filters.toDate}&CompareType=${filters.compareType}`, { headers }),
-        fetch(`https://localhost:7150/orders/statistic/order?year=${chartDate.year}&month=${chartDate.month}`, { headers }),
-        fetch(`https://localhost:7150/orders/statistic/prefit?year=${chartDate.year}&month=${chartDate.month}`, { headers })
+        fetch(`${apiUrl}/orders/statistic?FromDate=${filters.fromDate}&ToDate=${filters.toDate}&CompareType=${filters.compareType}`, { headers }),
+        fetch(`${apiUrl}/orders/statistic/order?year=${chartDate.year}&month=${chartDate.month}`, { headers }),
+        fetch(`${apiUrl}/orders/statistic/profit?year=${chartDate.year}&month=${chartDate.month}`, { headers })
       ]);
       
       // KIỂM TRA QUYỀN TRUY CẬP (401: Chưa đăng nhập, 403: Không có quyền)

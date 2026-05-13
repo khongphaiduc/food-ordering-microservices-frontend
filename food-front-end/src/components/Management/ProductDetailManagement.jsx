@@ -12,7 +12,7 @@ const ProductDetailManagement = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    
+     const apiUrl = import.meta.env.VITE_API_URL;
     const [product, setProduct] = useState({
         name: '', 
         price: 0, 
@@ -30,7 +30,7 @@ const ProductDetailManagement = () => {
         const fetchDetail = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(`https://localhost:7150/products/${id}`);
+                const res = await axios.get(`${apiUrl}/products/${id}`);
                 const data = res.data;
                 if (data) {
                     setProduct({
@@ -161,9 +161,9 @@ const ProductDetailManagement = () => {
         product.variantsToDelete.forEach(vId => formData.append('DeleteVariant', vId));
 
         try {
-            await axios.put('https://localhost:7150/admin/products', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+           await axios.put(`${apiUrl}/admin/products`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+});
             alert("Cập nhật sản phẩm thành công!");
             navigate('/management/menu');
         } catch (err) {

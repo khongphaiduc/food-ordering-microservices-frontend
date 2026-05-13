@@ -13,6 +13,7 @@ export default function ConfirmMenu() {
     const [paymentMethod, setPaymentMethod] = useState(1); // 1: PayOS, 2: Tiền mặt
     const [isSubmitting, setIsSubmitting] = useState(false);
     
+      const apiUrl = import.meta.env.VITE_API_URL;
     // --- States cho Địa chỉ ---
     const [addresses, setAddresses] = useState([]);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -36,7 +37,7 @@ export default function ConfirmMenu() {
                 return;
             }
             try {
-                const response = await axios.get(`https://localhost:7150/users/${userId}`, {
+                const response = await axios.get(`${apiUrl}/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const addrList = response.data.addressUsers || [];
@@ -56,7 +57,7 @@ export default function ConfirmMenu() {
     // --- 2. Khởi tạo SignalR ---
     useEffect(() => {
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7251/notificationPayOS", { 
+            .withUrl(`${apiUrl}/notificationPayOS`, { 
                 accessTokenFactory: () => token 
             })
             .withAutomaticReconnect()
@@ -93,7 +94,7 @@ export default function ConfirmMenu() {
                     Quantity: (item.idProduct === productId && item.idVariant === variantId) ? newQuantity : item.quantity
                 }))
             };
-            await axios.post(`https://localhost:7150/cart/update-cart`, payload, {
+            await axios.post(`${apiUrl}/cart/update-cart`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             let updatedItems = newQuantity === 0 
@@ -123,7 +124,7 @@ export default function ConfirmMenu() {
                 IdAddress: selectedAddressId
             };
 
-            const response = await axios.post(`https://localhost:7150/orders`, orderPayload, {
+            const response = await axios.post(`${apiUrl}/orders`, orderPayload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

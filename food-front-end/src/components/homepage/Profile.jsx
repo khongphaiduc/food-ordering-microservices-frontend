@@ -10,13 +10,13 @@ export default function Profile() {
   const [addressForm, setAddressForm] = useState({
     phone: '', city: '', line1: '', line2: '', district: ''
   });
-
+ const apiUrl = import.meta.env.VITE_API_URL;
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("accessToken");
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`https://localhost:7150/users/${userId}`, {
+      const res = await fetch(`${apiUrl}/users/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setUserData(await res.json());
@@ -31,7 +31,7 @@ export default function Profile() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch("https://localhost:7150/users/address", {
+      const res = await fetch(`${apiUrl}/users/address`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json', 

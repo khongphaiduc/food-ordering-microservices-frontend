@@ -10,7 +10,7 @@ const StaffManagement = () => {
     const [roles, setRoles] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    
+     const apiUrl = import.meta.env.VITE_API_URL;
     const [formData, setFormData] = useState({
         Name: '',
         Email: '',
@@ -18,8 +18,8 @@ const StaffManagement = () => {
         IdRole: ''
     });
 
-    const API_STAFF = 'https://localhost:7150/auth/admin/staff';
-    const API_ROLES = 'https://localhost:7150/auth/admin/roles';
+    const API_STAFF = `${apiUrl}/auth/admin/staff`;
+    const API_ROLES = `${apiUrl}/auth/admin/roles`;
 
     // Cấu hình Header chứa Token
     const getAuthHeader = () => {

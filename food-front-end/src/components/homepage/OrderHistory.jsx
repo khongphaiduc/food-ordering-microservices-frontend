@@ -8,7 +8,7 @@ export default function OrderHistory() {
     const [pageIndex, setPageIndex] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [selectedOrder, setSelectedOrder] = useState(null);
-
+ const apiUrl = import.meta.env.VITE_API_URL;
     const userId = localStorage.getItem("userId") || "22EBC352-0CA9-4CB6-AC82-3CEA7C8099B2";
     const token = localStorage.getItem("accessToken");
 
@@ -39,7 +39,7 @@ export default function OrderHistory() {
 
     const fetchOrders = (page) => {
         setLoading(true);
-        fetch(`https://localhost:7150/orders/histories`, {
+        fetch(`${apiUrl}/orders/histories`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ export default function OrderHistory() {
     };
 
     const handleViewDetail = (orderId) => {
-        fetch(`https://localhost:7150/orders/detail`, {
+        fetch(`${apiUrl}/orders/detail`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

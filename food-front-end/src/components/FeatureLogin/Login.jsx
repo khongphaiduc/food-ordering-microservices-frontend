@@ -31,10 +31,12 @@ const Login = () => {
         setError('');
 
         try {
-            const response = await axios.post('https://localhost:7150/auth/login', {
-                Email: email,
-                Password: password
-            });
+           const apiUrl = import.meta.env.VITE_API_URL;
+        
+         const response = await axios.post(`${apiUrl}/auth/login`, {
+            Email: email,
+            Password: password
+        });
 
             const data = response.data;
 

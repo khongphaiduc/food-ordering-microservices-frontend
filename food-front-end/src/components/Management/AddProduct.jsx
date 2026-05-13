@@ -8,7 +8,7 @@ const AddProduct = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]); // State lưu danh sách danh mục
-
+ const apiUrl = import.meta.env.VITE_API_URL;
     const [formData, setFormData] = useState({
         idCategory: '',
         name: '',
@@ -23,7 +23,7 @@ const AddProduct = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('https://localhost:7150/products/category');
+                const response = await axios.get(`${apiUrl}/products/category`);
                 // Lưu ý: response.data.list vì payload của bạn có bọc trong object "list"
                 setCategories(response.data.list || []);
             } catch (error) {
@@ -78,7 +78,7 @@ const AddProduct = () => {
         });
 
         try {
-            const response = await axios.post('https://localhost:7150/admin/products', data, {
+            const response = await axios.post(`${apiUrl}/admin/products`, data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             alert("Thêm món ăn thành công!");

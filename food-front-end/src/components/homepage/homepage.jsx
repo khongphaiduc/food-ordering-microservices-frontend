@@ -8,7 +8,7 @@ export default function Home() {
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDrawerActive, setIsDrawerActive] = useState(false);
-  
+   const apiUrl = import.meta.env.VITE_API_URL;
   // State quản lý Menu User
   const [showUserMenu, setShowUserMenu] = useState(false);
   
@@ -39,7 +39,7 @@ export default function Home() {
     const checkUserAddress = async () => {
       if (!token || !userId) return;
       try {
-        const response = await fetch(`https://localhost:7150/users/${userId}`, {
+        const response = await fetch(`${apiUrl}/users/${userId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -63,7 +63,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`https://localhost:7150/products/ai`, {
+        const response = await fetch(`${apiUrl}/products/ai`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export default function Home() {
     e.preventDefault();
     setSubmittingAddress(true);
     try {
-      const response = await fetch("https://localhost:7150/users/address", {
+      const response = await fetch(`${apiUrl}/users/address`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -9,7 +9,7 @@ import './SideBar.css';
 
 const Sidebar = ({ role = 'admin', isCollapsed, setIsCollapsed }) => {
   const navigate = useNavigate();
-
+ const apiUrl = import.meta.env.VITE_API_URL;
   // Giả sử bạn lưu thông tin user trong localStorage sau khi login
   // Bạn cần thay đổi dòng này để khớp với cách bạn lưu trữ userId
   const userId = localStorage.getItem('userId') || 'd4011506-1c9b-4b86-be2c-1e6bc9d7d707'; 
@@ -17,7 +17,7 @@ const Sidebar = ({ role = 'admin', isCollapsed, setIsCollapsed }) => {
   const handleLogout = async () => {
     try {
       // 1. Gọi API đăng xuất
-      await axios.post(`https://localhost:7150/auth/logout?id=${userId}`);
+      await axios.post(`${apiUrl}/auth/logout?id=${userId}`);
 
       // 2. Xóa dữ liệu phiên làm việc (Token, User Info)
       localStorage.clear(); // Hoặc xóa cụ thể: localStorage.removeItem('token');

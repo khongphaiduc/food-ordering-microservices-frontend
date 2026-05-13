@@ -21,7 +21,7 @@ const ProductDetail = () => {
   const [cartCount, setCartCount] = useState(0);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
-
+  const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
   // --- LOGIC CHUYỂN ẢNH TỰ ĐỘNG CHO SẢN PHẨM CHÍNH ---
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -49,7 +49,7 @@ const ProductDetail = () => {
   const updateCartBadge = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await axios.get(`https://localhost:7150/cart/user-cart/${userId}`, {
+      const res = await axios.get(`${apiUrl}/cart/user-cart/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const count = res.data.cartItems?.filter(it => it.quantity > 0).length || 0;
@@ -103,7 +103,7 @@ const ProductDetail = () => {
       };
 
       try {
-        await axios.post('https://localhost:7150/tracking', payload);
+        await axios.post(`${apiUrl}/tracking`, payload);
         // Gửi thành công thì clear queue trong localStorage
         localStorage.removeItem('trackingQueue');
       } catch (error) {
@@ -123,7 +123,7 @@ const ProductDetail = () => {
         setLoading(true);
         
         // 1. Lấy chi tiết sản phẩm chính
-        const productRes = await axios.get(`https://localhost:7150/products/${id}`);
+        const productRes = await axios.get(`${apiUrl}/products/${id}`);
         const productData = productRes.data;
         setProduct(productData);
         setCurrentImageIndex(0);
@@ -139,7 +139,7 @@ const ProductDetail = () => {
         // 2. Lấy danh sách gợi ý
         if (productData.idCategory) {
           try {
-            const suggestedRes = await axios.get(`https://localhost:7150/products/recommendation/${productData.idCategory}`);
+            const suggestedRes = await axios.get(`${apiUrl}/products/recommendation/${productData.idCategory}`);
             const rawList = suggestedRes.data || [];
             
             if (Array.isArray(rawList)) {
@@ -188,7 +188,7 @@ const ProductDetail = () => {
 
     try {
       setIsAdding(true);
-      const cartRes = await axios.get(`https://localhost:7150/cart/user-cart/${userId}`, {
+      const cartRes = await axios.get(`${apiUrl}/cart/user-cart/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -212,7 +212,7 @@ const ProductDetail = () => {
         }))
       };
 
-      await axios.post('https://localhost:7150/cart/update-cart', payload, {
+      await axios.post(`${apiUrl}/cart/update-cart`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       

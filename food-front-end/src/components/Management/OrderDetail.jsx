@@ -9,7 +9,7 @@ const OrderDetail = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
-
+ const apiUrl = import.meta.env.VITE_API_URL;
     const ORDER_STATUS_CONFIG = {
         0: { label: "Chờ xử lý", class: "st-0" },
         1: { label: "Đã xác nhận", class: "st-1" },
@@ -23,7 +23,7 @@ const OrderDetail = () => {
         const fetchOrderDetail = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
-                const res = await axios.get(`https://localhost:7150/orders/${id}`, {
+                const res = await axios.get(`${apiUrl}/orders/${id}`, {s
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setOrder(res.data);

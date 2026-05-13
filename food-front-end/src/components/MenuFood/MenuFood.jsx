@@ -16,13 +16,13 @@ export default function ViewListProductFood() {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const dropdownRef = useRef(null);
-
+    const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
     const userId = localStorage.getItem("userId") || "9f3c2e7a-4b8d-4a6f-9c21-6f8d2a1b7c54";
 
     // 1. CẬP NHẬT BADGE GIỎ HÀNG
     const updateCartBadge = useCallback(async () => {
         try {
-            const res = await fetch(`https://localhost:7150/cart/user-cart/${userId}`);
+            const res = await fetch(`${apiUrl}/cart/user-cart/${userId}`);
             if (res.ok) {
                 const data = await res.json();
                 const count = data.cartItems?.filter(it => it.quantity > 0).length || 0;
@@ -53,8 +53,8 @@ export default function ViewListProductFood() {
         try {
             setLoading(true);
             const url = query.trim()
-                ? `https://localhost:7150/search/products?key=${encodeURIComponent(query)}&Index=${currentPage}`
-                : `https://localhost:7150/products?PageIndex=${currentPage}&pageSize=${pageSize}`;
+                ? `${apiUrl}/search/products?key=${encodeURIComponent(query)}&Index=${currentPage}`
+                : `${apiUrl}/products?PageIndex=${currentPage}&pageSize=${pageSize}`;
 
             const res = await fetch(url);
             if (!res.ok) throw new Error("Lỗi kết nối");
@@ -118,7 +118,7 @@ export default function ViewListProductFood() {
         }
         const timeoutId = setTimeout(async () => {
             try {
-                const res = await fetch(`https://localhost:7150/search/suggest?Name=${encodeURIComponent(searchTerm)}`);
+                const res = await fetch(`${apiUrl}/search/suggest?Name=${encodeURIComponent(searchTerm)}`);
                 if (res.ok) {
                     const data = await res.json();
                     setSuggestions(data);

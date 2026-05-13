@@ -10,7 +10,7 @@ const MenuManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalProduct, setTotalProduct] = useState(0);
     const navigate = useNavigate();
-
+ const apiUrl = import.meta.env.VITE_API_URL;
     useEffect(() => { 
         fetchProducts(); 
     }, [currentPage]);
@@ -18,7 +18,7 @@ const MenuManagement = () => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`https://localhost:7150/products?PageIndex=${currentPage}`);
+            const response = await axios.get(`${apiUrl}/products?PageIndex=${currentPage}`);
             setProducts(response.data.list);
             setTotalProduct(response.data.totalProduct);
         } catch (error) { 

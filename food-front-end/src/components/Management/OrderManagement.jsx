@@ -37,7 +37,7 @@ const OrderManagement = () => {
         fromDate: '', toDate: '', currentPage: 1, pageSize: 10
     });
 
-    const API_URL = 'https://localhost:7150'; 
+    const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:7264/api'; 
     const HUB_URL = 'https://localhost:7264/ordersHub';
 
     const getAuthToken = () => localStorage.getItem("accessToken");

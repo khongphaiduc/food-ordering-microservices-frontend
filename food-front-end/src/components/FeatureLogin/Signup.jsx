@@ -32,7 +32,10 @@ const Signup = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('https://localhost:7150/auth/signup', formData);
+
+            const apiUrl = import.meta.env.VITE_API_URL;
+
+            const response = await axios.post(`${apiUrl}/auth/signup`, formData);
             console.log("Đăng ký thành công:", response.data);
             setSuccess(true);
             
