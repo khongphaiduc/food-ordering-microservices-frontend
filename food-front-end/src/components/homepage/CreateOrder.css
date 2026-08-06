@@ -427,3 +427,63 @@
         margin-top: 10px;
     }
 }
+
+/* --- ANIMATION ERROR CROSS --- */
+.error-checkmark {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+}
+
+.error-circle {
+    stroke: var(--primary-color);
+    stroke-width: 4;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    animation: circleAnim 0.6s ease-in-out forwards;
+}
+
+.error-line1 {
+    stroke: var(--primary-color);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: checkAnim 0.3s 0.4s ease-in-out forwards;
+}
+
+.error-line2 {
+    stroke: var(--primary-color);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: checkAnim 0.3s 0.6s ease-in-out forwards;
+}
+
+.qr-modal-content.error-modal {
+    border-top: 6px solid var(--primary-color);
+}
+
+.error-btn {
+    background: var(--primary-color);
+}
+
+.error-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
+}
+
+.error-title {
+    color: var(--primary-color) !important;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.error-msg {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 0 10px 0;
+}

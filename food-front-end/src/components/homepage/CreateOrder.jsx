@@ -25,6 +25,7 @@ export default function ConfirmMenu() {
     const [showCashSuccess, setShowCashSuccess] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [connection, setConnection] = useState(null);
+    const [checkoutError, setCheckoutError] = useState(null);
 
     const token = localStorage.getItem("accessToken");
     const userId = localStorage.getItem("userId");
@@ -112,7 +113,7 @@ export default function ConfirmMenu() {
     // --- 4. Hàm xử lý đặt hàng ---
     const handleCheckout = async () => {
         if (!selectedAddressId) {
-            alert("Vui lòng chọn địa chỉ giao hàng!");
+            setCheckoutError("Vui lòng chọn địa chỉ giao hàng!");
             return;
         }
 
@@ -129,23 +130,43 @@ export default function ConfirmMenu() {
             });
 
             const result = response.data; 
+            const isSuccess = result?.statusCreateOrder ?? result?.StatusCreateOrder;
+            const message = result?.message ?? result?.Message;
+            const qrCode = result?.qrCodeString ?? result?.QRCodeString;
 
-            if (paymentMethod === 1) {
-                setQrCodeValue(result);
-                setIsPaid(false);
-                setShowQRModal(true);
-                window.dispatchEvent(new Event('cartUpdated')); 
-            } 
-            else if (paymentMethod === 2 && result === "Success") {
-                // Hiển thị modal thành công cho tiền mặt
-                setShowCashSuccess(true);
-                window.dispatchEvent(new Event('cartUpdated'));
-                // KHÔNG navigate tự động
+            if (isSuccess) {
+                if (paymentMethod === 1) {
+                    if (qrCode) {
+                        setQrCodeValue(qrCode);
+                        setIsPaid(false);
+                        setShowQRModal(true);
+                        window.dispatchEvent(new Event('cartUpdated')); 
+                    } else {
+                        setCheckoutError("Lỗi hệ thống: Không thể khởi tạo mã QR thanh toán PayOS.");
+                    }
+                } 
+                else if (paymentMethod === 2) {
+                    setShowCashSuccess(true);
+                    window.dispatchEvent(new Event('cartUpdated'));
+                }
             } else {
-                alert("Lỗi hệ thống: " + result);
+                setCheckoutError("Đặt hàng thất bại: " + (message || "Lỗi không xác định"));
             }
         } catch (error) {
-            alert("Đặt hàng thất bại, vui lòng thử lại.");
+            console.error("Lỗi đặt hàng:", error);
+            
+            // Đọc thông tin chi tiết lỗi từ backend nếu có
+            const errorData = error.response?.data;
+            const isReservationFailed = errorData?.errorCode === "INVENTORY_RESERVATION_FAILED" || errorData?.ErrorCode === "INVENTORY_RESERVATION_FAILED";
+            const errorMsg = errorData?.message ?? errorData?.Message;
+
+            if (isReservationFailed) {
+                setCheckoutError("Đặt hàng thất bại: " + (errorMsg || "Không đủ số lượng sản phẩm trong kho (Đặt chỗ tồn kho thất bại)."));
+            } else if (errorMsg) {
+                setCheckoutError("Đặt hàng thất bại: " + errorMsg);
+            } else {
+                setCheckoutError("Đặt hàng thất bại, vui lòng thử lại.");
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -294,6 +315,27 @@ export default function ConfirmMenu() {
                                 XÁC NHẬN
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* --- MODAL LỖI ĐẶT HÀNG --- */}
+            {checkoutError && (
+                <div className="qr-modal-overlay">
+                    <div className="qr-modal-content error-modal">
+                        <button className="modal-close-x" onClick={() => setCheckoutError(null)}>×</button>
+                        <div className="error-checkmark">
+                            <svg className="checkmark-svg" viewBox="0 0 100 100">
+                                <circle className="checkmark-circle error-circle" cx="50" cy="50" r="45" fill="none"/>
+                                <path className="checkmark-check error-line1" fill="none" d="M35 35 L65 65"/>
+                                <path className="checkmark-check error-line2" fill="none" d="M65 35 L35 65"/>
+                            </svg>
+                        </div>
+                        <h2 className="error-title">Đặt hàng thất bại</h2>
+                        <p className="error-msg">{checkoutError}</p>
+                        <button className="btn-confirm-next error-btn" onClick={() => setCheckoutError(null)}>
+                            ĐÓNG
+                        </button>
                     </div>
                 </div>
             )}

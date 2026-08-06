@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'; // Thêm useNavigate
 import axios from 'axios'; // Đảm bảo đã cài đặt axios: npm install axios
 import { 
   LayoutDashboard, ClipboardList, UtensilsCrossed, 
-  Users, Settings, LogOut, ChevronLeft, ChevronRight 
+  Users, Settings, LogOut, ChevronLeft, ChevronRight, Boxes, PlusCircle
 } from 'lucide-react';
 import './SideBar.css';
 
@@ -38,6 +38,8 @@ const Sidebar = ({ role = 'admin', isCollapsed, setIsCollapsed }) => {
     { id: 'overview', icon: <LayoutDashboard size={20} />, label: 'Tổng quan', roles: ['admin'], path: '/management/dashboard' },
     { id: 'orders', icon: <ClipboardList size={20} />, label: 'Đơn hàng', roles: ['admin', 'staff'], path: '/management/orders' },
     { id: 'menu', icon: <UtensilsCrossed size={20} />, label: 'Thực đơn', roles: ['admin'], path: '/management/menu' },
+    { id: 'inventory', icon: <Boxes size={20} />, label: 'Kho hàng', roles: ['admin'], path: '/management/inventory' },
+    { id: 'create-inventory', icon: <PlusCircle size={20} />, label: 'Nhập kho', roles: ['admin'], path: '/management/inventory/create' },
     { id: 'staff', icon: <Users size={20} />, label: 'Nhân viên', roles: ['admin'], path: '/management/staff' },
     { id: 'settings', icon: <Settings size={20} />, label: 'Cài đặt', roles: ['admin', 'staff'], path: '/management/settings' },
   ];

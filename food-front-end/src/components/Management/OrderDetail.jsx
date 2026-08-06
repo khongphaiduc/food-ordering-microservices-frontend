@@ -23,10 +23,10 @@ const OrderDetail = () => {
         const fetchOrderDetail = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
-                const res = await axios.get(`${apiUrl}/orders/${id}`, {s
+                const res = await axios.get(`${apiUrl}/orders/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setOrder(res.data);
+                setOrder(res.data); 
             } catch (err) {
                 console.error("Lỗi lấy chi tiết đơn hàng", err);
             } finally {

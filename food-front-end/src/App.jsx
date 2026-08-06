@@ -21,6 +21,8 @@ import StaffManagement from "./components/Management/StaffManagement";
 // IMPORT THÊM QUẢN LÝ HÓA ĐƠN
 import OrderManagement from "./components/Management/OrderManagement"; 
 import OrderDetail from "./components/Management/OrderDetail";
+import InventoryManagement from "./components/Management/InventoryManagement";
+import CreateInventory from "./components/Management/CreateInventory";
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   // Thêm /management/orders vào danh sách ẩn giỏ hàng (nếu cần thiết)
@@ -71,6 +73,8 @@ function App() {
           <Route path="/management/orders" element={<ManagementLayout><OrderManagement /></ManagementLayout>} />
 
           <Route path="/management/staff" element={<ManagementLayout><StaffManagement /></ManagementLayout>} />
+          <Route path="/management/inventory" element={<ManagementLayout><InventoryManagement /></ManagementLayout>} />
+          <Route path="/management/inventory/create" element={<ManagementLayout><CreateInventory /></ManagementLayout>} />
 
           {/* Route thêm mới sản phẩm */}
           <Route path="/management/product/add" element={<ManagementLayout><AddProduct /></ManagementLayout>} />
