@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { QRCodeCanvas } from 'qrcode.react';
 import './OrderHistory.css';
 
 export default function OrderHistory() {
@@ -8,6 +9,14 @@ export default function OrderHistory() {
     const [pageIndex, setPageIndex] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [selectedOrder, setSelectedOrder] = useState(null);
+
+    // QR Payment states
+    const [showQRModal, setShowQRModal] = useState(false);
+    const [qrCodeValue, setQrCodeValue] = useState("");
+    const [isGeneratingQR, setIsGeneratingQR] = useState(false);
+    const [paymentError, setPaymentError] = useState(null);
+    const [paymentOrderCode, setPaymentOrderCode] = useState("");
+
  const apiUrl = import.meta.env.VITE_API_URL;
     const userId = localStorage.getItem("userId") || "22EBC352-0CA9-4CB6-AC82-3CEA7C8099B2";
     const token = localStorage.getItem("accessToken");
@@ -15,6 +24,41 @@ export default function OrderHistory() {
     useEffect(() => {
         fetchOrders(pageIndex);
     }, [pageIndex, userId]);
+
+    const handlePayAgain = (orderCode) => {
+        setPaymentOrderCode(orderCode);
+        setShowQRModal(true);
+        setIsGeneratingQR(true);
+        setQrCodeValue("");
+        setPaymentError(null);
+
+        fetch(`${apiUrl}/payments/qrcode/${orderCode}`, {
+            method: 'GET',
+            headers: { 
+                'Authorization': token ? `Bearer ${token}` : ''
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Không thể tạo mã QR thanh toán.");
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data && data.qrCode) {
+                setQrCodeValue(data.qrCode);
+            } else {
+                throw new Error("Không nhận được mã QR hợp lệ từ hệ thống.");
+            }
+        })
+        .catch(err => {
+            console.error("Lỗi tạo QR:", err);
+            setPaymentError(err.message || "Đã xảy ra lỗi khi tạo mã QR.");
+        })
+        .finally(() => {
+            setIsGeneratingQR(false);
+        });
+    };
 
     const getOrderStatus = (status) => {
         switch(status) {
@@ -115,9 +159,16 @@ export default function OrderHistory() {
                                                 </span>
                                             </td>
                                             <td>
-                                                <button className="view-detail-btn" onClick={() => handleViewDetail(order.idOrder)}>
-                                                    Xem chi tiết 📜
-                                                </button>
+                                                <div className="action-buttons-cell">
+                                                    <button className="view-detail-btn" onClick={() => handleViewDetail(order.idOrder)}>
+                                                        Xem chi tiết 📜
+                                                    </button>
+                                                    {order.orderStatusPayment === 1 && (
+                                                        <button className="pay-btn" onClick={() => handlePayAgain(order.orderCode)}>
+                                                            Thanh toán 💳
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -186,9 +237,59 @@ export default function OrderHistory() {
                             </div>
                         </div>
 
-                        <div className="modal-footer-fixed">
+                        <div className="modal-footer-fixed flex-footer">
+                            {selectedOrder.orderStatusPayments === 1 && (
+                                <button 
+                                    className="btn-pay-now" 
+                                    onClick={() => {
+                                        setSelectedOrder(null);
+                                        handlePayAgain(selectedOrder.orderCode);
+                                    }}
+                                >
+                                    THANH TOÁN LẠI 💳
+                                </button>
+                            )}
                             <button className="btn-close-final" onClick={() => setSelectedOrder(null)}>ĐÓNG</button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* --- MODAL QR (PayOS) --- */}
+            {showQRModal && (
+                <div className="qr-modal-overlay-fixed" onClick={() => setShowQRModal(false)}>
+                    <div className="qr-modal-content-fixed" onClick={e => e.stopPropagation()}>
+                        <button className="modal-close-x-fixed" onClick={() => setShowQRModal(false)}>×</button>
+                        <h2>Quét mã thanh toán</h2>
+                        <p className="qr-subtitle">Đơn hàng: #{paymentOrderCode}</p>
+                        
+                        <div className="qr-code-wrapper-fixed">
+                            {isGeneratingQR ? (
+                                <div className="qr-spinner-container-fixed">
+                                    <div className="qr-spinner-fixed"></div>
+                                    <p>Đang tạo mã thanh toán...</p>
+                                </div>
+                            ) : paymentError ? (
+                                <div className="qr-error-container-fixed">
+                                    <span className="qr-error-icon-fixed">⚠️</span>
+                                    <p>{paymentError}</p>
+                                </div>
+                            ) : (
+                                qrCodeValue && <QRCodeCanvas value={qrCodeValue} size={220} />
+                            )}
+                        </div>
+                        
+                        <p className="qr-instruction-fixed">🔔 Sử dụng ứng dụng ngân hàng hoặc ví điện tử để quét mã</p>
+                        
+                        <button 
+                            className="btn-confirm-next-fixed"
+                            onClick={() => {
+                                setShowQRModal(false);
+                                fetchOrders(pageIndex); // Refresh order list to get updated status
+                            }}
+                        >
+                            TÔI ĐÃ THANH TOÁN
+                        </button>
                     </div>
                 </div>
             )}

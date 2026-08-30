@@ -51,3 +51,194 @@
 .modal-total-fixed { background: #fff9db; padding: 20px; border-radius: 12px; border: 1px dashed #ffd700; }
 .total-row-fixed { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.3rem; color: #d32f2f; }
 .btn-close-final { width: 100%; background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+
+/* --- RE-PAYMENT & LAYOUT STYLES --- */
+.action-buttons-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-footer {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 15px 25px !important;
+}
+
+.flex-footer .btn-close-final {
+    margin-top: 0 !important;
+    flex: 1;
+}
+
+.pay-btn {
+    background: #00b894 !important;
+    color: white !important;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 130px;
+    box-shadow: 0 4px 6px rgba(0, 184, 148, 0.2);
+}
+
+.pay-btn:hover {
+    background: #00a082 !important;
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3);
+}
+
+.btn-pay-now {
+    flex: 1;
+    background: #00b894;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 184, 148, 0.2);
+}
+
+.btn-pay-now:hover {
+    background: #00a082;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 184, 148, 0.3);
+}
+
+/* --- QR MODAL OVERLAY --- */
+.qr-modal-overlay-fixed {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.qr-modal-content-fixed {
+    background: white;
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    position: relative;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-close-x-fixed {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    transition: 0.2s;
+}
+
+.modal-close-x-fixed:hover {
+    color: #333;
+}
+
+.qr-subtitle {
+    margin: 5px 0 15px;
+    font-size: 1.1rem;
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.qr-code-wrapper-fixed {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 16px;
+    display: inline-block;
+    margin: 10px 0 20px;
+    border: 1px solid #eee;
+    min-width: 260px;
+    min-height: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-instruction-fixed {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 10px 0;
+}
+
+.btn-confirm-next-fixed {
+    width: 100%;
+    background: #00b894;
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
+}
+
+.btn-confirm-next-fixed:hover {
+    background: #00a082;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3);
+}
+
+/* --- QR MODAL LOADING SPINNER & ERROR --- */
+.qr-spinner-container-fixed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    color: #666;
+}
+
+.qr-spinner-fixed {
+    width: 45px;
+    height: 45px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #d32f2f;
+    border-radius: 50%;
+    animation: qr-spin-fixed 1s linear infinite;
+}
+
+@keyframes qr-spin-fixed {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.qr-error-container-fixed {
+    color: #d32f2f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-width: 220px;
+}
+
+.qr-error-icon-fixed {
+    font-size: 2.5rem;
+}

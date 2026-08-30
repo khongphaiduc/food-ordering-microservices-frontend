@@ -172,13 +172,11 @@ export default function ViewListProductFood() {
 
             <div className="fixed-nav-group">
                 <button className="nav-floating-btn cart" onClick={() => window.dispatchEvent(new Event('openCart'))}>
-                    <span className="icon">🧧</span>
-                    <span className="label">Lộc Xuân</span>
+                    <span className="label">Rỏ Hàng</span>
                     {cartCount > 0 && <span className="badge">{cartCount}</span>}
                 </button>
                 <button className="nav-floating-btn home" onClick={() => navigate('/')}>
-                    <span className="icon">🏠</span>
-                    <span className="label">Trang Chủ</span>
+                    <span className="label">Home</span>
                 </button>
             </div>
 

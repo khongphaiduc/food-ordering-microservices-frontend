@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FoodCard from './FoodCard';
-import ShoppingCart from './CartDrawer'; 
 import './home.css';
 
 export default function Home() {
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDrawerActive, setIsDrawerActive] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
    const apiUrl = import.meta.env.VITE_API_URL;
   // State quản lý Menu User
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -214,6 +214,16 @@ export default function Home() {
             <span className="cart-icon">🧧</span>
           </button>
         </nav>
+
+        {/* Mobile Header Actions */}
+        <div className="mobile-header-actions">
+          <button className={`cart-header-btn-mobile ${isDrawerActive ? 'hidden' : ''}`} onClick={handleOpenCart}>
+            <span className="cart-icon">🧧</span>
+          </button>
+          <button className="mobile-menu-toggle" onClick={() => setShowMobileMenu(true)}>
+            <span className="burger-icon">☰</span>
+          </button>
+        </div>
       </header>
 
       <section className="hero">
@@ -257,9 +267,54 @@ export default function Home() {
         </button>
       </div>
 
-      <ShoppingCart />
+      {/* MOBILE MENU DRAWER */}
+      {showMobileMenu && (
+        <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
+          <div className="mobile-menu-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-menu-header">
+              <div className="mobile-menu-logo" style={{color: '#d32f2f'}}>
+                TRUNGDUCFOODLY
+              </div>
+              <button className="btn-close-menu" onClick={() => setShowMobileMenu(false)}>✕</button>
+            </div>
+            
+            <div className="mobile-menu-body">
+              <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link">
+                Thực đơn Tết 🧧
+              </Link>
+              
+              <div className="mobile-menu-divider"></div>
+              
+              {userName ? (
+                <div className="mobile-user-section">
+                  <div className="mobile-user-info">
+                    Chào, <strong>{userName}</strong> 🧧
+                  </div>
+                  <Link to="/profile" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link">
+                    👤 Hồ sơ cá nhân
+                  </Link>
+                  <Link to="/orders" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link">
+                    🛍️ Đơn của bạn
+                  </Link>
+                  <div className="mobile-menu-divider"></div>
+                  <button 
+                    onClick={() => { localStorage.clear(); window.location.reload(); }} 
+                    className="btn-mobile-logout"
+                  >
+                    🚪 Thoát tài khoản
+                  </button>
+                </div>
+              ) : (
+                <Link to="/login" onClick={() => setShowMobileMenu(false)} className="btn-mobile-login">
+                  Đăng nhập 🔑
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
-      <footer style={{ padding: '60px', textAlign: 'center', color: '#d32f2f', background: '#fffaf0', borderTop: '1px solid #fee2e2' }}>
+      <footer className="homepage-footer">
         © 2026 Foodly — Phạm Trung Đức - Chúc Mừng Năm Mới 🧨
       </footer>
     </div>

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
   ShoppingCart as CartIcon, ArrowLeft, Plus, Minus, Loader2, 
-  Star, Clock, ShieldCheck, CheckCircle2, ChevronLeft, ChevronRight 
+  Star, Clock, ShieldCheck, ChevronLeft, ChevronRight 
 } from 'lucide-react';
 
 import FoodCard from '../homepage/FoodCard';
@@ -21,6 +21,7 @@ const ProductDetail = () => {
   const [cartCount, setCartCount] = useState(0);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+
   const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
   // --- LOGIC CHUYỂN ẢNH TỰ ĐỘNG CHO SẢN PHẨM CHÍNH ---
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -180,6 +181,9 @@ const ProductDetail = () => {
 
   // --- THÊM VÀO GIỎ HÀNG ---
   const handleAddToCart = async () => {
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 1000);
+    return;
     if (!userId || !token) {
       alert("Vui lòng đăng nhập!");
       navigate('/login');
@@ -221,7 +225,7 @@ const ProductDetail = () => {
 
       window.dispatchEvent(new Event('cartUpdated'));
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setTimeout(() => setShowToast(false), 1000);
 
     } catch (error) {
       if(error.response?.status === 401) navigate('/login');
@@ -235,21 +239,14 @@ const ProductDetail = () => {
 
   return (
     <div className="modern-detail-wrapper">
-      <div className={`modern-toast ${showToast ? 'show' : ''}`}>
-        <div className="toast-content">
-          <div className="toast-icon-circle"><CheckCircle2 size={20} color="#fff" /></div>
-          <div className="toast-message">
-            <span className="toast-title">Thành công!</span>
-            <span className="toast-body">Đã thêm vào thực đơn xuân.</span>
-          </div>
-        </div>
-        <div className="toast-progress"></div>
+      <div className={`simple-mini-toast ${showToast ? 'show' : ''}`}>
+        Đã thêm
       </div>
+
 
       <div className={`fixed-nav-group ${isCartOpen ? 'hidden' : ''}`}>
         <button className="nav-floating-btn cart" onClick={handleOpenCartDrawer}>
-          <span className="icon">🛒</span>
-          <span className="label">Giỏ hàng</span>
+          <span className="label">Rỏ Hàng</span>
           {cartCount > 0 && <span className="badge">{cartCount}</span>}
         </button>
       </div>
@@ -257,7 +254,7 @@ const ProductDetail = () => {
       <div className="container">
         <div className="detail-top-bar">
           <button className="glass-back-btn" onClick={() => navigate('/menu')}>
-            <ArrowLeft size={20} /> <span>Quay lại thực đơn</span>
+            <span>Home</span>
           </button>
         </div>
 

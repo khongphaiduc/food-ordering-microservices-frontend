@@ -51,8 +51,10 @@
     color: #d63031;
 }
 
-.nav-floating-btn:hover {
-    transform: scale(1.08) translateX(-5px);
+@media (hover: hover) {
+    .nav-floating-btn:hover {
+        transform: scale(1.08) translateX(-5px);
+    }
 }
 
 .nav-floating-btn .icon { font-size: 1.2rem; }
@@ -143,8 +145,81 @@
     .search-controls { width: 100%; max-width: none; }
 }
 
+@media (max-width: 768px) {
+    .tet-decoration {
+        display: none !important;
+    }
+}
+
 @media (max-width: 600px) {
-    .fixed-nav-group { bottom: 15px; right: 15px; }
-    .nav-floating-btn { min-width: auto; padding: 12px; border-radius: 50%; }
-    .nav-floating-btn .label { display: none; } /* Ẩn chữ trên mobile */
+    .menu-page-container {
+        padding: 12px;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .header-divider {
+        margin-bottom: 20px;
+    }
+    
+    .search-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .search-box-wrapper {
+        flex: 1 1 100%;
+    }
+    
+    .search-input-modern {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+    
+    .btn-action {
+        flex: 1;
+        height: 38px;
+        font-size: 13px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .food-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+    }
+
+    .fixed-nav-group {
+        bottom: 15px;
+        right: 15px;
+        gap: 8px;
+    }
+    
+    .nav-floating-btn {
+        min-width: auto;
+        width: auto;
+        height: auto;
+        padding: 8px 16px;
+        border-radius: 30px;
+        position: relative;
+        justify-content: center;
+    }
+    
+    .nav-floating-btn .label {
+        display: inline-block;
+    }
+    
+    .nav-floating-btn .badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        margin: 0;
+        padding: 1px 5px;
+        font-size: 0.65rem;
+        border: 1px solid #ffd700;
+    }
 }

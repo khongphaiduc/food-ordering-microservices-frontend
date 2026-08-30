@@ -21,7 +21,7 @@ export default function ConfirmMenu() {
     const navigate = useNavigate();
     const [cartData, setCartData] = useState(location.state?.cartData || null);
     const [updatingId, setUpdatingId] = useState(null);
-    const [paymentMethod, setPaymentMethod] = useState(1); // 1: PayOS, 2: Tiền mặt
+    const paymentMethod = 1; // 1: PayOS, 2: Tiền mặt (Mặc định)
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -37,6 +37,8 @@ export default function ConfirmMenu() {
     const [showCashSuccess, setShowCashSuccess] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [connection, setConnection] = useState(null);
+    const [qrConnection, setQrConnection] = useState(null);
+    const [orderUserConnection, setOrderUserConnection] = useState(null);
     const [checkoutError, setCheckoutError] = useState(null);
 
     // --- State lưu Idempotency Key (chỉ dùng cho lần retry cùng thao tác) ---
@@ -72,27 +74,68 @@ export default function ConfirmMenu() {
 
     // --- 2. Khởi tạo SignalR ---
     useEffect(() => {
+        const paymentServiceUrl = "https://localhost:7251";
+        const orderServiceUrl = "https://localhost:7264";
+
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(`${apiUrl}/notificationPayOS`, {
+            .withUrl(`${paymentServiceUrl}/notificationPayOS`, {
                 accessTokenFactory: () => token
             })
             .withAutomaticReconnect()
             .build();
         setConnection(newConnection);
-        return () => { if (newConnection) newConnection.stop(); };
-    }, [token, apiUrl]);
+
+        const newQrConnection = new signalR.HubConnectionBuilder()
+            .withUrl(`${paymentServiceUrl}/QRCodeOrder`, {
+                accessTokenFactory: () => token
+            })
+            .withAutomaticReconnect()
+            .build();
+        setQrConnection(newQrConnection);
+
+        const newOrderUserConnection = new signalR.HubConnectionBuilder()
+            .withUrl(`${orderServiceUrl}/orderofuser`, {
+                accessTokenFactory: () => token
+            })
+            .withAutomaticReconnect()
+            .build();
+        setOrderUserConnection(newOrderUserConnection);
+
+        return () => {
+            if (newConnection) newConnection.stop();
+            if (newQrConnection) newQrConnection.stop();
+            if (newOrderUserConnection) newOrderUserConnection.stop();
+        };
+    }, [token]);
 
     useEffect(() => {
         if (connection) {
-            connection.start()
-                .then(() => {
-                    connection.on("mynofication", (message) => {
-                        setIsPaid(true);
-                    });
-                })
-                .catch(err => console.error("❌ SignalR Error: ", err));
+            connection.on("mynofication", (message) => {
+                setIsPaid(true);
+            });
+            connection.start().catch(err => console.error("❌ [SignalR PayOS] Lỗi kết nối:", err));
         }
     }, [connection]);
+
+    useEffect(() => {
+        if (qrConnection) {
+            qrConnection.on("ViewQRCodeOrderMethod", (qrCode) => {
+                setQrCodeValue(qrCode);
+                setShowQRModal(true);
+            });
+            qrConnection.start().catch(err => console.error("❌ [SignalR QR] Lỗi kết nối:", err));
+        }
+    }, [qrConnection]);
+
+    useEffect(() => {
+        if (orderUserConnection) {
+            orderUserConnection.on("OrderPaySuccessfully", (message) => {
+                console.log("💰 [SignalR OrderPaySuccessfully]:", message);
+                setIsPaid(true);
+            });
+            orderUserConnection.start().catch(err => console.error("❌ [SignalR OrderOfUser] Lỗi kết nối:", err));
+        }
+    }, [orderUserConnection]);
 
     // --- 3. Hàm cập nhật số lượng ---
     const updateQuantity = async (productId, variantId, newQuantity) => {
@@ -135,11 +178,6 @@ export default function ConfirmMenu() {
         setCurrentIdempotencyKey(null);
     };
 
-    const handlePaymentMethodChange = (method) => {
-        setPaymentMethod(method);
-        setCurrentIdempotencyKey(null);
-    };
-
     // --- 4. Hàm xử lý đặt hàng với Idempotency Key chuẩn ---
     const handleCheckout = async () => {
         if (!selectedAddressId) {
@@ -168,24 +206,15 @@ export default function ConfirmMenu() {
                 }
             });
 
-            const result = response.data;
-            const isSuccess = result?.statusCreateOrder ?? result?.StatusCreateOrder;
-            const message = result?.message ?? result?.Message;
-            const qrCode = result?.qrCodeString ?? result?.QRCodeString;
-
-            if (isSuccess) {
+            if (response.status === 200) {
                 // Đặt hàng thành công -> Xóa key đã hoàn tất
                 setCurrentIdempotencyKey(null);
 
                 if (paymentMethod === 1) {
-                    if (qrCode) {
-                        setQrCodeValue(qrCode);
-                        setIsPaid(false);
-                        setShowQRModal(true);
-                        window.dispatchEvent(new Event('cartUpdated'));
-                    } else {
-                        setCheckoutError("Lỗi hệ thống: Không thể khởi tạo mã QR thanh toán PayOS.");
-                    }
+                    setQrCodeValue(""); // Reset mã QR cũ, chờ SignalR gửi mã mới
+                    setIsPaid(false);
+                    setShowQRModal(true);
+                    window.dispatchEvent(new Event('cartUpdated'));
                 } else if (paymentMethod === 2) {
                     setShowCashSuccess(true);
                     window.dispatchEvent(new Event('cartUpdated'));
@@ -193,7 +222,7 @@ export default function ConfirmMenu() {
             } else {
                 // Thất bại do logic nghiệp vụ từ backend -> Làm mới key cho lần thử sau
                 setCurrentIdempotencyKey(null);
-                setCheckoutError("Đặt hàng thất bại: " + (message || "Lỗi không xác định"));
+                setCheckoutError("Đặt hàng thất bại.");
             }
         } catch (error) {
             console.error("Lỗi đặt hàng:", error);
@@ -306,23 +335,9 @@ export default function ConfirmMenu() {
 
                 <div className="order-summary">
                     <h3>Thanh toán</h3>
-                    <div className="payment-methods">
-                        <label className={`payment-option ${paymentMethod === 1 ? 'active' : ''}`}>
-                            <input
-                                type="radio"
-                                checked={paymentMethod === 1}
-                                onChange={() => handlePaymentMethodChange(1)}
-                            />
-                            <span>💳 Chuyển khoản (PayOS)</span>
-                        </label>
-                        <label className={`payment-option ${paymentMethod === 2 ? 'active' : ''}`}>
-                            <input
-                                type="radio"
-                                checked={paymentMethod === 2}
-                                onChange={() => handlePaymentMethodChange(2)}
-                            />
-                            <span>💵 Tiền mặt khi nhận hàng</span>
-                        </label>
+                    <div className="payment-info-static" style={{ margin: '20px 0', fontSize: '0.95rem', color: 'var(--text-gray)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span>Phương thức:</span>
+                        <span style={{ fontWeight: '600', color: 'var(--text-dark)' }}>💳 Chuyển khoản (PayOS)</span>
                     </div>
                     <div className="summary-row total">
                         <span>Tổng cộng:</span>
@@ -347,10 +362,26 @@ export default function ConfirmMenu() {
                             <>
                                 <button className="modal-close-x" onClick={() => setShowQRModal(false)}>×</button>
                                 <h2>Quét mã thanh toán</h2>
-                                <div className="qr-code-wrapper">
-                                    <QRCodeCanvas value={qrCodeValue} size={220} />
+                                <div className="qr-code-wrapper" style={{ minWidth: '220px', minHeight: '220px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    {qrCodeValue ? (
+                                        <QRCodeCanvas value={qrCodeValue} size={220} />
+                                    ) : (
+                                        <div className="qr-spinner-container">
+                                            <div className="qr-spinner"></div>
+                                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-gray)' }}>Đang tạo mã thanh toán...</p>
+                                        </div>
+                                    )}
                                 </div>
                                 <p>🔔 Đang chờ xác nhận giao dịch...</p>
+                                <button 
+                                    className="btn-confirm-next"
+                                    onClick={() => {
+                                        setShowQRModal(false);
+                                        navigate('/');
+                                    }}
+                                >
+                                    TÔI ĐÃ THANH TOÁN
+                                </button>
                             </>
                         ) : (
                             <div className="success-anim">
@@ -414,4 +445,4 @@ export default function ConfirmMenu() {
             )}
         </div>
     );
-}
+} 

@@ -182,7 +182,7 @@
   background: #b91c1c;
 }
 
-.badge {
+.photo-item .badge {
   position: absolute;
   bottom: 0;
   width: 100%;
