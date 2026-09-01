@@ -314,7 +314,7 @@ const Signup = () => {
                             <p className="footer-text">
                                 Đã có tài khoản Tết?{' '}
                                 <Link to="/login" className="login-gold-link">
-                                    Đăng nhập hái lộc ngay <ArrowRight size={14} className="inline-arrow" />
+                                    Đăng nhập đặt món liền tay <ArrowRight size={14} className="inline-arrow" />
                                 </Link>
                             </p>
                         </div>
