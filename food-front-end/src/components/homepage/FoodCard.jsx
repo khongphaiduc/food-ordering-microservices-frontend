@@ -15,7 +15,6 @@ export default function FoodCard({ food }) {
         <p className="food-card-desc">{food.desc}</p>
         
         <div className="food-card-actions">
-          {/* Chỉ giữ lại nút Chi tiết và cho nó chiếm toàn bộ chiều rộng */}
           <Link to={`/detail/${food.id}`} className="btn-outline">
             Xem chi tiết món ăn
           </Link>

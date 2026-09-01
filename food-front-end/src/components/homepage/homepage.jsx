@@ -174,6 +174,43 @@ export default function Home() {
 
   const handleOpenCart = () => window.dispatchEvent(new Event('openCart'));
 
+  const handleQuickAddToCart = async (foodItem) => {
+    if (!userId || !token) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      return;
+    }
+    try {
+      const cartRes = await axios.get(`${apiUrl}/cart/user-cart/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const idCart = cartRes.data.idCart;
+      let currentItems = cartRes.data.cartItems || [];
+      const existingIndex = currentItems.findIndex(it => it.idProduct === foodItem.id);
+      if (existingIndex > -1) {
+        currentItems[existingIndex].quantity += 1;
+      } else {
+        currentItems.push({ idProduct: foodItem.id, idVariant: null, quantity: 1 });
+      }
+
+      await axios.post(`${apiUrl}/cart/update-cart`, {
+        IdCart: idCart,
+        CartItems: currentItems.map(it => ({
+          ProductId: it.idProduct,
+          VariantId: it.idVariant || null,
+          Quantity: it.quantity
+        }))
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      window.dispatchEvent(new Event('cartUpdated'));
+      window.dispatchEvent(new Event('openCart'));
+    } catch (e) {
+      console.error("Lỗi thêm vào giỏ hàng:", e);
+      alert("Không thể thêm vào giỏ hàng, vui lòng thử lại!");
+    }
+  };
+
   const featuredFoods = foods.filter(f => f.featured);
 
   return (
@@ -357,7 +394,7 @@ export default function Home() {
           <>
             <div className="grid">
               {foods.map(food => (
-                <FoodCard key={food.id} food={food} onAdd={handleOpenCart} />
+                <FoodCard key={food.id} food={food} />
               ))}
             </div>
             <div style={{ textAlign: 'center', marginTop: '50px', marginBottom: '20px' }}>

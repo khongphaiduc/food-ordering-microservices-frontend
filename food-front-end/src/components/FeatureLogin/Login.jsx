@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Thư viện giải mã token
 import axios from 'axios';
+import longdentetImg from '../../assets/longdentet.png';
+import hoadaotraiImg from '../../assets/hoadaotrai.webp';
+import tetdoanvienImg from '../../assets/tetdoanvien.webp';
 import './login.css';
 
 const Login = () => {
@@ -10,20 +13,8 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [envelopes, setEnvelopes] = useState([]);
     
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const items = Array.from({ length: 20 }).map((_, i) => ({
-            id: i,
-            left: Math.random() * 100,
-            delay: Math.random() * 8,
-            duration: 6 + Math.random() * 6,
-            size: 1.5 + Math.random() * 2
-        }));
-        setEnvelopes(items);
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -76,23 +67,13 @@ const Login = () => {
 
     return (
         <div className="login-wrapper tet-theme">
-            <div className="li-xi-container">
-                {envelopes.map(env => (
-                    <div key={env.id} className="li-xi" 
-                        style={{ 
-                            left: `${env.left}%`, 
-                            animationDelay: `${env.delay}s`,
-                            animationDuration: `${env.duration}s`,
-                            fontSize: `${env.size}rem`
-                        }}>🧧</div>
-                ))}
-            </div>
+            {/* Lồng đèn góc phải trên màn hình */}
+            <img src={longdentetImg} alt="Lồng đèn Tết" className="top-right-longden-img" />
 
             <div className="login-card-custom shadow-lg">
-                <div className="cherry-blossom-top">🌸</div>
                 
                 <div className="login-image-section d-none d-md-block">
-                    <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80" alt="Tet Holiday" />
+                    <img src={tetdoanvienImg} alt="Tết Đoàn Viên" />
                     <div className="image-overlay">
                         <h3>FOODLY - TẾT ĐOÀN VIÊN</h3>
                         <p>Khai xuân như ý, lì xì đầy tay!</p>
@@ -102,7 +83,11 @@ const Login = () => {
                 <div className="login-form-section">
                     <div className="text-center">
                         <h1 className="login-logo">FOODLY.</h1>
-                        <p className="tet-greeting">🏮 CHÚC MỪNG NĂM MỚI 🏮</p>
+                        <p className="tet-greeting">
+                            <img src={hoadaotraiImg} alt="Hoa đào" className="greeting-hoadaotrai-icon" />
+                            <span>CHÚC MỪNG NĂM MỚI</span>
+                            <img src={hoadaotraiImg} alt="Hoa đào" className="greeting-hoadaotrai-icon flipped" />
+                        </p>
                     </div>
 
                     {error && <div className="alert alert-danger p-2 small text-center">{error}</div>}
@@ -141,7 +126,7 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-            <div className="lantern-bottom">🏮</div>
+            <img src={hoadaotraiImg} alt="Hoa đào góc dưới" className="hoadaotrai-bottom-img" />
         </div>
     );
 };

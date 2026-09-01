@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
+import khungOrderImg from '../../assets/khungOrder.jpg';
 import './OrderHistory.css';
 
 export default function OrderHistory() {
     const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [initialLoading, setInitialLoading] = useState(true);
+    const [isPageChanging, setIsPageChanging] = useState(false);
     const [pageIndex, setPageIndex] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -81,8 +83,10 @@ export default function OrderHistory() {
         }
     };
 
-    const fetchOrders = (page) => {
-        setLoading(true);
+    const fetchOrders = (page, isFirst = false) => {
+        if (isFirst) setInitialLoading(true);
+        else setIsPageChanging(true);
+
         fetch(`${apiUrl}/orders/histories`, {
             method: 'POST',
             headers: { 
@@ -95,9 +99,12 @@ export default function OrderHistory() {
         .then(data => {
             setOrders(data.orderHistory || []);
             setTotalPages(data.totalPages || 1);
-            setLoading(false);
         })
-        .catch(() => setLoading(false));
+        .catch(err => console.error("Lỗi tải đơn hàng:", err))
+        .finally(() => {
+            setInitialLoading(false);
+            setIsPageChanging(false);
+        });
     };
 
     const handleViewDetail = (orderId) => {
@@ -120,35 +127,45 @@ export default function OrderHistory() {
                 <span>🔙 Trang chủ</span>
             </Link>
 
-            <main className="tet-border-outer">
-                <div className="tet-border-inner">
+            <main className="tet-order-frame-wrapper">
+                <img src={khungOrderImg} alt="Khung đơn hàng" className="tet-order-frame-bg" />
+                <div className="tet-order-frame-content">
                     <h2 className="section-title-tet">🧧 LỊCH SỬ ĐƠN HÀNG 🧧</h2>
 
-                    {loading ? (
+                    {initialLoading ? (
                         <div className="loading-state">🌸 Đang tải danh sách đơn hàng...</div>
                     ) : (
-                        <div className="table-responsive">
+                        <div className={`table-responsive ${isPageChanging ? 'changing-page' : ''}`}>
+                            {isPageChanging && (
+                                <div className="page-change-overlay">
+                                    <div className="qr-spinner-fixed" />
+                                </div>
+                            )}
                             <table className="tet-table">
                                 <thead>
                                     <tr>
-                                        <th>Mã Đơn</th>
-                                        <th>Ngày Đặt</th>
-                                        <th>Tổng Tiền</th> {/* Thêm cột tổng tiền */}
-                                        <th>Thanh Toán</th>
+                                        <th className="col-order-code">Mã Đơn</th>
+                                        <th className="col-date">Ngày Đặt</th>
+                                        <th>Tổng Tiền</th>
+                                        <th className="col-payment-status">Thanh Toán</th>
                                         <th>Vận Chuyển</th>
-                                        <th>Thao Tác</th>
+                                        <th className="col-action">Hành Động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {orders.map((order) => (
-                                        <tr key={order.idOrder}>
-                                            <td className="code-highlight">#{order.orderCode}</td>
-                                            <td>{new Date(order.createAt).toLocaleDateString('vi-VN')}</td>
-                                            {/* Hiển thị số tiền của order */}
+                                        <tr 
+                                            key={order.idOrder}
+                                            className="order-row-clickable"
+                                            onClick={() => handleViewDetail(order.idOrder)}
+                                            title="Bấm vào để xem chi tiết đơn hàng"
+                                        >
+                                            <td className="code-highlight col-order-code">#{order.orderCode}</td>
+                                            <td className="col-date">{new Date(order.createAt).toLocaleDateString('vi-VN')}</td>
                                             <td className="price-column">
                                                 {order.totalPrice?.toLocaleString()}đ
                                             </td>
-                                            <td>
+                                            <td className="col-payment-status">
                                                 <span className={`status-pill ${getPaymentStatus(order.orderStatusPayment).class}`}>
                                                     {getPaymentStatus(order.orderStatusPayment).text}
                                                 </span>
@@ -158,13 +175,13 @@ export default function OrderHistory() {
                                                     {getOrderStatus(order.orderStatus).text}
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td className="col-action">
                                                 <div className="action-buttons-cell">
-                                                    <button className="view-detail-btn" onClick={() => handleViewDetail(order.idOrder)}>
+                                                    <button className="view-detail-btn desktop-only" onClick={(e) => { e.stopPropagation(); handleViewDetail(order.idOrder); }}>
                                                         Xem chi tiết 📜
                                                     </button>
                                                     {order.orderStatusPayment === 1 && (
-                                                        <button className="pay-btn" onClick={() => handlePayAgain(order.orderCode)}>
+                                                        <button className="pay-btn" onClick={(e) => { e.stopPropagation(); handlePayAgain(order.orderCode); }}>
                                                             Thanh toán 💳
                                                         </button>
                                                     )}

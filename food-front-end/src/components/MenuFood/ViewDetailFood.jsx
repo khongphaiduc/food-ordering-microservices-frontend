@@ -181,11 +181,8 @@ const ProductDetail = () => {
 
   // --- THÊM VÀO GIỎ HÀNG ---
   const handleAddToCart = async () => {
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 1000);
-    return;
     if (!userId || !token) {
-      alert("Vui lòng đăng nhập!");
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
       navigate('/login');
       return;
     }
@@ -199,12 +196,12 @@ const ProductDetail = () => {
       const idCart = cartRes.data.idCart;
       let currentItems = cartRes.data.cartItems || [];
       const vId = selectedVariant?.idVariant || null;
-      const existingIndex = currentItems.findIndex(it => it.idProduct === product.idProduct && it.idVariant === vId);
+      const existingIndex = currentItems.findIndex(it => it.idProduct === (product.idProduct || id) && it.idVariant === vId);
 
       if (existingIndex > -1) {
         currentItems[existingIndex].quantity += quantity;
       } else {
-        currentItems.push({ idProduct: product.idProduct, idVariant: vId, quantity: quantity });
+        currentItems.push({ idProduct: product.idProduct || id, idVariant: vId, quantity: quantity });
       }
 
       const payload = {
@@ -224,11 +221,14 @@ const ProductDetail = () => {
       trackUserAction(3, product.idProduct || id);
 
       window.dispatchEvent(new Event('cartUpdated'));
+      window.dispatchEvent(new Event('openCart'));
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 1000);
+      setTimeout(() => setShowToast(false), 1200);
 
     } catch (error) {
+      console.error("Lỗi thêm vào giỏ hàng:", error);
       if(error.response?.status === 401) navigate('/login');
+      else alert("Không thể thêm sản phẩm vào giỏ hàng!");
     } finally { setIsAdding(false); }
   };
 
