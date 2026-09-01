@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-    Search, 
-    RotateCcw, 
-    ChevronLeft, 
-    ChevronRight, 
-    Sparkles, 
-    Flame
+import {
+    Search,
+    RotateCcw,
+    ChevronLeft,
+    ChevronRight,
+    Sparkles,
+    Flame,
+    Home
 } from 'lucide-react';
 import FoodCard from '../homepage/FoodCard';
 import BrandLogo from '../homepage/BrandLogo';
@@ -87,7 +88,7 @@ export default function ViewListProductFood() {
 
                 if (Array.isArray(data)) {
                     rawItems = data;
-                    total = data.length; 
+                    total = data.length;
                 } else {
                     rawItems = data.list || data.items || [];
                     total = data.totalProduct || data.totalCount || rawItems.length;
@@ -95,9 +96,9 @@ export default function ViewListProductFood() {
 
                 const mappedFoods = rawItems.map(f => {
                     const images = f.productImageInternalDTOs || f.imageFoods || f.productImageDTOs || [];
-                    const mainImage = images.find(img => img.isMain)?.urlImage 
-                                    || images[0]?.urlImage 
-                                    || "https://via.placeholder.com/300";
+                    const mainImage = images.find(img => img.isMain)?.urlImage
+                        || images[0]?.urlImage
+                        || "https://via.placeholder.com/300";
 
                     return {
                         id: f.id,
@@ -173,9 +174,9 @@ export default function ViewListProductFood() {
 
         for (let i = startPage; i <= endPage; i++) {
             pages.push(
-                <button 
-                    key={i} 
-                    className={`page-number ${currentPage === i ? 'active' : ''}`} 
+                <button
+                    key={i}
+                    className={`page-number ${currentPage === i ? 'active' : ''}`}
                     onClick={() => setCurrentPage(i)}
                 >
                     {i}
@@ -248,10 +249,10 @@ export default function ViewListProductFood() {
                 <div className="menu-hero-header">
                     <div className="header-text-block">
                         <div className="tet-tag-badge">
-                            <Sparkles size={15} /> <span>MÂM CỖ NGÀY TẾT</span> <Sparkles size={15} />
+                            <Sparkles size={15} /> <span>HÔM NAY BẠN ĂN GÌ </span> <Sparkles size={15} />
                         </div>
-                        <h1 className="page-title">🏮 Mỹ Vị Khai Xuân 🏮</h1>
-                        <p className="results-subtitle">Tìm thấy <b>{totalItems}</b> món ngon đãi tiệc gia đình</p>
+                        <h1 className="page-title">🏮 Xuân Về – Bếp Ấm, Nhà Vui</h1>
+
                     </div>
 
                     {/* THANH TÌM KIẾM HẬU CẦN */}
@@ -300,9 +301,9 @@ export default function ViewListProductFood() {
                         <div className="food-grid">
                             {foods.length > 0 ? (
                                 foods.map(food => (
-                                    <FoodCard 
-                                        key={food.id} 
-                                        food={food} 
+                                    <FoodCard
+                                        key={food.id}
+                                        food={food}
                                         onAdd={() => navigate(`/detail/${food.id}`)}
                                     />
                                 ))
@@ -332,8 +333,12 @@ export default function ViewListProductFood() {
                 )}
             </div>
 
-            {/* NÚT GIỎ HÀNG NỔI GÓC DƯỚI */}
+            {/* NÚT ĐIỀU HƯỚNG NỔI GÓC DƯỚI */}
             <div className="fixed-nav-group">
+                <button className="nav-floating-btn home-btn" onClick={() => navigate('/home')}>
+                    <Home size={18} />
+                    <span className="label">Trang Chủ</span>
+                </button>
                 <button className="nav-floating-btn cart" onClick={handleOpenCart}>
                     <img src={banhTrungImg} alt="Lộc Xuân" className="floating-cart-img" />
                     <span className="label">Giỏ Hàng</span>
@@ -462,4 +467,4 @@ export default function ViewListProductFood() {
             </footer>
         </div>
     );
-}
+}

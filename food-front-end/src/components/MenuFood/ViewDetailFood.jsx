@@ -246,7 +246,7 @@ const ProductDetail = () => {
 
       <div className={`fixed-nav-group ${isCartOpen ? 'hidden' : ''}`}>
         <button className="nav-floating-btn cart" onClick={handleOpenCartDrawer}>
-          <span className="label">Rỏ Hàng</span>
+          <span className="label">Giỏ Hàng</span>
           {cartCount > 0 && <span className="badge">{cartCount}</span>}
         </button>
       </div>
@@ -254,7 +254,8 @@ const ProductDetail = () => {
       <div className="container">
         <div className="detail-top-bar">
           <button className="glass-back-btn" onClick={() => navigate('/menu')}>
-            <span>Home</span>
+            <ArrowLeft size={18} />
+            <span>Quay về thực đơn</span>
           </button>
         </div>
 
