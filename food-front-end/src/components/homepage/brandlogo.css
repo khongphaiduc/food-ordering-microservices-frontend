@@ -1,0 +1,81 @@
+/* BRAND LOGO STYLING SYSTEM */
+.brand-logo-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+.brand-logo-wrapper:hover {
+  transform: translateY(-1px);
+}
+
+.brand-logo-crest-svg {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand-logo-wrapper:hover .brand-logo-crest-svg {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.brand-logo-text-block {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-title-primary {
+  font-size: 19px;
+  font-weight: 900;
+  color: #b91c1c;
+  letter-spacing: 0.5px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  text-shadow: 0 1px 2px rgba(185, 28, 28, 0.1);
+}
+
+.brand-title-secondary {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #b8860b;
+  letter-spacing: 1.5px;
+  margin-top: 3px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* SIZES VARIATION */
+.brand-logo-wrapper.small .brand-logo-crest-svg {
+  width: 36px;
+  height: 36px;
+}
+.brand-logo-wrapper.small .brand-title-primary {
+  font-size: 15px;
+}
+.brand-logo-wrapper.small .brand-title-secondary {
+  font-size: 7.5px;
+  letter-spacing: 1px;
+}
+
+.brand-logo-wrapper.large .brand-logo-crest-svg {
+  width: 64px;
+  height: 64px;
+}
+.brand-logo-wrapper.large .brand-title-primary {
+  font-size: 24px;
+}
+.brand-logo-wrapper.large .brand-title-secondary {
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+/* LIGHT THEME FOR DARK FOOTER / BACKGROUND */
+.brand-logo-wrapper.light-theme .brand-title-primary {
+  color: #ffffff;
+}
+.brand-logo-wrapper.light-theme .brand-title-secondary {
+  color: #ffd700;
+}

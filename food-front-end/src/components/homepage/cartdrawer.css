@@ -82,6 +82,16 @@
     filter: drop-shadow(0 10px 15px rgba(220, 38, 38, 0.3));
 }
 
+.cart-empty-banhtrung-img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    animation: swing 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+}
+
 .mai-flower-1, .mai-flower-2 {
     position: absolute;
     font-size: 1.5rem;

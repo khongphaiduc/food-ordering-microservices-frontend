@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FoodCard from './FoodCard';
+import BrandLogo from './BrandLogo';
+import FireworksEffect from './FireworksEffect';
+import banhTrungImg from '../../assets/banhtrung.avif';
+import sideLeftImg from '../../assets/sideleft.webp';
 import './home.css';
 
 export default function Home() {
@@ -178,7 +182,9 @@ export default function Home() {
       {showAddressModal && (
         <div className="address-overlay">
           <div className="address-modal">
-            <div className="modal-header-icon">🧧</div>
+            <div className="modal-header-icon">
+              <img src={banhTrungImg} alt="Bánh Chưng" className="banh-trung-icon-img" />
+            </div>
             <h3>Khai Xuân Hoàn Tất Thông Tin</h3>
             <p>Để nhận lộc xuân, bạn vui lòng cập nhật địa chỉ giao hàng nhé!</p>
 
@@ -276,9 +282,9 @@ export default function Home() {
       </div>
 
       <header className="topbar">
-        <div className="logo" style={{ color: '#d32f2f' }}>
-          TRUNGDUCFOODLY<span className="tet-sub">.Tết Đoàn Viên</span>
-        </div>
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <BrandLogo size="medium" />
+        </Link>
 
         <nav className="nav-links">
           <Link to="/menu">Thực đơn Tết</Link>
@@ -308,14 +314,14 @@ export default function Home() {
           )}
 
           <button className={`cart-header-btn ${isDrawerActive ? 'hidden' : ''}`} onClick={handleOpenCart}>
-            <span className="cart-icon">🧧</span>
+            <img src={banhTrungImg} alt="Giỏ Hàng Bánh Chưng" className="cart-icon-img" />
           </button>
         </nav>
 
         {/* Mobile Header Actions */}
         <div className="mobile-header-actions">
           <button className={`cart-header-btn-mobile ${isDrawerActive ? 'hidden' : ''}`} onClick={handleOpenCart}>
-            <span className="cart-icon">🧧</span>
+            <img src={banhTrungImg} alt="Giỏ Hàng Bánh Chưng" className="cart-icon-img" />
           </button>
           <button className="mobile-menu-toggle" onClick={() => setShowMobileMenu(true)}>
             <span className="burger-icon">☰</span>
@@ -324,14 +330,17 @@ export default function Home() {
       </header>
 
       <section className="hero">
+        <FireworksEffect />
         <h1>
           <span className="slide-left">Tết Trọn Vị Ngon,</span>
           <span className="slide-right">
             Giao Hàng <span style={{ color: '#d32f2f' }}>Tốc Biến</span>
           </span>
         </h1>
-        <p className="fade-in" style={{ textAlign: 'center', marginTop: '-10px', color: '#718096' }}>
-          🧧 Ưu đãi khai xuân - Giảm 20% cho mọi đơn hàng 🧧
+        <p className="fade-in hero-subtitle-banner" style={{ textAlign: 'center', marginTop: '-10px', color: '#718096', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <img src={sideLeftImg} alt="Side icon" className="hero-side-icon-img" />
+          <span>Ưu đãi khai xuân - Giảm 20% cho mọi đơn hàng</span>
+          <img src={sideLeftImg} alt="Side icon" className="hero-side-icon-img flipped" />
         </p>
       </section>
 
@@ -452,7 +461,7 @@ export default function Home() {
 
       <div className={`fixed-nav-group ${isDrawerActive || showAddressModal ? 'hidden' : ''}`}>
         <button className="nav-floating-btn cart" onClick={handleOpenCart} style={{ backgroundColor: '#d32f2f' }}>
-          <span className="icon">🧧</span>
+          <img src={banhTrungImg} alt="Lộc Xuân" className="floating-cart-img" />
           <span className="label">Lộc Xuân</span>
         </button>
       </div>
@@ -462,9 +471,9 @@ export default function Home() {
         <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
           <div className="mobile-menu-drawer" onClick={(e) => e.stopPropagation()}>
             <div className="mobile-menu-header">
-              <div className="mobile-menu-logo" style={{ color: '#d32f2f' }}>
-                TRUNGDUCFOODLY
-              </div>
+              <Link to="/" onClick={() => setShowMobileMenu(false)} style={{ textDecoration: 'none' }}>
+                <BrandLogo size="small" />
+              </Link>
               <button className="btn-close-menu" onClick={() => setShowMobileMenu(false)}>✕</button>
             </div>
 
@@ -510,8 +519,8 @@ export default function Home() {
           <div className="footer-main-grid">
             {/* CỘT 1: THƯƠNG HIỆU */}
             <div className="footer-col footer-brand-col">
-              <div className="footer-logo">
-                TRUNGDUCFOODLY<span className="footer-tet-sub">.Tết Đoàn Viên</span>
+              <div className="footer-logo-wrapper" style={{ marginBottom: '12px' }}>
+                <BrandLogo size="medium" />
               </div>
               <span className="footer-tagline">⚜️ Ẩm Thực Thượng Hạng — Giao Thần Tốc 15 Phút</span>
               <p className="footer-brand-desc">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
+import banhTrungImg from '../../assets/banhtrung.avif';
 import './cartdrawer.css';
 
 export default function ShoppingCart() {
@@ -105,7 +106,7 @@ export default function ShoppingCart() {
         <div className="cart-body">
           {!userId ? (
             <div className="tet-empty-state">
-               <span className="tet-icon">🧧</span>
+               <img src={banhTrungImg} alt="Bánh Chưng" className="cart-empty-banhtrung-img" />
                <h3 className="tet-title">Xuân sang, rước lộc!</h3>
                <p className="tet-desc">Vui lòng đăng nhập để đặt món nhé.</p>
                <a href="/login" className="btn-tet-login">ĐĂNG NHẬP</a>
