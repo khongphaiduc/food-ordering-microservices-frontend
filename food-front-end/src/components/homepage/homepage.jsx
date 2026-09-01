@@ -5,6 +5,7 @@ import BrandLogo from './BrandLogo';
 import FireworksEffect from './FireworksEffect';
 import banhTrungImg from '../../assets/banhtrung.avif';
 import sideLeftImg from '../../assets/sideleft.webp';
+import vienTextImg from '../../assets/VienText.png';
 import './home.css';
 
 export default function Home() {
@@ -331,12 +332,15 @@ export default function Home() {
 
       <section className="hero">
         <FireworksEffect />
-        <h1>
-          <span className="slide-left">Tết Trọn Vị Ngon,</span>
-          <span className="slide-right">
-            Giao Hàng <span style={{ color: '#d32f2f' }}>Tốc Biến</span>
-          </span>
-        </h1>
+        <div className="hero-framed-container">
+          <img src={vienTextImg} alt="Khung viền tiêu đề" className="hero-frame-bg-img" />
+          <h1>
+            <span className="slide-left">Tết Trọn Vị Ngon,</span>
+            <span className="slide-right">
+              Giao Hàng <span style={{ color: '#d32f2f' }}>Tốc Biến</span>
+            </span>
+          </h1>
+        </div>
         <p className="fade-in hero-subtitle-banner" style={{ textAlign: 'center', marginTop: '-10px', color: '#718096', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
           <img src={sideLeftImg} alt="Side icon" className="hero-side-icon-img" />
           <span>Ưu đãi khai xuân - Giảm 20% cho mọi đơn hàng</span>
