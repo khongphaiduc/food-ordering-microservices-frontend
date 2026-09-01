@@ -126,12 +126,22 @@
   box-shadow: 0 4px 10px rgba(185, 28, 28, 0.2);
 }
 
+.btn-outline .btn-text-mobile {
+  display: none;
+}
+
 .btn-outline:hover {
   filter: brightness(1.18);
   letter-spacing: 0.5px;
 }
 
 @media (max-width: 600px) {
+  .btn-outline .btn-text-pc {
+    display: none;
+  }
+  .btn-outline .btn-text-mobile {
+    display: inline;
+  }
   .food-card {
     border-radius: 16px 6px 16px 6px;
     border-width: 1.5px;

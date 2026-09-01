@@ -239,8 +239,12 @@ const ProductDetail = () => {
         <span>🧧 Đã thêm vào mâm cỗ Tết!</span>
       </div>
 
-      {/* FLOATING CART BUTTON */}
+      {/* FLOATING NAVIGATION GROUP (QUAY VỀ THỰC ĐƠN + GIỎ MÓN) */}
       <div className={`fixed-nav-group ${isCartOpen ? 'hidden' : ''}`}>
+        <button className="nav-floating-btn menu-btn tet-float-menu" onClick={() => navigate('/menu')}>
+          <ArrowLeft size={18} />
+          <span className="label">Thực đơn</span>
+        </button>
         <button className="nav-floating-btn cart tet-float-cart" onClick={handleOpenCartDrawer}>
           <img src={banhTrungImg} alt="Giỏ món" className="floating-cart-img" />
           <span className="label">Giỏ món</span>
@@ -249,14 +253,6 @@ const ProductDetail = () => {
       </div>
 
       <div className="container">
-        {/* TOP BAR GO BACK */}
-        <div className="detail-top-bar">
-          <button className="glass-back-btn tet-back-btn" onClick={() => navigate('/menu')}>
-            <ArrowLeft size={18} />
-            <span>Quay về thực đơn</span>
-          </button>
-        </div>
-
         {/* MAIN CARD DETAIL */}
         <div className="main-content-card tet-main-card">
           {/* SLIDESHOW SECTION */}

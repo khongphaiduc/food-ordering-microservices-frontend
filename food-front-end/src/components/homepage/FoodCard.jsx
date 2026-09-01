@@ -16,7 +16,8 @@ export default function FoodCard({ food }) {
         
         <div className="food-card-actions">
           <Link to={`/detail/${food.id}`} className="btn-outline">
-            Xem chi tiết món ăn
+            <span className="btn-text-pc">Xem chi tiết món ăn</span>
+            <span className="btn-text-mobile">Xem Chi Tiết</span>
           </Link>
         </div>
       </div>
