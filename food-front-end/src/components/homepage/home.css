@@ -246,15 +246,15 @@ section { padding: 60px 6%; }
     transform: scale(0.9);
 }
 
-/* Mobile drawer styles */
+/* ==================== TET MOBILE SIDEBAR DRAWER ==================== */
 .mobile-menu-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
     z-index: 10005;
     display: flex;
     justify-content: flex-end;
@@ -266,15 +266,18 @@ section { padding: 60px 6%; }
     to { opacity: 1; }
 }
 
-.mobile-menu-drawer {
-    width: 80%;
+.mobile-menu-drawer.tet-drawer {
+    width: 85%;
     max-width: 320px;
     height: 100%;
-    background-color: #ffffff;
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    background-color: #fffbf0;
+    background-image: radial-gradient(#ffd700 0.75px, transparent 0.75px);
+    background-size: 24px 24px;
+    box-shadow: -10px 0 35px rgba(142, 0, 0, 0.3);
+    border-left: 3px solid #ffd700;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    padding: 24px;
     animation: slideInDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -283,118 +286,231 @@ section { padding: 60px 6%; }
     to { transform: translateX(0); }
 }
 
-.mobile-menu-header {
+.mobile-menu-header.tet-drawer-header {
+    background: linear-gradient(135deg, #8e0000 0%, #b71c1c 100%);
+    padding: 20px 22px;
+    border-bottom: 2px solid #ffd700;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #fee2e2;
+    box-shadow: 0 4px 15px rgba(142, 0, 0, 0.2);
 }
 
-.mobile-menu-logo {
-    font-size: 20px;
+.tet-drawer-header .brand-title-primary {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tet-drawer-header .brand-title-secondary {
+    color: #ffd700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.btn-close-menu.tet-close-btn {
+    background: #ffffff;
+    border: 1.5px solid #ffd700;
+    color: #8e0000;
     font-weight: 800;
-    letter-spacing: 0.5px;
-}
-
-.btn-close-menu {
-    background: #fff5f5;
-    border: 1px solid #fee2e2;
-    color: var(--tet-red);
     font-size: 16px;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
 }
 
-.btn-close-menu:active {
+.btn-close-menu.tet-close-btn:active {
     transform: scale(0.9);
+    background: #ffd700;
 }
 
-.mobile-menu-body {
-    padding: 24px 0;
+.mobile-menu-body.tet-drawer-body {
+    padding: 20px 18px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
     flex-grow: 1;
     overflow-y: auto;
 }
 
-.mobile-menu-link {
-    display: block;
-    padding: 14px 18px;
-    text-decoration: none;
-    color: var(--text-main);
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 12px;
-    background: #fdfaf2;
-    border: 1px solid #fef3c7;
-    transition: all 0.2s;
+/* User Card trong Drawer */
+.mobile-user-card-tet {
+    background: #ffffff;
+    border: 1.5px solid #ffe0b2;
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 6px 16px rgba(142, 0, 0, 0.08);
 }
 
-.mobile-menu-link:active {
-    background: #fef3c7;
+.user-avatar-tet {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #fff0f0;
+    border: 1.5px solid #d32f2f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.user-text-tet {
+    flex: 1;
+    overflow: hidden;
+}
+
+.user-greeting-tet {
+    font-size: 0.92rem;
+    color: #212121;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-greeting-tet strong {
+    color: #d32f2f;
+}
+
+.user-sub-tet {
+    font-size: 0.78rem;
+    color: #b8860b;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* Menu items */
+.mobile-nav-group-tet {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.mobile-menu-link-tet {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1.5px solid #ffe0b2;
+    border-radius: 16px;
+    color: #212121;
+    font-weight: 700;
+    font-size: 0.92rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.mobile-menu-link-tet .link-icon-tet {
+    font-size: 1.2rem;
+    margin-right: 12px;
+}
+
+.mobile-menu-link-tet .link-text-tet {
+    flex: 1;
+}
+
+.mobile-menu-link-tet .link-arrow-tet {
+    color: #ffd700;
+    font-size: 1.2rem;
+    font-weight: 800;
+    transition: transform 0.2s ease;
+}
+
+.mobile-menu-link-tet.active,
+.mobile-menu-link-tet:active {
+    background: #fff0f0;
+    border-color: #d32f2f;
+    color: #d32f2f;
     transform: translateX(4px);
 }
 
-.mobile-menu-divider {
-    height: 2px;
-    background: #fee2e2;
-    margin: 10px 0;
+.mobile-menu-link-tet.active .link-arrow-tet,
+.mobile-menu-link-tet:active .link-arrow-tet {
+    color: #d32f2f;
+    transform: translateX(3px);
 }
 
-.mobile-user-section {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.mobile-menu-divider-tet {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    margin: 8px 0;
 }
 
-.mobile-user-info {
-    font-size: 15px;
-    color: #4a5568;
-    padding: 0 10px 8px;
-}
-
-.btn-mobile-logout {
+.btn-mobile-logout-tet {
     width: 100%;
     padding: 14px;
-    background: #fff5f5;
-    border: 1.5px solid #fee2e2;
-    color: #e53e3e;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1.5px solid #ffa39e;
+    color: #d32f2f;
+    font-weight: 800;
+    font-size: 0.92rem;
+    border-radius: 16px;
     cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.08);
 }
 
-.btn-mobile-logout:active {
-    background: #ffebeb;
-}
-
-.btn-mobile-login {
-    display: block;
-    padding: 14px;
-    background: linear-gradient(135deg, #d32f2f 0%, #ff4d4d 100%);
-    color: white !important;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
-    transition: all 0.2s;
-}
-
-.btn-mobile-login:active {
+.btn-mobile-logout-tet:active {
+    background: #fff0f0;
     transform: scale(0.98);
+}
+
+.btn-mobile-login-tet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: #ffffff !important;
+    border: 1.5px solid #ffd700;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.95rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(183, 28, 28, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-mobile-login-tet:active {
+    transform: scale(0.98);
+}
+
+/* Greeting box at bottom of drawer */
+.mobile-drawer-greeting-box {
+    margin-top: auto;
+    background: linear-gradient(135deg, #fff0f0 0%, #fff8e1 100%);
+    border: 1.5px dashed #ffd700;
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+}
+
+.mobile-drawer-greeting-box span {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #8e0000;
+    letter-spacing: 0.5px;
+}
+
+.mobile-drawer-greeting-box p {
+    margin: 4px 0 0 0;
+    font-size: 0.72rem;
+    color: #b8860b;
+    font-weight: 600;
 }
 
 .homepage-footer {

@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { 
+    Search, 
+    RotateCcw, 
+    ChevronLeft, 
+    ChevronRight, 
+    Sparkles, 
+    Flame
+} from 'lucide-react';
 import FoodCard from '../homepage/FoodCard';
+import BrandLogo from '../homepage/BrandLogo';
+import banhTrungImg from '../../assets/banhtrung.avif';
+import hoadaotraiImg from '../../assets/hoadaotrai.webp';
+import longdentetImg from '../../assets/longdentet.png';
 import './menu.css';
 
 export default function ViewListProductFood() {
@@ -15,8 +27,14 @@ export default function ViewListProductFood() {
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [cartCount, setCartCount] = useState(0);
+    const [showUserMenu, setShowUserMenu] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+
     const dropdownRef = useRef(null);
+    const userMenuRef = useRef(null);
+
     const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
+    const userName = localStorage.getItem("userName");
     const userId = localStorage.getItem("userId") || "9f3c2e7a-4b8d-4a6f-9c21-6f8d2a1b7c54";
 
     // 1. CẬP NHẬT BADGE GIỎ HÀNG
@@ -29,7 +47,7 @@ export default function ViewListProductFood() {
                 setCartCount(count);
             }
         } catch (e) { console.error("Lỗi cập nhật badge:", e); }
-    }, [userId]);
+    }, [apiUrl, userId]);
 
     useEffect(() => {
         updateCartBadge();
@@ -37,18 +55,21 @@ export default function ViewListProductFood() {
         return () => window.removeEventListener('cartUpdated', updateCartBadge);
     }, [updateCartBadge]);
 
-    // 2. CLICK RA NGOÀI ĐỂ ĐÓNG GỢI Ý
+    // 2. CLICK RA NGOÀI ĐỂ ĐÓNG GỢI Ý & USER MENU
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setShowSuggestions(false);
+            }
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+                setShowUserMenu(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // 3. HÀM FETCH DATA CHÍNH - XỬ LÝ ĐA CẤU TRÚC PAYLOAD
+    // 3. FETCH DỮ LIỆU SẢN PHẨM
     const fetchData = useCallback(async (isMounted) => {
         try {
             setLoading(true);
@@ -64,7 +85,6 @@ export default function ViewListProductFood() {
                 let rawItems = [];
                 let total = 0;
 
-                // Kiểm tra xem API trả về Mảng (Search) hay Object (List)
                 if (Array.isArray(data)) {
                     rawItems = data;
                     total = data.length; 
@@ -74,7 +94,6 @@ export default function ViewListProductFood() {
                 }
 
                 const mappedFoods = rawItems.map(f => {
-                    // Ưu tiên các loại field ảnh khác nhau từ 2 API
                     const images = f.productImageInternalDTOs || f.imageFoods || f.productImageDTOs || [];
                     const mainImage = images.find(img => img.isMain)?.urlImage 
                                     || images[0]?.urlImage 
@@ -83,7 +102,6 @@ export default function ViewListProductFood() {
                     return {
                         id: f.id,
                         name: f.name,
-                        // Xử lý typo decriptions từ API List và description từ API Search
                         desc: f.description || f.decriptions || "Mỹ vị ngày Tết",
                         price: f.price || 0,
                         img: mainImage,
@@ -100,7 +118,7 @@ export default function ViewListProductFood() {
         } finally {
             if (isMounted) setLoading(false);
         }
-    }, [currentPage, pageSize, query]);
+    }, [apiUrl, currentPage, pageSize, query]);
 
     useEffect(() => {
         let isMounted = true;
@@ -109,7 +127,7 @@ export default function ViewListProductFood() {
         return () => { isMounted = false; };
     }, [fetchData]);
 
-    // 4. GỢI Ý TÌM KIẾM (SUGGEST)
+    // 4. GỢI Ý TÌM KIẾM
     useEffect(() => {
         if (!searchTerm.trim()) {
             setSuggestions([]);
@@ -127,7 +145,7 @@ export default function ViewListProductFood() {
             } catch (err) { console.error(err); }
         }, 200);
         return () => clearTimeout(timeoutId);
-    }, [searchTerm]);
+    }, [apiUrl, searchTerm]);
 
     const handleSearch = () => {
         setCurrentPage(1);
@@ -141,6 +159,8 @@ export default function ViewListProductFood() {
         setCurrentPage(1);
         setSuggestions([]);
     };
+
+    const handleOpenCart = () => window.dispatchEvent(new Event('openCart'));
 
     // 5. PHÂN TRANG
     const totalPages = Math.ceil(totalItems / pageSize) || 1;
@@ -166,80 +186,280 @@ export default function ViewListProductFood() {
     };
 
     return (
-        <div className="menu-page-container">
-            <div className="tet-decoration left-branch"></div>
-            <div className="tet-decoration right-branch"></div>
+        <div className="menu-page-wrapper tet-mode">
+            {/* TRANG TRÍ TẾT */}
+            <img src={longdentetImg} alt="Lồng đèn Tết" className="top-lantern-decoration" />
+            <img src={hoadaotraiImg} alt="Hoa đào" className="bottom-peach-decoration" />
 
-            <div className="fixed-nav-group">
-                <button className="nav-floating-btn cart" onClick={() => window.dispatchEvent(new Event('openCart'))}>
-                    <span className="label">Rỏ Hàng</span>
-                    {cartCount > 0 && <span className="badge">{cartCount}</span>}
-                </button>
-                <button className="nav-floating-btn home" onClick={() => navigate('/')}>
-                    <span className="label">Home</span>
-                </button>
-            </div>
+            {/* TOPBAR HEADER NAV */}
+            <header className="topbar">
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                    <BrandLogo size="medium" />
+                </Link>
 
-            <header className="menu-header">
-                <div className="header-left">
-                    <h1 className="page-title">🏮 Mỹ Vị Khai Xuân 🏮</h1>
-                    <p className="results-subtitle">Tìm thấy <b>{totalItems}</b> món ngon đãi tiệc</p>
-                </div>
+                <nav className="nav-links">
+                    <Link to="/home">Trang chủ</Link>
+                    <Link to="/menu" className="active-nav">Thực đơn Tết 🧧</Link>
 
-                <div className="search-controls" ref={dropdownRef}>
-                    <div className="search-box-wrapper">
-                        <input
-                            type="text"
-                            className="search-input-modern"
-                            placeholder="Bạn muốn ăn gì ngày Tết?"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
-                        />
-                        {showSuggestions && suggestions.length > 0 && (
-                            <ul className="suggestion-dropdown">
-                                {suggestions.map((item, index) => (
-                                    <li key={index} onClick={() => { setSearchTerm(item); setQuery(item); setCurrentPage(1); setShowSuggestions(false); }}>
-                                        <span className="s-icon">🌸</span>
-                                        <span className="s-text">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                    <button className="btn-action search" onClick={handleSearch}>Khai Lộc</button>
-                    <button className="btn-action reset" onClick={handleReset}>Reset</button>
+                    {userName ? (
+                        <div className="user-nav-container" ref={userMenuRef}>
+                            <div className={`user-badge-main ${showUserMenu ? 'active' : ''}`} onClick={() => setShowUserMenu(!showUserMenu)}>
+                                <span>Chào, <strong>{userName}</strong> 🧧</span>
+                                <span className={`arrow ${showUserMenu ? 'up' : ''}`}>▾</span>
+                            </div>
+
+                            {showUserMenu && (
+                                <div className="user-dropdown-menu">
+                                    <Link to="/profile" className="dropdown-link">👤 Hồ sơ cá nhân</Link>
+                                    <Link to="/orders" className="dropdown-link">🛍️ Đơn của bạn</Link>
+                                    <div className="divider"></div>
+                                    <button onClick={() => { localStorage.clear(); window.location.reload(); }} className="btn-logout-item">
+                                        🚪 Thoát tài khoản
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <Link to="/login" className="btn-login" style={{ borderColor: '#d32f2f', color: '#d32f2f' }}>
+                            Đăng nhập
+                        </Link>
+                    )}
+
+                    <button className="cart-header-btn" onClick={handleOpenCart}>
+                        <img src={banhTrungImg} alt="Giỏ Hàng Bánh Chưng" className="cart-icon-img" />
+                        {cartCount > 0 && <span className="cart-badge-count">{cartCount}</span>}
+                    </button>
+                </nav>
+
+                {/* Mobile Header Actions */}
+                <div className="mobile-header-actions">
+                    <button className="cart-header-btn-mobile" onClick={handleOpenCart}>
+                        <img src={banhTrungImg} alt="Giỏ Hàng" className="cart-icon-img" />
+                        {cartCount > 0 && <span className="cart-badge-count">{cartCount}</span>}
+                    </button>
+                    <button className="mobile-menu-toggle" onClick={() => setShowMobileMenu(true)}>
+                        <span className="burger-icon">☰</span>
+                    </button>
                 </div>
             </header>
 
-            <hr className="header-divider" />
+            {/* CONTAINER NỘI DUNG CHÍNH */}
+            <div className="menu-page-container">
+                <div className="menu-hero-header">
+                    <div className="header-text-block">
+                        <div className="tet-tag-badge">
+                            <Sparkles size={15} /> <span>MÂM CỖ NGÀY TẾT</span> <Sparkles size={15} />
+                        </div>
+                        <h1 className="page-title">🏮 Mỹ Vị Khai Xuân 🏮</h1>
+                        <p className="results-subtitle">Tìm thấy <b>{totalItems}</b> món ngon đãi tiệc gia đình</p>
+                    </div>
 
-            {loading ? (
-                <div className="loading-state">🎋 Đang chuẩn bị mâm cỗ...</div>
-            ) : (
-                <>
-                    <div className="food-grid">
-                        {foods.length > 0 ? (
-                            foods.map(food => (
-                                <FoodCard 
-                                    key={food.id} 
-                                    food={food} 
-                                    onAdd={() => navigate(`/detail/${food.id}`)}
-                                />
-                            ))
-                        ) : (
-                            <div className="no-results">Không tìm thấy món "{query}"</div>
+                    {/* THANH TÌM KIẾM HẬU CẦN */}
+                    <div className="search-controls" ref={dropdownRef}>
+                        <div className="search-box-wrapper">
+                            <Search className="search-icon-inside" size={18} />
+                            <input
+                                type="text"
+                                className="search-input-modern"
+                                placeholder="Nhập tên món ăn bạn muốn tìm..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
+                            />
+                            {showSuggestions && suggestions.length > 0 && (
+                                <ul className="suggestion-dropdown">
+                                    {suggestions.map((item, index) => (
+                                        <li key={index} onClick={() => { setSearchTerm(item); setQuery(item); setCurrentPage(1); setShowSuggestions(false); }}>
+                                            <span className="s-icon">🌸</span>
+                                            <span className="s-text">{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                        <button className="btn-action search" onClick={handleSearch}>
+                            <Search size={16} /> <span>Khai Lộc</span>
+                        </button>
+                        <button className="btn-action reset" onClick={handleReset}>
+                            <RotateCcw size={16} /> <span>Đặt lại</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr className="header-divider" />
+
+                {/* DANH SÁCH MÓN ĂN */}
+                {loading ? (
+                    <div className="loading-state">
+                        <div className="loading-spinner">🎋</div>
+                        <p>Đang chuẩn bị mâm cỗ khai xuân...</p>
+                    </div>
+                ) : (
+                    <>
+                        <div className="food-grid">
+                            {foods.length > 0 ? (
+                                foods.map(food => (
+                                    <FoodCard 
+                                        key={food.id} 
+                                        food={food} 
+                                        onAdd={() => navigate(`/detail/${food.id}`)}
+                                    />
+                                ))
+                            ) : (
+                                <div className="no-results-box">
+                                    <Flame size={40} className="no-results-icon" />
+                                    <h3>Không tìm thấy món "{query}"</h3>
+                                    <p>Thử tìm kiếm với từ khóa khác hoặc bấm Đặt lại để xem tất cả món ăn.</p>
+                                    <button className="btn-reset-results" onClick={handleReset}>Xem tất cả món ăn</button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* PHÂN TRANG */}
+                        {totalPages > 1 && (
+                            <div className="pagination-modern">
+                                <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="p-nav">
+                                    <ChevronLeft size={18} />
+                                </button>
+                                <div className="p-numbers-group">{renderPageNumbers()}</div>
+                                <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)} className="p-nav">
+                                    <ChevronRight size={18} />
+                                </button>
+                            </div>
                         )}
+                    </>
+                )}
+            </div>
+
+            {/* NÚT GIỎ HÀNG NỔI GÓC DƯỚI */}
+            <div className="fixed-nav-group">
+                <button className="nav-floating-btn cart" onClick={handleOpenCart}>
+                    <img src={banhTrungImg} alt="Lộc Xuân" className="floating-cart-img" />
+                    <span className="label">Giỏ Hàng</span>
+                    {cartCount > 0 && <span className="badge">{cartCount}</span>}
+                </button>
+            </div>
+
+            {/* MOBILE MENU DRAWER */}
+            {showMobileMenu && (
+                <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
+                    <div className="mobile-menu-drawer tet-drawer" onClick={(e) => e.stopPropagation()}>
+                        <div className="mobile-menu-header tet-drawer-header">
+                            <Link to="/" onClick={() => setShowMobileMenu(false)} style={{ textDecoration: 'none' }}>
+                                <BrandLogo size="small" light={true} />
+                            </Link>
+                            <button className="btn-close-menu tet-close-btn" onClick={() => setShowMobileMenu(false)}>✕</button>
+                        </div>
+
+                        <div className="mobile-menu-body tet-drawer-body">
+                            {userName && (
+                                <div className="mobile-user-card-tet">
+                                    <div className="user-avatar-tet">🧧</div>
+                                    <div className="user-text-tet">
+                                        <div className="user-greeting-tet">Chào xuân, <strong>{userName}</strong> 🌸</div>
+                                        <div className="user-sub-tet">Chúc Bạn Năm Mới An Khang!</div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <nav className="mobile-nav-group-tet">
+                                <Link to="/home" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
+                                    <span className="link-icon-tet">🏡</span>
+                                    <span className="link-text-tet">Trang chủ Đoàn Viên</span>
+                                    <span className="link-arrow-tet">›</span>
+                                </Link>
+
+                                <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet active">
+                                    <span className="link-icon-tet">🧧</span>
+                                    <span className="link-text-tet">Thực Đơn Tết 2026</span>
+                                    <span className="link-arrow-tet">›</span>
+                                </Link>
+
+                                {userName && (
+                                    <>
+                                        <Link to="/profile" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
+                                            <span className="link-icon-tet">👤</span>
+                                            <span className="link-text-tet">Hồ sơ cá nhân</span>
+                                            <span className="link-arrow-tet">›</span>
+                                        </Link>
+
+                                        <Link to="/orders" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
+                                            <span className="link-icon-tet">🛍️</span>
+                                            <span className="link-text-tet">Đơn hàng của bạn</span>
+                                            <span className="link-arrow-tet">›</span>
+                                        </Link>
+                                    </>
+                                )}
+                            </nav>
+
+                            <div className="mobile-menu-divider-tet"></div>
+
+                            {userName ? (
+                                <button
+                                    onClick={() => { localStorage.clear(); window.location.reload(); }}
+                                    className="btn-mobile-logout-tet"
+                                >
+                                    🚪 Thoát tài khoản
+                                </button>
+                            ) : (
+                                <Link to="/login" onClick={() => setShowMobileMenu(false)} className="btn-mobile-login-tet">
+                                    🔑 ĐĂNG NHẬP KHAI XUÂN
+                                </Link>
+                            )}
+
+                            <div className="mobile-drawer-greeting-box">
+                                <span>🏮 CHÚC MỪNG NĂM MỚI 🏮</span>
+                                <p>Vạn Sự Như Ý • Đại Cát Đại Lộc</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* FOOTER ĐỒNG BỘ NỀN TẢNG */}
+            <footer className="homepage-footer-wrapper">
+                <div className="footer-main-container">
+                    <div className="footer-main-grid">
+                        <div className="footer-col footer-brand-col">
+                            <div className="footer-logo-wrapper" style={{ marginBottom: '12px' }}>
+                                <BrandLogo size="medium" />
+                            </div>
+                            <span className="footer-tagline">⚜️ Ẩm Thực Thượng Hạng — Giao Thần Tốc 15 Phút</span>
+                            <p className="footer-brand-desc">
+                                Hệ thống đặt đồ ăn ẩm thực cao cấp chuẩn VietGAP 100%, bảo lưu độ nóng bốc khói nguyên bản và phục vụ chuẩn tiêu chuẩn 5 sao.
+                            </p>
+                        </div>
+
+                        <div className="footer-col">
+                            <h4>KHÁM PHÁ & HỖ TRỢ</h4>
+                            <ul className="footer-links-list">
+                                <li><Link to="/home">Trang Chủ Đoàn Viên</Link></li>
+                                <li><Link to="/menu">Thực Đơn Tết 2026</Link></li>
+                                <li><Link to="/orders">Theo Dõi Đơn Hàng</Link></li>
+                            </ul>
+                        </div>
+
+                        <div className="footer-col footer-contact-col">
+                            <h4>THÔNG TIN LIÊN HỆ</h4>
+                            <div className="contact-item">
+                                <span className="contact-icon">📍</span>
+                                <div>123 Phố Huế, Hai Bà Trưng, Hà Nội | 456 Nguyễn Thị Minh Khai, Q.1, TP.HCM</div>
+                            </div>
+                            <div className="contact-item">
+                                <span className="contact-icon">📞</span>
+                                <div><strong>Hotline 24/7:</strong> <a href="tel:19008888" className="phone-link">1900 8888</a></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="pagination-modern">
-                        <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="p-nav">&laquo;</button>
-                        <div className="p-numbers-group">{renderPageNumbers()}</div>
-                        <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)} className="p-nav">&raquo;</button>
+                    <div className="footer-bottom-bar">
+                        <div className="copyright-text">
+                            © 2026 <strong>TRUNGDUCFOODLY</strong> — Phát triển bởi <strong>Phạm Trung Đức</strong>.
+                        </div>
                     </div>
-                </>
-            )}
+                </div>
+            </footer>
         </div>
     );
-}
+}

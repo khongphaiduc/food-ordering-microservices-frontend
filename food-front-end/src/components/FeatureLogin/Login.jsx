@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Thư viện giải mã token
+import { Mail, Lock, ArrowRight, Loader2, Home } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
+import { useNavigate, Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import longdentetImg from '../../assets/longdentet.png';
 import hoadaotraiImg from '../../assets/hoadaotrai.webp';
@@ -16,50 +17,69 @@ const Login = () => {
     
     const navigate = useNavigate();
 
+    const handleGoogleLogin = () => {
+        const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
+        // Điều hướng tới endpoint xử lý Google OAuth trên backend
+        window.location.href = `${apiUrl}/auth/google-login`;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
         try {
-           const apiUrl = import.meta.env.VITE_API_URL;
+            const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
         
-         const response = await axios.post(`${apiUrl}/auth/login`, {
-            Email: email,
-            Password: password
-        });
+            const response = await axios.post(`${apiUrl}/auth/login`, {
+                Email: email,
+                Password: password
+            });
 
             const data = response.data;
+            const token = data.accessToken?.tokenValue || data.accessToken || data.token;
 
-            if (data.isLoginSuccessful) {
-                const token = data.accessToken.tokenValue;
-                
-                // --- GIẢI MÃ TOKEN ĐỂ LẤY ROLE ---
-                const decoded = jwtDecode(token);
-                console.log("Dữ liệu trong Token:", decoded); // Xem cấu trúc token tại đây
-                
-                // Tùy vào Backend mà field này có thể là 'role' hoặc link dài của Microsoft
-                const userRole = decoded["role"] || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+            if (data.isLoginSuccessful || token) {
+                let userRole = 'User';
+                if (token) {
+                    try {
+                        const decoded = jwtDecode(token);
+                        console.log("Dữ liệu trong Token:", decoded);
+                        userRole = decoded["role"] 
+                            || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+                            || 'User';
+                    } catch (decErr) {
+                        console.error("Lỗi giải mã token:", decErr);
+                    }
+                }
 
-                // Lưu vào LocalStorage
+                // Lưu thông tin vào LocalStorage
                 localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("userId", data.id);
-                localStorage.setItem("userName", data.email);
+                localStorage.setItem("userId", data.id || data.userId || "");
+                localStorage.setItem("userName", data.email || email);
                 localStorage.setItem("userRole", userRole); 
-                localStorage.setItem("accessToken", token);
-                localStorage.setItem("refreshToken", data.refreshToken.tokenValue);
-                localStorage.setItem("sessionId", data.idSession);
+                if (token) localStorage.setItem("accessToken", token);
+                if (data.refreshToken?.tokenValue) {
+                    localStorage.setItem("refreshToken", data.refreshToken.tokenValue);
+                }
+                if (data.idSession) {
+                    localStorage.setItem("sessionId", data.idSession);
+                }
+
+                // Bắn event thông báo ứng dụng đã đăng nhập
+                window.dispatchEvent(new Event('authChanged'));
          
-                if (userRole === 'Admin' || userRole == "Staff") {
+                if (userRole === 'Admin' || userRole === 'Staff') {
                     navigate('/management/dashboard');
                 } else {
                     navigate('/home');
                 }
             } else {
-                setError(data.message || "Đăng nhập không thành công.");
+                setError(data.message || "Đăng nhập không thành công, vui lòng kiểm tra lại thông tin.");
             }
         } catch (err) {
-            setError(err.response?.data?.message || "Lỗi kết nối đến máy chủ.");
+            console.error("Lỗi Đăng Nhập:", err);
+            setError(err.response?.data?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại email hoặc mật khẩu.");
         } finally {
             setLoading(false);
         }
@@ -67,6 +87,12 @@ const Login = () => {
 
     return (
         <div className="login-wrapper tet-theme">
+            {/* Nút Trở về trang chủ */}
+            <Link to="/home" className="btn-back-home">
+                <Home size={18} />
+                <span>Trở về trang chủ</span>
+            </Link>
+
             {/* Lồng đèn góc phải trên màn hình */}
             <img src={longdentetImg} alt="Lồng đèn Tết" className="top-right-longden-img" />
 
@@ -118,6 +144,21 @@ const Login = () => {
 
                         <button type="submit" className="btn-foodly" disabled={loading}>
                             {loading ? <Loader2 className="spinner animate-spin" /> : <>KHAI XUÂN NGAY <ArrowRight size={20} /></>}
+                        </button>
+
+                        <div className="divider-container">
+                            <span className="divider-line"></span>
+                            <span className="divider-text">Hoặc</span>
+                            <span className="divider-line"></span>
+                        </div>
+
+                        <button 
+                            type="button" 
+                            className="btn-google-login"
+                            onClick={handleGoogleLogin}
+                        >
+                            <FcGoogle size={22} />
+                            <span>Đăng nhập bằng Google</span>
                         </button>
                     </form>
                     

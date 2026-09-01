@@ -1,164 +1,690 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,600&display=swap');
 
 :root {
     --tet-red: #d32f2f;
-    --tet-gold: #ffc107;
     --tet-dark-red: #8e0000;
-    --tet-gradient: linear-gradient(135deg, #d32f2f 0%, #ff5252 100%);
+    --tet-crimson: #670000;
+    --tet-gold: #ffd700;
+    --tet-gold-warm: #ffb300;
+    --tet-gold-light: #fff8e1;
+    --tet-cream: #fffaf0;
+    --tet-shadow: rgba(142, 0, 0, 0.25);
 }
 
-.signup-wrapper {
+* {
+    box-sizing: border-box;
+}
+
+/* ==================== WRAPPER & BACKGROUND ==================== */
+.tet-signup-wrapper {
     min-height: 100vh;
-    background: #fff5f5;
-    background-image: radial-gradient(#ffcfcf 0.5px, transparent 0.5px);
-    background-size: 20px 20px;
+    width: 100%;
+    background-color: var(--tet-cream);
+    background-image: 
+        radial-gradient(var(--tet-gold) 0.75px, transparent 0.75px),
+        radial-gradient(rgba(211, 47, 47, 0.08) 1px, transparent 1px);
+    background-size: 36px 36px, 18px 18px;
+    background-position: 0 0, 9px 9px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    font-family: 'Inter', sans-serif;
+    padding: 30px 20px;
+    font-family: 'Montserrat', sans-serif;
     position: relative;
     overflow: hidden;
 }
 
-.signup-card-custom {
-    max-width: 1000px;
-    width: 100%;
-    height: 700px;
-    background: #ffffff;
+/* Nút Trở về trang chủ */
+.btn-back-home {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 120;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    color: var(--tet-dark-red);
+    border: 1.5px solid var(--tet-gold);
     border-radius: 30px;
-    box-shadow: 0 20px 50px rgba(211, 47, 47, 0.2);
-    display: flex;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(183, 28, 28, 0.15);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-back-home:hover {
+    background: var(--tet-dark-red);
+    color: var(--tet-gold);
+    border-color: var(--tet-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(183, 28, 28, 0.3);
+}
+
+/* ==================== TRANG TRÍ TẾT (LỒNG ĐÈN & CÀNH HÒA) ==================== */
+.top-right-lantern {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 380px;
+    max-width: 45vw;
+    height: auto;
+    z-index: 50;
+    pointer-events: none;
+    filter: drop-shadow(0 15px 30px rgba(211, 47, 47, 0.35));
+    animation: swayLantern 6s ease-in-out infinite alternate;
+    transform-origin: top right;
+}
+
+.bottom-left-peach-branch {
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 360px;
+    max-width: 42vw;
+    height: auto;
+    z-index: 40;
+    pointer-events: none;
+    filter: drop-shadow(0 10px 25px rgba(142, 0, 0, 0.3));
+    animation: swayBranch 7s ease-in-out infinite alternate;
+    transform-origin: bottom left;
+}
+
+@keyframes swayLantern {
+    0% { transform: rotate(0deg) translateY(0); }
+    100% { transform: rotate(4deg) translateY(8px); }
+}
+
+@keyframes swayBranch {
+    0% { transform: rotate(0deg) scale(1); }
+    100% { transform: rotate(-3deg) scale(1.03); }
+}
+
+/* HIỆU ỨNG CÁNH HOA & LÌ XÌ RƠI */
+.falling-petals-container {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
     overflow: hidden;
-    border: 3px solid var(--tet-gold);
+}
+
+.falling-item {
+    position: absolute;
+    font-size: 1.4rem;
+    user-select: none;
+    animation: floatDown 12s linear infinite;
+    opacity: 0.8;
+}
+
+.falling-item:nth-child(1) { left: 5%; animation-duration: 10s; animation-delay: 0s; }
+.falling-item:nth-child(2) { left: 15%; animation-duration: 14s; animation-delay: 2s; font-size: 1.8rem; }
+.falling-item:nth-child(3) { left: 25%; animation-duration: 11s; animation-delay: 4s; }
+.falling-item:nth-child(4) { left: 35%; animation-duration: 15s; animation-delay: 1s; }
+.falling-item:nth-child(5) { left: 48%; animation-duration: 9s; animation-delay: 3s; font-size: 1.6rem; }
+.falling-item:nth-child(6) { left: 58%; animation-duration: 13s; animation-delay: 5s; }
+.falling-item:nth-child(7) { left: 68%; animation-duration: 10s; animation-delay: 2s; }
+.falling-item:nth-child(8) { left: 78%; animation-duration: 16s; animation-delay: 0.5s; font-size: 1.7rem; }
+.falling-item:nth-child(9) { left: 88%; animation-duration: 12s; animation-delay: 3.5s; }
+.falling-item:nth-child(10) { left: 94%; animation-duration: 11s; animation-delay: 1.5s; }
+
+@keyframes floatDown {
+    0% { transform: translateY(-50px) rotate(0deg) translateX(0); opacity: 0; }
+    10% { opacity: 0.9; }
+    90% { opacity: 0.9; }
+    100% { transform: translateY(110vh) rotate(360deg) translateX(40px); opacity: 0; }
+}
+
+/* ==================== TET SIGNUP CARD ==================== */
+.tet-signup-card {
+    max-width: 1080px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: 
+        0 25px 60px rgba(142, 0, 0, 0.22),
+        0 0 0 3px var(--tet-gold),
+        0 0 25px rgba(255, 215, 0, 0.35);
     position: relative;
     z-index: 10;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Trang trí hoa Đào - Mai */
-.tet-decoration {
-    position: absolute;
-    z-index: 20;
-    pointer-events: none;
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+/* BĂNG RÔN PHÍA TRÊN CARD */
+.tet-top-ribbon {
+    background: linear-gradient(90deg, var(--tet-crimson) 0%, var(--tet-red) 50%, var(--tet-crimson) 100%);
+    color: var(--tet-gold);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-bottom: 2px solid var(--tet-gold);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
-.dao-branch {
-    top: -20px;
-    right: -20px;
-    width: 180px;
-    animation: sway 4s ease-in-out infinite;
+.sparkle-icon {
+    color: var(--tet-gold);
+    animation: sparkleGlow 2s infinite alternate;
 }
 
-.mai-branch {
-    bottom: -15px;
-    left: -15px;
-    width: 150px;
-    animation: sway 5s ease-in-out infinite reverse;
+@keyframes sparkleGlow {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 4px var(--tet-gold)); }
 }
 
-@keyframes sway {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(5deg); }
+.tet-signup-body {
+    display: flex;
+    min-height: 640px;
 }
 
-/* Cột trái: Ảnh nền Tết */
-.signup-image-section {
-    flex: 1.2;
+/* ==================== CỘT TRÁI - VISUAL TẾT ==================== */
+.tet-visual-section {
+    flex: 1.1;
     position: relative;
-    background: #000;
+    background-color: var(--tet-dark-red);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 35px;
+    color: #ffffff;
 }
 
-.signup-image-section img {
+.visual-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.7);
+    object-position: center;
+    filter: brightness(0.85);
+    transition: transform 10s ease;
 }
 
-.image-overlay-text {
+.tet-signup-card:hover .visual-bg-image {
+    transform: scale(1.05);
+}
+
+.visual-gradient-overlay {
     position: absolute;
-    bottom: 40px;
-    left: 30px;
-    color: white;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        180deg, 
+        rgba(103, 0, 0, 0.4) 0%, 
+        rgba(142, 0, 0, 0.75) 50%, 
+        rgba(70, 0, 0, 0.95) 100%
+    );
+    z-index: 1;
 }
 
-.image-overlay-text h2 {
-    font-family: 'Dancing Script', cursive;
-    font-size: 3rem;
+.tet-badge-emblem {
+    position: relative;
+    z-index: 2;
+    align-self: flex-start;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--tet-gold);
+    padding: 6px 16px;
+    border-radius: 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
     color: var(--tet-gold);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-/* Cột phải: Form đăng ký */
-.signup-form-section {
-    flex: 1;
-    padding: 40px 50px;
+.emblem-flower {
+    width: 22px;
+    height: 22px;
+}
+
+.visual-content {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+}
+
+.brand-header {
+    margin-bottom: 20px;
+}
+
+.brand-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--tet-gold);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    margin: 0;
+    line-height: 1.1;
+}
+
+.brand-subtitle {
+    font-size: 0.95rem;
+    color: #ffe0b2;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* CAROUSEL LỜI CHÚC */
+.wish-carousel-box {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    border-left: 4px solid var(--tet-gold);
+    padding: 12px 18px;
+    border-radius: 0 14px 14px 0;
+    margin-bottom: 25px;
+}
+
+.wish-text {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    transition: all 0.5s ease;
+}
+
+/* ĐẶC QUYỀN TẾT */
+.tet-benefits-list {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    background-color: #fffaf0; /* Màu giấy xuyến chỉ nhẹ */
-    position: relative;
+    gap: 14px;
 }
 
-.text-tet-red {
-    color: var(--tet-red);
-    font-weight: 900;
-    text-transform: uppercase;
-}
-
-.custom-input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #f2dede;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    outline: none;
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
     transition: all 0.3s ease;
 }
 
-.custom-input:focus {
-    border-color: var(--tet-red);
-    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+.benefit-item:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: var(--tet-gold);
+    transform: translateX(5px);
 }
 
-/* Nút bấm Lì Xì */
-.btn-tet {
-    background: var(--tet-gradient);
-    color: white;
-    border: 2px solid var(--tet-gold);
+.benefit-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.benefit-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.benefit-info strong {
+    font-size: 0.88rem;
+    color: var(--tet-gold);
+}
+
+.benefit-info span {
+    font-size: 0.76rem;
+    color: #f5f5f5;
+}
+
+/* ==================== CỘT PHẢI - FORM ĐĂNG KÝ ==================== */
+.tet-form-section {
+    flex: 1.25;
+    padding: 40px 48px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-header {
+    margin-bottom: 24px;
+}
+
+.logo-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.inline-flower {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.inline-flower.flipped {
+    transform: scaleX(-1);
+}
+
+.logo-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--tet-red);
+    letter-spacing: -0.5px;
+}
+
+.signup-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--tet-dark-red);
+    margin: 4px 0 2px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.signup-subtitle {
+    font-size: 0.85rem;
+    color: #757575;
+    margin: 0;
+}
+
+/* ==================== ALERTS ==================== */
+.tet-alert {
+    padding: 12px 16px;
     border-radius: 12px;
-    padding: 14px;
+    font-size: 0.86rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+.tet-alert-error {
+    background-color: #fff1f0;
+    border: 1px solid #ffa39e;
+    color: #cf1322;
+}
+
+.tet-alert-success {
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
+    color: #389e0d;
+}
+
+.alert-icon.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== FORM INPUTS ==================== */
+.tet-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-group-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.input-label {
+    font-size: 0.82rem;
     font-weight: 700;
+    color: var(--tet-dark-red);
+    margin: 0;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.field-icon {
+    position: absolute;
+    left: 14px;
+    color: #9e9e9e;
+    transition: color 0.3s ease;
+    pointer-events: none;
+}
+
+.form-control-custom {
     width: 100%;
+    padding: 11px 14px 11px 44px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #fafafa;
+    color: #333333;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.form-control-custom.pr-toggle {
+    padding-right: 44px;
+}
+
+.form-control-custom:focus {
+    background-color: #ffffff;
+    border-color: var(--tet-red);
+    box-shadow: 0 0 0 3.5px rgba(211, 47, 47, 0.12);
+}
+
+.form-control-custom:focus + .field-icon,
+.input-wrapper:focus-within .field-icon {
+    color: var(--tet-red);
+}
+
+.input-error-border {
+    border-color: #ff4d4f !important;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #9e9e9e;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.2s ease;
+}
+
+.toggle-password-btn:hover {
+    color: var(--tet-red);
+}
+
+/* MẬT KHẨU STRENGTH BAR */
+.strength-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.strength-bar-bg {
+    height: 4px;
+    width: 100%;
+    background-color: #eee;
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.strength-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* ==================== GIFT PICKER ==================== */
+.tet-gift-picker {
+    margin-top: 2px;
+    background: var(--tet-gold-light);
+    border: 1px dashed var(--tet-gold-warm);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.text-gold {
+    color: var(--tet-dark-red);
+}
+
+.gift-options {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.gift-card {
+    flex: 1;
+    background: #ffffff;
+    border: 1.5px solid #ffe0b2;
+    border-radius: 10px;
+    padding: 8px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #5d4037;
+    user-select: none;
+}
+
+.gift-card:hover {
+    border-color: var(--tet-red);
+    background-color: #fff8f8;
+}
+
+.gift-card.active {
+    background-color: #fff0f0;
+    border-color: var(--tet-red);
+    color: var(--tet-dark-red);
+    box-shadow: 0 3px 8px rgba(211, 47, 47, 0.15);
+}
+
+.gift-radio {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    transition: all 0.2s ease;
+}
+
+.gift-card.active .gift-radio {
+    border-color: var(--tet-red);
+    background-color: var(--tet-red);
+}
+
+/* ==================== BUTTON SUBMIT ==================== */
+.btn-tet-submit {
+    margin-top: 6px;
+    background: linear-gradient(135deg, var(--tet-red) 0%, #b71c1c 100%);
+    color: #ffffff;
+    border: 2px solid var(--tet-gold);
+    border-radius: 14px;
+    padding: 13px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(183, 28, 28, 0.35);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-tet-submit::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(
+        60deg, 
+        transparent 0%, 
+        rgba(255, 215, 0, 0.4) 50%, 
+        transparent 100%
+    );
+    transform: rotate(25deg);
+    transition: all 0.6s ease;
+}
+
+.btn-tet-submit:hover:not(:disabled)::after {
+    left: 120%;
+}
+
+.btn-tet-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(183, 28, 28, 0.45);
+    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+}
+
+.btn-tet-submit:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.btn-tet-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-content, .loading-content {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: 0.3s;
-    cursor: pointer;
 }
 
-.btn-tet:hover:not(:disabled) {
-    transform: scale(1.02);
-    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
-}
-
-/* Hiệu ứng Pháo hoa lấp lánh */
-.firework-sparkle {
-    position: absolute;
-    top: 20px;
-    right: 30px;
+.fill-gold {
+    fill: var(--tet-gold);
     color: var(--tet-gold);
-    animation: blink 1.5s infinite;
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.3); }
+.arrow-icon {
+    transition: transform 0.3s ease;
 }
 
-.spinner {
+.btn-tet-submit:hover:not(:disabled) .arrow-icon {
+    transform: translateX(4px);
+}
+
+.spinner-icon {
     animation: spin 1s linear infinite;
 }
 
@@ -167,8 +693,101 @@
     to { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
-    .signup-image-section { display: none; }
-    .signup-card-custom { height: auto; border-radius: 20px; }
-    .dao-branch { width: 100px; }
+/* ==================== FOOTER ==================== */
+.form-footer {
+    margin-top: 20px;
 }
+
+.footer-text {
+    font-size: 0.85rem;
+    color: #616161;
+    margin: 0;
+}
+
+.login-gold-link {
+    color: var(--tet-red);
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 1.5px dashed var(--tet-red);
+    padding-bottom: 1px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.login-gold-link:hover {
+    color: var(--tet-dark-red);
+    border-bottom-style: solid;
+}
+
+.inline-arrow {
+    transition: transform 0.2s ease;
+}
+
+.login-gold-link:hover .inline-arrow {
+    transform: translateX(3px);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 992px) {
+    .tet-signup-card {
+        max-width: 650px;
+    }
+    
+    .tet-visual-section {
+        display: none;
+    }
+
+    .tet-form-section {
+        padding: 35px 30px;
+    }
+
+    .top-right-lantern {
+        width: 250px;
+    }
+
+    .bottom-left-peach-branch {
+        width: 240px;
+    }
+}
+
+@media (max-width: 576px) {
+    .tet-signup-wrapper {
+        padding: 15px 10px;
+    }
+
+    .tet-top-ribbon {
+        font-size: 0.72rem;
+        letter-spacing: 0.5px;
+        padding: 6px 10px;
+    }
+
+    .tet-form-section {
+        padding: 25px 20px;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+
+    .signup-title {
+        font-size: 1.45rem;
+    }
+
+    .gift-options {
+        flex-direction: column;
+    }
+
+    .top-right-lantern {
+        width: 180px;
+        top: -5px;
+        right: -5px;
+    }
+
+    .bottom-left-peach-branch {
+        width: 170px;
+        bottom: -15px;
+        left: -15px;
+    }
+}

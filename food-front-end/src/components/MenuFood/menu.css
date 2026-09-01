@@ -1,225 +1,458 @@
-/* CONTAINER CHÍNH */
-.menu-page-container { 
-    max-width: 1200px; 
-    margin: 0 auto; 
-    padding: 20px; 
-    position: relative;
-    background-color: #fffaf0; 
+/* ==================== MENU PAGE WRAPPER ==================== */
+.menu-page-wrapper {
     min-height: 100vh;
+    width: 100%;
+    background-color: #fffbf2;
+    background-image: 
+        radial-gradient(#ffd700 0.75px, transparent 0.75px),
+        radial-gradient(rgba(211, 47, 47, 0.06) 1px, transparent 1px);
+    background-size: 36px 36px, 18px 18px;
+    position: relative;
+    overflow-x: hidden;
+    font-family: 'Montserrat', sans-serif;
 }
 
-/* TRANG TRÍ CÂY ĐÀO/MAI */
-.tet-decoration {
-    position: fixed; top: 0; width: 250px; height: 400px; 
-    z-index: 1; pointer-events: none; background-size: contain; background-repeat: no-repeat;
+/* ==================== TRANG TRÍ TẾT ==================== */
+.top-lantern-decoration {
+    position: absolute;
+    top: 65px;
+    right: 0;
+    width: 320px;
+    max-width: 40vw;
+    z-index: 10;
+    pointer-events: none;
+    filter: drop-shadow(0 10px 20px rgba(211, 47, 47, 0.25));
 }
-.left-branch { left: -20px; background-image: url('https://png.pngtree.com/png-clipart/20220111/original/pngtree-cherry-blossom-flowers-red-lunar-new-year-tree-branch-png-image_7064368.png'); }
-.right-branch { right: -20px; background-image: url('https://png.pngtree.com/png-clipart/20230113/original/pngtree-gold-apricot-flower-yellow-lunar-new-year-tree-branch-png-image_8907366.png'); }
 
-/* NHÓM NÚT NỔI (HOME & CART) */
+.bottom-peach-decoration {
+    position: fixed;
+    bottom: -20px;
+    left: -20px;
+    width: 280px;
+    max-width: 35vw;
+    z-index: 5;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 20px rgba(142, 0, 0, 0.2));
+}
+
+/* ==================== CONTAINER NỘI DUNG ==================== */
+.menu-page-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 30px 20px 60px 20px;
+    position: relative;
+    z-index: 15;
+}
+
+/* HERO HEADER */
+.menu-hero-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.header-text-block {
+    flex: 1;
+    min-width: 280px;
+}
+
+.tet-tag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(211, 47, 47, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.6);
+    color: #b71c1c;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.page-title {
+    color: #b71c1c;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+}
+
+.results-subtitle {
+    color: #555555;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.results-subtitle b {
+    color: #b71c1c;
+}
+
+/* ==================== THANH TÌM KIẾM ==================== */
+.search-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1.2;
+    max-width: 650px;
+    min-width: 280px;
+}
+
+.search-box-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon-inside {
+    position: absolute;
+    left: 16px;
+    color: #b71c1c;
+    pointer-events: none;
+}
+
+.search-input-modern {
+    width: 100%;
+    padding: 12px 18px 12px 46px;
+    border-radius: 30px;
+    border: 2px solid #ffd700;
+    outline: none;
+    background: #ffffff;
+    font-size: 0.9rem;
+    font-family: inherit;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.08);
+    transition: all 0.3s ease;
+}
+
+.search-input-modern:focus {
+    border-color: #b71c1c;
+    box-shadow: 0 4px 20px rgba(183, 28, 28, 0.18);
+}
+
+.btn-action {
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-action.search {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: #ffffff;
+    border: 1.5px solid #ffd700;
+    box-shadow: 0 4px 12px rgba(183, 28, 28, 0.3);
+}
+
+.btn-action.search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(183, 28, 28, 0.4);
+}
+
+.btn-action.reset {
+    background: #ffffff;
+    color: #555555;
+    border: 1.5px solid #dddddd;
+}
+
+.btn-action.reset:hover {
+    background: #f5f5f5;
+    border-color: #b71c1c;
+    color: #b71c1c;
+}
+
+/* DROP DOWN SUGGESTIONS */
+.suggestion-dropdown {
+    position: absolute;
+    top: 115%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1.5px solid #ffd700;
+    box-shadow: 0 12px 35px rgba(183, 28, 28, 0.15);
+    z-index: 1000;
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.suggestion-dropdown li {
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: #333333;
+    transition: background 0.2s ease;
+}
+
+.suggestion-dropdown li:hover {
+    background: #fff4ed;
+    color: #b71c1c;
+}
+
+.header-divider {
+    border: 0;
+    border-top: 2px dashed #ffd700;
+    margin: 25px 0 35px 0;
+    opacity: 0.6;
+}
+
+/* ==================== FOOD GRID ==================== */
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+    min-height: 300px;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 80px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #b71c1c;
+}
+
+.loading-spinner {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.no-results-box {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1.5px dashed #ffd700;
+}
+
+.no-results-icon {
+    color: #b71c1c;
+    margin-bottom: 12px;
+}
+
+.btn-reset-results {
+    margin-top: 15px;
+    background: #b71c1c;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 24px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ==================== PAGINATION ==================== */
+.pagination-modern {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 45px;
+}
+
+.p-numbers-group {
+    display: flex;
+    gap: 8px;
+}
+
+.page-number, .p-nav {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #ffd700;
+    background: #ffffff;
+    color: #b71c1c;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.page-number.active {
+    background: #b71c1c;
+    color: #ffd700;
+    border-color: #b71c1c;
+    box-shadow: 0 4px 12px rgba(183, 28, 28, 0.3);
+}
+
+.page-number:hover:not(.active), .p-nav:hover:not(:disabled) {
+    background: #fff0f0;
+    border-color: #b71c1c;
+}
+
+.p-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ==================== FLOATING CART BUTTON ==================== */
 .fixed-nav-group {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 9999; /* Đảm bảo nằm trên mọi thành phần */
+    z-index: 999;
 }
 
 .nav-floating-btn {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 20px;
+    padding: 12px 22px;
     border-radius: 50px;
     border: 2px solid #ffd700;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 20px rgba(183, 28, 28, 0.3);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    min-width: 150px;
+    background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%);
+    color: #ffffff;
     font-family: inherit;
 }
 
-.nav-floating-btn.home {
-    background: #d63031;
-    color: #fff;
+.nav-floating-btn:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 10px 25px rgba(183, 28, 28, 0.45);
 }
 
-.nav-floating-btn.cart {
-    background: #fff;
-    color: #d63031;
+.floating-cart-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
-@media (hover: hover) {
-    .nav-floating-btn:hover {
-        transform: scale(1.08) translateX(-5px);
-    }
+.nav-floating-btn .label {
+    font-weight: 800;
+    font-size: 0.88rem;
+    text-transform: uppercase;
 }
-
-.nav-floating-btn .icon { font-size: 1.2rem; }
-.nav-floating-btn .label { font-weight: 800; font-size: 0.9rem; text-transform: uppercase; }
 
 .nav-floating-btn .badge {
     background: #ffd700;
-    color: #d63031;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    margin-left: auto;
+    color: #b71c1c;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 0.8rem;
 }
 
-/* HEADER */
-.menu-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 25px; 
-    gap: 30px; 
-    position: relative; 
-    z-index: 10; 
-}
-
-.page-title { 
-    color: #d63031; font-size: 2rem; font-weight: 800; margin: 0; 
-    text-shadow: 1px 1px #ffd700;
-}
-
-.results-subtitle { color: #555; margin-top: 5px; font-size: 0.95rem; }
-
-/* SEARCH CONTROLS */
-.search-controls { 
-    display: flex; 
+/* Cart Badge Count in topbar */
+.cart-badge-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ffd700;
+    color: #b71c1c;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
     align-items: center;
-    gap: 12px; 
-    flex: 1; 
-    max-width: 650px; 
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 900;
+    border: 1px solid #b71c1c;
 }
 
-.search-box-wrapper { position: relative; flex: 1; }
-
-.search-input-modern { 
-    width: 100%; padding: 12px 18px; border-radius: 30px;
-    border: 2px solid #ffd700; outline: none; background: #fff; font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+/* Active Nav Link */
+.active-nav {
+    color: #d32f2f !important;
+    font-weight: 800 !important;
+    border-bottom: 2px solid #d32f2f;
 }
-
-.btn-action {
-    height: 45px; padding: 0 20px; border-radius: 25px; 
-    font-weight: bold; cursor: pointer; transition: 0.3s; white-space: nowrap;
-}
-.btn-action.search { background: #d63031; color: #fff; border: none; }
-.btn-action.reset { background: #eee; color: #333; border: 1px solid #ccc; }
-
-/* DROP DOWN SUGGESTIONS */
-.suggestion-dropdown {
-    position: absolute; top: 110%; left: 0; right: 0;
-    background: #fff; border-radius: 12px; border: 1px solid #ffd700;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1000;
-    list-style: none; padding: 8px 0; margin: 0; max-height: 250px; overflow-y: auto;
-}
-.suggestion-dropdown li { padding: 10px 20px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-.suggestion-dropdown li:hover { background: #fff4ed; }
-
-/* PAGINATION */
-.pagination-modern {
-    display: flex !important; flex-direction: row !important;
-    justify-content: center; align-items: center; gap: 10px;
-    margin: 50px 0; width: 100%;
-}
-.p-numbers-group { display: flex !important; flex-direction: row !important; gap: 8px; }
-.page-number, .p-nav {
-    width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ffd700;
-    background: #fff; color: #d63031; font-weight: bold; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.page-number.active { background: #d63031; color: #ffd700; border-color: #d63031; }
-
-/* GRID */
-.food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
-.header-divider { border: 0; border-top: 2px dashed #ffd700; margin-bottom: 40px; opacity: 0.4; }
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
-    .menu-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-    .search-controls { width: 100%; max-width: none; }
-}
+    .menu-hero-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-controls {
+        max-width: 100%;
+    }
 
-@media (max-width: 768px) {
-    .tet-decoration {
-        display: none !important;
+    .top-lantern-decoration {
+        display: none;
     }
 }
 
 @media (max-width: 600px) {
     .menu-page-container {
-        padding: 12px;
+        padding: 16px 10px;
     }
-    
+
     .page-title {
         font-size: 1.5rem;
     }
-    
-    .header-divider {
-        margin-bottom: 20px;
-    }
-    
+
     .search-controls {
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    .search-box-wrapper {
-        flex: 1 1 100%;
-    }
-    
-    .search-input-modern {
-        padding: 10px 15px;
-        font-size: 16px;
-    }
-    
-    .btn-action {
-        flex: 1;
-        height: 38px;
-        font-size: 13px;
-        padding: 0 10px;
         display: flex;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100%;
+        gap: 6px;
         align-items: center;
-        justify-content: center;
+    }
+
+    .search-box-wrapper {
+        flex: 1 1 auto !important;
+        min-width: 0;
+    }
+
+    .search-icon-inside {
+        left: 10px;
+        width: 15px;
+        height: 15px;
+    }
+
+    .search-input-modern {
+        padding: 8px 8px 8px 30px;
+        font-size: 0.8rem;
+        height: 38px;
+        border-radius: 20px;
+    }
+
+    .btn-action {
+        height: 38px;
+        padding: 0 10px;
+        font-size: 0.76rem;
+        border-radius: 20px;
+        flex-shrink: 0;
+        gap: 4px;
+    }
+
+    .btn-action span {
+        white-space: nowrap;
     }
 
     .food-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 12px;
-    }
-
-    .fixed-nav-group {
-        bottom: 15px;
-        right: 15px;
-        gap: 8px;
-    }
-    
-    .nav-floating-btn {
-        min-width: auto;
-        width: auto;
-        height: auto;
-        padding: 8px 16px;
-        border-radius: 30px;
-        position: relative;
-        justify-content: center;
-    }
-    
-    .nav-floating-btn .label {
-        display: inline-block;
-    }
-    
-    .nav-floating-btn .badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        margin: 0;
-        padding: 1px 5px;
-        font-size: 0.65rem;
-        border: 1px solid #ffd700;
     }
 }

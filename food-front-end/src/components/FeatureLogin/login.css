@@ -17,6 +17,36 @@
     justify-content: center;
 }
 
+/* Nút Trở về trang chủ */
+.btn-back-home {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 120;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    color: var(--tet-dark-red);
+    border: 1.5px solid var(--tet-gold);
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(183, 28, 28, 0.15);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-back-home:hover {
+    background: var(--tet-dark-red);
+    color: var(--tet-gold);
+    border-color: var(--tet-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(183, 28, 28, 0.3);
+}
+
 /* Container cho hiệu ứng rơi */
 .li-xi-container {
     position: absolute;
@@ -175,6 +205,53 @@
     font-weight: bold;
     text-decoration: none;
     border-bottom: 1px dashed var(--tet-red);
+}
+
+/* Nút Đăng nhập Google & Đường phân cách */
+.divider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background-color: #e0e0e0;
+}
+
+.divider-text {
+    font-size: 0.78rem;
+    color: #888888;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-google-login {
+    width: 100%;
+    background-color: #ffffff;
+    color: #333333;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-google-login:hover {
+    background-color: #f8f9fa;
+    border-color: #d0d0d0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 /* Phụ kiện trang trí */

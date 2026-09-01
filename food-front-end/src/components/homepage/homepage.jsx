@@ -510,45 +510,74 @@ export default function Home() {
       {/* MOBILE MENU DRAWER */}
       {showMobileMenu && (
         <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
-          <div className="mobile-menu-drawer" onClick={(e) => e.stopPropagation()}>
-            <div className="mobile-menu-header">
+          <div className="mobile-menu-drawer tet-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-menu-header tet-drawer-header">
               <Link to="/" onClick={() => setShowMobileMenu(false)} style={{ textDecoration: 'none' }}>
-                <BrandLogo size="small" />
+                <BrandLogo size="small" light={true} />
               </Link>
-              <button className="btn-close-menu" onClick={() => setShowMobileMenu(false)}>✕</button>
+              <button className="btn-close-menu tet-close-btn" onClick={() => setShowMobileMenu(false)}>✕</button>
             </div>
 
-            <div className="mobile-menu-body">
-              <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link">
-                Thực đơn Tết 🧧
-              </Link>
+            <div className="mobile-menu-body tet-drawer-body">
+              {userName && (
+                <div className="mobile-user-card-tet">
+                  <div className="user-avatar-tet">🧧</div>
+                  <div className="user-text-tet">
+                    <div className="user-greeting-tet">Chào xuân, <strong>{userName}</strong> 🌸</div>
+                    <div className="user-sub-tet">Chúc Bạn Năm Mới An Khang!</div>
+                  </div>
+                </div>
+              )}
 
-              <div className="mobile-menu-divider"></div>
+              <nav className="mobile-nav-group-tet">
+                <Link to="/home" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet active">
+                  <span className="link-icon-tet">🏡</span>
+                  <span className="link-text-tet">Trang chủ Đoàn Viên</span>
+                  <span className="link-arrow-tet">›</span>
+                </Link>
+
+                <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
+                  <span className="link-icon-tet">🧧</span>
+                  <span className="link-text-tet">Thực Đơn Tết 2026</span>
+                  <span className="link-arrow-tet">›</span>
+                </Link>
+
+                {userName && (
+                  <>
+                    <Link to="/profile" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
+                      <span className="link-icon-tet">👤</span>
+                      <span className="link-text-tet">Hồ sơ cá nhân</span>
+                      <span className="link-arrow-tet">›</span>
+                    </Link>
+
+                    <Link to="/orders" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
+                      <span className="link-icon-tet">🛍️</span>
+                      <span className="link-text-tet">Đơn hàng của bạn</span>
+                      <span className="link-arrow-tet">›</span>
+                    </Link>
+                  </>
+                )}
+              </nav>
+
+              <div className="mobile-menu-divider-tet"></div>
 
               {userName ? (
-                <div className="mobile-user-section">
-                  <div className="mobile-user-info">
-                    Chào, <strong>{userName}</strong> 🧧
-                  </div>
-                  <Link to="/profile" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link">
-                    👤 Hồ sơ cá nhân
-                  </Link>
-                  <Link to="/orders" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link">
-                    🛍️ Đơn của bạn
-                  </Link>
-                  <div className="mobile-menu-divider"></div>
-                  <button
-                    onClick={() => { localStorage.clear(); window.location.reload(); }}
-                    className="btn-mobile-logout"
-                  >
-                    🚪 Thoát tài khoản
-                  </button>
-                </div>
+                <button
+                  onClick={() => { localStorage.clear(); window.location.reload(); }}
+                  className="btn-mobile-logout-tet"
+                >
+                  🚪 Thoát tài khoản
+                </button>
               ) : (
-                <Link to="/login" onClick={() => setShowMobileMenu(false)} className="btn-mobile-login">
-                  Đăng nhập 🔑
+                <Link to="/login" onClick={() => setShowMobileMenu(false)} className="btn-mobile-login-tet">
+                  🔑 ĐĂNG NHẬP KHAI XUÂN
                 </Link>
               )}
+
+              <div className="mobile-drawer-greeting-box">
+                <span>🏮 CHÚC MỪNG NĂM MỚI 🏮</span>
+                <p>Vạn Sự Như Ý • Đại Cát Đại Lộc</p>
+              </div>
             </div>
           </div>
         </div>

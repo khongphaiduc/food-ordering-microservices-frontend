@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { QRCodeCanvas } from 'qrcode.react';
 import * as signalR from '@microsoft/signalr';
+import { 
+    MapPin, 
+    ShoppingBag, 
+    ArrowLeft, 
+    Check, 
+    Plus, 
+    Minus, 
+    Trash2, 
+    Sparkles, 
+    PartyPopper, 
+    CreditCard, 
+    AlertTriangle, 
+    Loader2
+} from 'lucide-react';
+
+import longdentetImg from '../../assets/longdentet.png';
+import hoadaotraiImg from '../../assets/hoadaotrai.webp';
+import iconloginhoaImg from '../../assets/iconloginhoa.png';
 import './CreateOrder.css';
 
 const generateUUID = () => {
@@ -24,7 +42,7 @@ export default function ConfirmMenu() {
     const paymentMethod = 1; // 1: PayOS, 2: Tiền mặt (Mặc định)
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
 
     // --- States cho Địa chỉ ---
     const [addresses, setAddresses] = useState([]);
@@ -41,7 +59,7 @@ export default function ConfirmMenu() {
     const [orderUserConnection, setOrderUserConnection] = useState(null);
     const [checkoutError, setCheckoutError] = useState(null);
 
-    // --- State lưu Idempotency Key (chỉ dùng cho lần retry cùng thao tác) ---
+    // --- State lưu Idempotency Key ---
     const [currentIdempotencyKey, setCurrentIdempotencyKey] = useState(null);
 
     const token = localStorage.getItem("accessToken");
@@ -110,7 +128,7 @@ export default function ConfirmMenu() {
 
     useEffect(() => {
         if (connection) {
-            connection.on("mynofication", (message) => {
+            connection.on("mynofication", () => {
                 setIsPaid(true);
             });
             connection.start().catch(err => console.error("❌ [SignalR PayOS] Lỗi kết nối:", err));
@@ -143,7 +161,6 @@ export default function ConfirmMenu() {
         const loadingKey = variantId ? `${productId}-${variantId}` : productId;
         setUpdatingId(loadingKey);
 
-        // Làm mới Idempotency Key khi giỏ hàng có sự thay đổi
         setCurrentIdempotencyKey(null);
 
         try {
@@ -172,23 +189,21 @@ export default function ConfirmMenu() {
         }
     };
 
-    // Thay đổi địa chỉ hoặc PTTT cũng làm mới Idempotency Key
     const handleAddressChange = (id) => {
         setSelectedAddressId(id);
         setCurrentIdempotencyKey(null);
     };
 
-    // --- 4. Hàm xử lý đặt hàng với Idempotency Key chuẩn ---
+    // --- 4. Hàm xử lý đặt hàng ---
     const handleCheckout = async () => {
         if (!selectedAddressId) {
-            setCheckoutError("Vui lòng chọn địa chỉ giao hàng!");
+            setCheckoutError("Vui lòng chọn địa chỉ nhận lộc Tết!");
             return;
         }
 
         setIsSubmitting(true);
         setCheckoutError(null);
 
-        // Sử dụng key hiện tại nếu là lần retry sau sự cố mạng, hoặc tạo key mới hoàn toàn
         const requestKey = currentIdempotencyKey || generateUUID();
         setCurrentIdempotencyKey(requestKey);
 
@@ -207,11 +222,10 @@ export default function ConfirmMenu() {
             });
 
             if (response.status === 200) {
-                // Đặt hàng thành công -> Xóa key đã hoàn tất
                 setCurrentIdempotencyKey(null);
 
                 if (paymentMethod === 1) {
-                    setQrCodeValue(""); // Reset mã QR cũ, chờ SignalR gửi mã mới
+                    setQrCodeValue("");
                     setIsPaid(false);
                     setShowQRModal(true);
                     window.dispatchEvent(new Event('cartUpdated'));
@@ -220,9 +234,8 @@ export default function ConfirmMenu() {
                     window.dispatchEvent(new Event('cartUpdated'));
                 }
             } else {
-                // Thất bại do logic nghiệp vụ từ backend -> Làm mới key cho lần thử sau
                 setCurrentIdempotencyKey(null);
-                setCheckoutError("Đặt hàng thất bại.");
+                setCheckoutError("Đặt hàng thất bại, vui lòng thử lại.");
             }
         } catch (error) {
             console.error("Lỗi đặt hàng:", error);
@@ -232,169 +245,245 @@ export default function ConfirmMenu() {
             const isReservationFailed = errorData?.errorCode === "INVENTORY_RESERVATION_FAILED" || errorData?.ErrorCode === "INVENTORY_RESERVATION_FAILED";
             const errorMsg = errorData?.message ?? errorData?.Message;
 
-            // Phân loại lỗi để giữ hoặc làm mới Idempotency Key
             if (!status || status >= 500) {
-                // Lỗi mạng hoặc 5xx/Timeout: GIỮ NGUYÊN requestKey để nếu user bấm lại sẽ retry đúng giao dịch đó
                 setCurrentIdempotencyKey(requestKey);
             } else {
-                // Lỗi 4xx (Hết hàng, sai dữ liệu...): LÀM MỚI key để tránh cache lỗi cũ
                 setCurrentIdempotencyKey(null);
             }
 
             if (isReservationFailed) {
-                setCheckoutError("Đặt hàng thất bại: " + (errorMsg || "Không đủ số lượng sản phẩm trong kho (Đặt chỗ tồn kho thất bại)."));
+                setCheckoutError("Đặt hàng thất bại: " + (errorMsg || "Không đủ số lượng món Tết trong kho đãi tiệc."));
             } else if (errorMsg) {
                 setCheckoutError("Đặt hàng thất bại: " + errorMsg);
             } else {
-                setCheckoutError("Đặt hàng thất bại, vui lòng thử lại.");
+                setCheckoutError("Đặt hàng thất bại, vui lòng kiểm tra lại thông tin.");
             }
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    if (!cartData || cartData.cartItems.length === 0) {
+    if (!cartData || !cartData.cartItems || cartData.cartItems.length === 0) {
         return (
-            <div className="confirm-empty">
-                <p>Giỏ hàng trống.</p>
-                <button onClick={() => navigate('/')}>Quay lại</button>
+            <div className="confirm-empty-tet">
+                <div className="empty-icon">🧧</div>
+                <h2>Mâm cỗ giỏ hàng đang trống</h2>
+                <p style={{ color: '#666', marginBottom: '20px' }}>Hãy quay lại thực đơn Tết để chọn món ngon đãi tiệc nhé!</p>
+                <button className="btn-back-tet" onClick={() => navigate('/menu')}>
+                    <ArrowLeft size={18} />
+                    <span>Quay lại Thực Đơn Tết</span>
+                </button>
             </div>
         );
     }
 
     return (
         <div className="confirm-container">
-            <header className="confirm-header">
-                <button onClick={() => navigate(-1)} className="btn-back">← QUAY LẠI</button>
-                <h1>Xác nhận đơn hàng</h1>
-            </header>
+            {/* Trang trí góc Tết */}
+            <img src={longdentetImg} alt="Lồng đèn Tết" className="confirm-top-lantern" />
+            <img src={hoadaotraiImg} alt="Hoa đào" className="confirm-bottom-peach" />
 
-            <div className="confirm-content">
-                <div className="left-column">
-                    <div className="address-section">
-                        <div className="section-title-box">
-                            <h3>📍 Địa chỉ giao hàng</h3>
-                            <button className="btn-link" onClick={() => navigate('/profile')}>Quản lý địa chỉ</button>
+            <div className="confirm-wrapper-inner">
+                <header className="confirm-header">
+                    <button onClick={() => navigate(-1)} className="btn-back-tet">
+                        <ArrowLeft size={18} />
+                        <span>QUAY LẠI TẠO ĐƠN</span>
+                    </button>
+
+                    <div className="confirm-title-block">
+                        <h1>🏮 XÁC NHẬN ĐƠN HÀNG TẾT 🏮</h1>
+                        <p className="confirm-subtitle">Mâm Cỗ Khai Xuân • Đong Đầy Hương Vị Tết Việt</p>
+                    </div>
+
+                    <div style={{ width: '140px' }}></div>
+                </header>
+
+                <div className="confirm-content">
+                    <div className="left-column">
+                        {/* 📍 ĐỊA CHỈ GIAO HÀNG */}
+                        <div className="address-section">
+                            <div className="section-title-box">
+                                <h3>
+                                    <MapPin size={20} className="text-red" /> Địa Chỉ Nhận Lộc Khai Xuân
+                                </h3>
+                                <button className="btn-link-tet" onClick={() => navigate('/profile')}>
+                                    Quản lý địa chỉ
+                                </button>
+                            </div>
+
+                            {loadingAddress ? (
+                                <p style={{ color: '#8e0000', fontSize: '0.9rem' }}>🎋 Đang tải địa chỉ nhận lộc...</p>
+                            ) : addresses.length > 0 ? (
+                                <div className="address-grid">
+                                    {addresses.map((addr) => (
+                                        <div
+                                            key={addr.idAddressItem}
+                                            className={`address-card ${selectedAddressId === addr.idAddressItem ? 'active' : ''}`}
+                                            onClick={() => handleAddressChange(addr.idAddressItem)}
+                                        >
+                                            <div className="check-icon-circle">
+                                                {selectedAddressId === addr.idAddressItem && <Check size={14} />}
+                                            </div>
+                                            <div className="addr-info">
+                                                <p className="addr-line-main">{addr.line1}, {addr.line2}</p>
+                                                <p className="addr-line-sub">{addr.region}, {addr.city}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="no-address-box">
+                                    <AlertTriangle size={18} />
+                                    <span>Bạn chưa có địa chỉ nhận hàng. Vui lòng thêm trong hồ sơ cá nhân.</span>
+                                </div>
+                            )}
                         </div>
 
-                        {loadingAddress ? (
-                            <p>Đang tải địa chỉ...</p>
-                        ) : addresses.length > 0 ? (
-                            <div className="address-grid">
-                                {addresses.map((addr) => (
-                                    <div
-                                        key={addr.idAddressItem}
-                                        className={`address-card ${selectedAddressId === addr.idAddressItem ? 'active' : ''}`}
-                                        onClick={() => handleAddressChange(addr.idAddressItem)}
-                                    >
-                                        <div className="check-icon">{selectedAddressId === addr.idAddressItem && "✓"}</div>
-                                        <div className="addr-info">
-                                            <p className="addr-line-main">{addr.line1}, {addr.line2}</p>
-                                            <p className="addr-line-sub">{addr.region}, {addr.city}</p>
+                        {/* 🛒 DANH SÁCH MÓN TẾT */}
+                        <div className="items-list">
+                            <h3>
+                                <ShoppingBag size={20} className="text-red" /> Mâm Cỗ Đã Chọn ({cartData.cartItems.length} món)
+                            </h3>
+                            {cartData.cartItems.map((item) => {
+                                const itemKey = item.idVariant ? `${item.idProduct}-${item.idVariant}` : item.idProduct;
+                                return (
+                                    <div key={itemKey} className="confirm-item">
+                                        <div className="item-img-wrapper">
+                                            <img src={item.urlImage} alt={item.nameProduct} className="item-img" />
+                                        </div>
+                                        <div className="item-info">
+                                            <h4>{item.nameProduct}</h4>
+                                            <p className="item-price">{item.price.toLocaleString('vi-VN')}đ</p>
+                                        </div>
+                                        <div className="quantity-controls-tet">
+                                            <button
+                                                className="btn-qty-tet"
+                                                disabled={updatingId === itemKey}
+                                                onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity - 1)}
+                                            >
+                                                {item.quantity === 1 ? <Trash2 size={14} /> : <Minus size={14} />}
+                                            </button>
+                                            <span className="qty-number">{item.quantity}</span>
+                                            <button
+                                                className="btn-qty-tet"
+                                                disabled={updatingId === itemKey}
+                                                onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity + 1)}
+                                            >
+                                                <Plus size={14} />
+                                            </button>
+                                        </div>
+                                        <div className="item-subtotal">
+                                            {(item.price * item.quantity).toLocaleString('vi-VN')}đ
                                         </div>
                                     </div>
-                                ))}
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* CỘT THANH TOÁN TỔNG KẾT */}
+                    <div className="order-summary-tet">
+                        <h3 className="summary-title-tet">
+                            <CreditCard size={20} /> Thanh Toán Khai Xuân
+                        </h3>
+
+                        <div className="payment-method-box">
+                            <span className="pay-label">Phương thức:</span>
+                            <span className="pay-val">
+                                <CreditCard size={16} /> Chuyển khoản PayOS
+                            </span>
+                        </div>
+
+                        <div className="summary-details">
+                            <div className="sum-row">
+                                <span>Tiền hàng mâm cỗ:</span>
+                                <span>{cartData.totalCart.toLocaleString('vi-VN')}đ</span>
                             </div>
-                        ) : (
-                            <p className="no-address-text">⚠️ Bạn chưa có địa chỉ. Vui lòng thêm trong hồ sơ.</p>
+                            <div className="sum-row">
+                                <span>Phí vận chuyển đêm giao thừa:</span>
+                                <span className="text-green">FREESHIP 0Đ</span>
+                            </div>
+                            <div className="sum-row">
+                                <span>Lì xì chiết khấu Tết:</span>
+                                <span className="text-green">-0đ</span>
+                            </div>
+                        </div>
+
+                        <div className="summary-row-total">
+                            <span className="total-label">Tổng cộng:</span>
+                            <span className="price-big-tet">{cartData.totalCart.toLocaleString('vi-VN')}đ</span>
+                        </div>
+
+                        <button
+                            className="btn-checkout-tet"
+                            onClick={handleCheckout}
+                            disabled={isSubmitting || !selectedAddressId}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 size={20} className="spin-slow" />
+                                    <span>ĐANG XỬ LÝ ĐẶT HÀNG...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Sparkles size={18} fill="#ffd700" color="#ffd700" />
+                                    <span>XÁC NHẬN ĐẶT HÀNG & NHẬN LỘC</span>
+                                </>
+                            )}
+                        </button>
+
+                        {!selectedAddressId && (
+                            <p className="error-small-tet">⚠️ Vui lòng chọn địa chỉ nhận lộc để tiếp tục</p>
                         )}
                     </div>
-
-                    <div className="items-list">
-                        <h3>🛒 Sản phẩm đã chọn</h3>
-                        {cartData.cartItems.map((item) => {
-                            const itemKey = item.idVariant ? `${item.idProduct}-${item.idVariant}` : item.idProduct;
-                            return (
-                                <div key={itemKey} className="confirm-item">
-                                    <img src={item.urlImage} alt={item.nameProduct} className="item-img" />
-                                    <div className="item-info">
-                                        <h3>{item.nameProduct}</h3>
-                                        <p className="item-price">{item.price.toLocaleString('vi-VN')}đ</p>
-                                    </div>
-                                    <div className="quantity-controls">
-                                        <button
-                                            disabled={updatingId === itemKey}
-                                            onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity - 1)}
-                                        >
-                                            {item.quantity === 1 ? '🗑️' : '−'}
-                                        </button>
-                                        <span>{item.quantity}</span>
-                                        <button
-                                            disabled={updatingId === itemKey}
-                                            onClick={() => updateQuantity(item.idProduct, item.idVariant, item.quantity + 1)}
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                    <div className="item-subtotal">{(item.price * item.quantity).toLocaleString('vi-VN')}đ</div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                <div className="order-summary">
-                    <h3>Thanh toán</h3>
-                    <div className="payment-info-static" style={{ margin: '20px 0', fontSize: '0.95rem', color: 'var(--text-gray)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span>Phương thức:</span>
-                        <span style={{ fontWeight: '600', color: 'var(--text-dark)' }}>💳 Chuyển khoản (PayOS)</span>
-                    </div>
-                    <div className="summary-row total">
-                        <span>Tổng cộng:</span>
-                        <span className="price-big">{cartData.totalCart.toLocaleString('vi-VN')}đ</span>
-                    </div>
-                    <button
-                        className="btn-checkout-final"
-                        onClick={handleCheckout}
-                        disabled={isSubmitting || !selectedAddressId}
-                    >
-                        {isSubmitting ? "ĐANG XỬ LÝ..." : "XÁC NHẬN ĐẶT HÀNG"}
-                    </button>
-                    {!selectedAddressId && <p className="error-small">Vui lòng chọn địa chỉ để đặt hàng</p>}
                 </div>
             </div>
 
             {/* --- MODAL QR (PayOS) --- */}
             {showQRModal && (
                 <div className="qr-modal-overlay">
-                    <div className="qr-modal-content">
+                    <div className="qr-modal-content-tet">
                         {!isPaid ? (
                             <>
-                                <button className="modal-close-x" onClick={() => setShowQRModal(false)}>×</button>
-                                <h2>Quét mã thanh toán</h2>
-                                <div className="qr-code-wrapper" style={{ minWidth: '220px', minHeight: '220px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <button className="modal-close-btn" onClick={() => setShowQRModal(false)}>×</button>
+                                <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                    <img src={iconloginhoaImg} alt="Hoa" style={{ width: '24px' }} />
+                                    <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#8e0000', fontWeight: '800' }}>
+                                        Quét Mã Thanh Toán Khai Xuân
+                                    </h2>
+                                </div>
+                                <div className="qr-code-wrapper-tet">
                                     {qrCodeValue ? (
                                         <QRCodeCanvas value={qrCodeValue} size={220} />
                                     ) : (
-                                        <div className="qr-spinner-container">
-                                            <div className="qr-spinner"></div>
-                                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-gray)' }}>Đang tạo mã thanh toán...</p>
+                                        <div style={{ padding: '40px 20px', color: '#8e0000' }}>
+                                            <Loader2 size={32} className="spin-slow mb-2" />
+                                            <p style={{ margin: 0, fontSize: '0.9rem' }}>Đang tạo mã QR PayOS khai xuân...</p>
                                         </div>
                                     )}
                                 </div>
-                                <p>🔔 Đang chờ xác nhận giao dịch...</p>
+                                <p style={{ color: '#616161', fontSize: '0.88rem' }}>
+                                    🔔 Hệ thống tự động xác nhận sau khi chuyển khoản thành công...
+                                </p>
                                 <button 
-                                    className="btn-confirm-next"
+                                    className="btn-confirm-next-tet"
                                     onClick={() => {
                                         setShowQRModal(false);
                                         navigate('/');
                                     }}
                                 >
-                                    TÔI ĐÃ THANH TOÁN
+                                    TÔI ĐÃ THANH TOÁN KHAI XUÂN
                                 </button>
                             </>
                         ) : (
                             <div className="success-anim">
-                                <div className="success-checkmark">
-                                    <svg className="checkmark-svg" viewBox="0 0 100 100">
-                                        <circle className="checkmark-circle" cx="50" cy="50" r="45" fill="none" />
-                                        <path className="checkmark-check" fill="none" d="M30 50 L45 65 L70 35" />
-                                    </svg>
-                                </div>
-                                <h2>Thanh toán thành công!</h2>
-                                <p>Cảm ơn bạn đã sử dụng dịch vụ.</p>
-                                <button className="btn-confirm-next" onClick={() => navigate('/order-success')}>
-                                    TIẾP TỤC
+                                <PartyPopper size={50} style={{ color: '#2e7d32', marginBottom: '15px' }} />
+                                <h2 style={{ color: '#2e7d32', fontWeight: '800' }}>Khai Xuân Thành Công! 🎉</h2>
+                                <p style={{ color: '#555', fontSize: '0.92rem' }}>
+                                    Đơn hàng mâm cỗ Tết của bạn đã được thanh toán thành công. Chúc bạn và gia đình năm mới An Khang Thịnh Vượng!
+                                </p>
+                                <button className="btn-confirm-next-tet" onClick={() => navigate('/orders')}>
+                                    XEM ĐƠN HÀNG CỦA BẠN ➔
                                 </button>
                             </div>
                         )}
@@ -405,20 +494,15 @@ export default function ConfirmMenu() {
             {/* --- MODAL TIỀN MẶT --- */}
             {showCashSuccess && (
                 <div className="qr-modal-overlay">
-                    <div className="qr-modal-content">
-                        <div className="payment-success-content">
-                            <div className="success-checkmark">
-                                <svg className="checkmark-svg" viewBox="0 0 100 100">
-                                    <circle className="checkmark-circle" cx="50" cy="50" r="45" fill="none" />
-                                    <path className="checkmark-check" fill="none" d="M30 50 L45 65 L70 35" />
-                                </svg>
-                            </div>
-                            <h2 className="success-title">Đặt hàng thành công!</h2>
-                            <p className="success-msg">Đơn hàng đã được ghi nhận. Vui lòng chuẩn bị tiền mặt khi nhận hàng.</p>
-                            <button className="btn-confirm-next" onClick={() => navigate('/order-success')}>
-                                XÁC NHẬN
-                            </button>
-                        </div>
+                    <div className="qr-modal-content-tet">
+                        <PartyPopper size={50} style={{ color: '#2e7d32', marginBottom: '15px' }} />
+                        <h2 style={{ color: '#2e7d32', fontWeight: '800' }}>Đặt Hàng Thành Công! 🧧</h2>
+                        <p style={{ color: '#555', fontSize: '0.92rem', margin: '10px 0 20px 0' }}>
+                            Mâm cỗ Tết của bạn đã được ghi nhận. Vui lòng chuẩn bị tiền mặt khi shipper giao tới.
+                        </p>
+                        <button className="btn-confirm-next-tet" onClick={() => navigate('/orders')}>
+                            XÁC NHẬN & QUẢN LÝ ĐƠN HÀNG
+                        </button>
                     </div>
                 </div>
             )}
@@ -426,19 +510,13 @@ export default function ConfirmMenu() {
             {/* --- MODAL LỖI ĐẶT HÀNG --- */}
             {checkoutError && (
                 <div className="qr-modal-overlay">
-                    <div className="qr-modal-content error-modal">
-                        <button className="modal-close-x" onClick={() => setCheckoutError(null)}>×</button>
-                        <div className="error-checkmark">
-                            <svg className="checkmark-svg" viewBox="0 0 100 100">
-                                <circle className="checkmark-circle error-circle" cx="50" cy="50" r="45" fill="none" />
-                                <path className="checkmark-check error-line1" fill="none" d="M35 35 L65 65" />
-                                <path className="checkmark-check error-line2" fill="none" d="M65 35 L35 65" />
-                            </svg>
-                        </div>
-                        <h2 className="error-title">Đặt hàng thất bại</h2>
-                        <p className="error-msg">{checkoutError}</p>
-                        <button className="btn-confirm-next error-btn" onClick={() => setCheckoutError(null)}>
-                            ĐÓNG
+                    <div className="qr-modal-content-tet">
+                        <button className="modal-close-btn" onClick={() => setCheckoutError(null)}>×</button>
+                        <AlertTriangle size={48} style={{ color: '#d32f2f', marginBottom: '15px' }} />
+                        <h2 style={{ color: '#d32f2f', fontWeight: '800', margin: '0 0 10px 0' }}>Đặt Hàng Thất Bại</h2>
+                        <p style={{ color: '#424242', fontSize: '0.92rem', lineHeight: '1.5' }}>{checkoutError}</p>
+                        <button className="btn-confirm-next-tet error-btn" onClick={() => setCheckoutError(null)}>
+                            ĐÓNG & THỬ LẠI
                         </button>
                     </div>
                 </div>
