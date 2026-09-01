@@ -8,6 +8,8 @@ import banhTrungImg from '../../assets/banhtrung.avif';
 import sideLeftImg from '../../assets/sideleft.webp';
 import vienTextImg from '../../assets/VienText.png';
 import hoaDaoTraiImg from '../../assets/hoadaotrai.webp';
+import cayMaiImg from '../../assets/caymai-removebg-preview.png';
+import canhDaoImg from '../../assets/canhdao.png';
 import './home.css';
 
 export default function Home() {
@@ -380,12 +382,16 @@ export default function Home() {
         <FireworksEffect />
         <div className="hero-framed-container">
           <img src={vienTextImg} alt="Khung viền tiêu đề" className="hero-frame-bg-img" />
-          <h1>
-            <span className="slide-left">Tết Trọn Vị Ngon,</span>
-            <span className="slide-right">
-              Giao Hàng <span style={{ color: '#d32f2f' }}>Tốc Biến</span>
-            </span>
-          </h1>
+          <div className="hero-title-with-mai">
+            <img src={cayMaiImg} alt="Cành Mai Khai Xuân" className="hero-caymai-icon-left" />
+            <h1>
+              <span className="slide-left">Tết Trọn Vị Ngon,</span>
+              <span className="slide-right">
+                Giao Hàng <span style={{ color: '#d32f2f' }}>Tốc Biến</span>
+              </span>
+            </h1>
+            <img src={canhDaoImg} alt="Cành Đào Khai Xuân" className="hero-canhdao-icon-right" />
+          </div>
         </div>
         <p className="fade-in hero-subtitle-banner" style={{ textAlign: 'center', marginTop: '-10px', color: '#718096', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
           <img src={sideLeftImg} alt="Side icon" className="hero-side-icon-img" />
