@@ -3,10 +3,13 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
   ShoppingCart as CartIcon, ArrowLeft, Plus, Minus, Loader2, 
-  Star, Clock, ShieldCheck, ChevronLeft, ChevronRight 
+  Star, Clock, ShieldCheck, ChevronLeft, ChevronRight, Sparkles, Award
 } from 'lucide-react';
 
 import FoodCard from '../homepage/FoodCard';
+import banhTrungImg from '../../assets/banhtrung.avif';
+import hoadaotraiImg from '../../assets/hoadaotrai.webp';
+import longdentetImg from '../../assets/longdentet.png';
 import './ViewDetailProduct.css';
 
 const ProductDetail = () => {
@@ -23,6 +26,7 @@ const ProductDetail = () => {
   const [showToast, setShowToast] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
+  
   // --- LOGIC CHUYỂN ẢNH TỰ ĐỘNG CHO SẢN PHẨM CHÍNH ---
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -58,18 +62,17 @@ const ProductDetail = () => {
     } catch (e) {
       console.error("Lỗi cập nhật badge:", e);
     }
-  }, [userId, token]);
+  }, [userId, token, apiUrl]);
 
   const handleOpenCartDrawer = () => {
     window.dispatchEvent(new Event('openCart'));
   };
 
-  // --- LOGIC TRACKING DÙNG CHUNG (ĐÃ CẬP NHẬT THỜI GIAN) ---
+  // --- LOGIC TRACKING DÙNG CHUNG ---
   const trackUserAction = async (eventType, productId) => {
     const sessionId = localStorage.getItem("sessionId");
-    const currentUserId = localStorage.getItem("userId"); // Lấy lại để đảm bảo fresh data
+    const currentUserId = localStorage.getItem("userId");
     
-    // Lấy ngày và giờ hiện tại
     const today = new Date();
     const day = today.getDate().toString().padStart(2, '0');
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -78,24 +81,18 @@ const ProductDetail = () => {
     const minutes = today.getMinutes().toString().padStart(2, '0');
     const seconds = today.getSeconds().toString().padStart(2, '0');
 
-    // Format theo chuẩn: dd/MM/yyyy HH:mm:ss
     const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
-    // Tạo event payload
     const newEvent = {
       EventType: eventType, 
       IdProduct: productId,
       CreateAt: formattedDate
     };
 
-    // Lấy queue hiện tại từ localStorage và thêm event mới
     let trackingQueue = JSON.parse(localStorage.getItem('trackingQueue') || '[]');
     trackingQueue.push(newEvent);
-
-    // Lưu lại queue mới vào localStorage ngay lập tức
     localStorage.setItem('trackingQueue', JSON.stringify(trackingQueue));
 
-    // Kiểm tra nếu đủ 5 item thì gửi API
     if (trackingQueue.length >= 5) {
       const payload = {
         IdSession: sessionId || "", 
@@ -105,7 +102,6 @@ const ProductDetail = () => {
 
       try {
         await axios.post(`${apiUrl}/tracking`, payload);
-        // Gửi thành công thì clear queue trong localStorage
         localStorage.removeItem('trackingQueue');
       } catch (error) {
         console.error("Lỗi gửi tracking data:", error);
@@ -123,7 +119,6 @@ const ProductDetail = () => {
       try {
         setLoading(true);
         
-        // 1. Lấy chi tiết sản phẩm chính
         const productRes = await axios.get(`${apiUrl}/products/${id}`);
         const productData = productRes.data;
         setProduct(productData);
@@ -133,11 +128,9 @@ const ProductDetail = () => {
           setSelectedVariant(productData.productVariantDTOs[0]);
         }
 
-        // --- GỌI TRACKING VIEW SẢN PHẨM (EventType = 1) ---
         const productIdToTrack = productData.idProduct || id;
         trackUserAction(1, productIdToTrack);
 
-        // 2. Lấy danh sách gợi ý
         if (productData.idCategory) {
           try {
             const suggestedRes = await axios.get(`${apiUrl}/products/recommendation/${productData.idCategory}`);
@@ -153,9 +146,9 @@ const ProductDetail = () => {
                   img: item.imageFoods?.find(img => img.isMain)?.urlImage 
                        || item.imageFoods?.[0]?.urlImage 
                        || 'https://via.placeholder.com/300',
-                  desc: item.decriptions || "Món ngon đãi tiệc"
+                  desc: item.decriptions || "Món ngon đãi tiệc Tết"
                 }));
-              setSuggestedProducts(mappedSuggestions.slice(0, 8));
+              setSuggestedProducts(mappedSuggestions.slice(0, 6));
             }
           } catch (e) { console.error("Lỗi lấy gợi ý:", e); }
         }
@@ -176,13 +169,12 @@ const ProductDetail = () => {
       window.removeEventListener('cartStateChanged', handleCartStateChange);
       window.removeEventListener('cartUpdated', updateCartBadge);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, updateCartBadge]);
+  }, [id, updateCartBadge, apiUrl]);
 
   // --- THÊM VÀO GIỎ HÀNG ---
   const handleAddToCart = async () => {
     if (!userId || !token) {
-      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      alert("Vui lòng đăng nhập để thêm món vào giỏ hàng nhé!");
       navigate('/login');
       return;
     }
@@ -217,53 +209,63 @@ const ProductDetail = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // --- GỌI TRACKING THÊM GIỎ HÀNG (EventType = 3) ---
       trackUserAction(3, product.idProduct || id);
 
       window.dispatchEvent(new Event('cartUpdated'));
       window.dispatchEvent(new Event('openCart'));
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 1200);
+      setTimeout(() => setShowToast(false), 1500);
 
     } catch (error) {
       console.error("Lỗi thêm vào giỏ hàng:", error);
       if(error.response?.status === 401) navigate('/login');
-      else alert("Không thể thêm sản phẩm vào giỏ hàng!");
+      else alert("Không thể thêm món vào giỏ hàng!");
     } finally { setIsAdding(false); }
   };
 
-  if (loading) return <div className="modern-loader"><Loader2 className="spinner" size={48} /><p>Đang chuẩn bị mâm cỗ...</p></div>;
-  if (!product) return <div className="error-container">Món ăn không tồn tại!</div>;
+  if (loading) return <div className="modern-loader tet-loader"><Loader2 className="spinner" size={48} /><p>Đang chuẩn bị mâm cỗ Tết...</p></div>;
+  if (!product) return <div className="error-container tet-error">Món ăn không tồn tại!</div>;
 
   const totalPrice = (product.price + (selectedVariant?.extraPrice || 0)) * quantity;
 
   return (
-    <div className="modern-detail-wrapper">
-      <div className={`simple-mini-toast ${showToast ? 'show' : ''}`}>
-        Đã thêm
+    <div className="modern-detail-wrapper tet-detail-mode">
+      {/* TRANG TRÍ HOẠ TIẾT TẾT CHÌM */}
+      <img src={longdentetImg} alt="Lồng đèn Tết" className="detail-lantern-decor" />
+      <img src={hoadaotraiImg} alt="Cành đào" className="detail-peach-decor" />
+
+      {/* TOAST THÔNG BÁO */}
+      <div className={`simple-mini-toast tet-mini-toast ${showToast ? 'show' : ''}`}>
+        <span>🧧 Đã thêm vào mâm cỗ Tết!</span>
       </div>
 
-
+      {/* FLOATING CART BUTTON */}
       <div className={`fixed-nav-group ${isCartOpen ? 'hidden' : ''}`}>
-        <button className="nav-floating-btn cart" onClick={handleOpenCartDrawer}>
-          <span className="label">Giỏ Hàng</span>
+        <button className="nav-floating-btn cart tet-float-cart" onClick={handleOpenCartDrawer}>
+          <img src={banhTrungImg} alt="Giỏ món" className="floating-cart-img" />
+          <span className="label">Giỏ món</span>
           {cartCount > 0 && <span className="badge">{cartCount}</span>}
         </button>
       </div>
 
       <div className="container">
+        {/* TOP BAR GO BACK */}
         <div className="detail-top-bar">
-          <button className="glass-back-btn" onClick={() => navigate('/menu')}>
+          <button className="glass-back-btn tet-back-btn" onClick={() => navigate('/menu')}>
             <ArrowLeft size={18} />
             <span>Quay về thực đơn</span>
           </button>
         </div>
 
-        <div className="main-content-card">
+        {/* MAIN CARD DETAIL */}
+        <div className="main-content-card tet-main-card">
           {/* SLIDESHOW SECTION */}
-          <div className="image-section">
-            <div className="badge-overlay">Món Đặc Sản</div>
-            <div className="slideshow-container">
+          <div className="image-section tet-image-section">
+            <div className="badge-overlay tet-badge-overlay">
+              <Sparkles size={14} /> ✦ ĐẶC SẢN TẾT ✦
+            </div>
+
+            <div className="slideshow-container tet-slideshow">
               {product.productImageDTOs?.map((img, index) => (
                 <img 
                   key={index} 
@@ -272,10 +274,11 @@ const ProductDetail = () => {
                   className={`hero-image ${index === currentImageIndex ? 'active' : ''}`} 
                 />
               ))}
+
               {product.productImageDTOs?.length > 1 && (
                 <>
-                  <button className="slide-nav-btn prev" onClick={prevImage}><ChevronLeft/></button>
-                  <button className="slide-nav-btn next" onClick={nextImage}><ChevronRight/></button>
+                  <button className="slide-nav-btn prev tet-slide-btn" onClick={prevImage}><ChevronLeft size={20}/></button>
+                  <button className="slide-nav-btn next tet-slide-btn" onClick={nextImage}><ChevronRight size={20}/></button>
                   <div className="slide-indicators">
                     {product.productImageDTOs.map((_, idx) => (
                       <div key={idx} className={`dot ${idx === currentImageIndex ? 'active' : ''}`} onClick={() => setCurrentImageIndex(idx)} />
@@ -287,66 +290,84 @@ const ProductDetail = () => {
           </div>
 
           {/* INFO SECTION */}
-          <div className="info-section">
+          <div className="info-section tet-info-section">
             <div className="header-meta">
-              <span className="category-tag">🏮 Khai Xuân</span>
-              <div className="rating"><Star size={16} fill="#FFB800" color="#FFB800" /><span>4.9 (150+)</span></div>
+              <span className="category-tag tet-category-tag">🏮 Khai Xuân Mỹ Vị</span>
+              <div className="rating tet-rating">
+                <Star size={16} fill="#FFD700" color="#FFD700" />
+                <span>4.9 (150+ đánh giá)</span>
+              </div>
             </div>
-            <h1 className="modern-title">{product.name}</h1>
-             
-         <p className="modern-description">{product.description}</p>
-            <div className="price-tag-wrapper">
-              <span className="currency">đ</span>
-              <span className="amount">{totalPrice.toLocaleString('vi-VN')}</span>
-            </div>
+
+            <h1 className="modern-title tet-product-title">{product.name}</h1>
             
-            <div className="benefit-icons">           
-              <div className="icon-item"><Clock size={18}/> 15-25 phút</div>
-              <div className="icon-item"><ShieldCheck size={18}/> ATVSTP</div>
+            <div className="price-tag-wrapper tet-price-wrapper">
+              <span className="amount tet-amount">{totalPrice.toLocaleString('vi-VN')}</span>
+              <span className="currency tet-currency">đ</span>
+              <span className="freeship-tag-tet">Freeship Khai Xuân 0đ</span>
             </div>
-            <div className="divider" />
-            <div className="variant-box">
-              <h3>Chọn kích cỡ</h3>
-              <div className="modern-variants">
-                {product.productVariantDTOs?.map(v => (
-                  <label key={v.idVariant} className={`variant-chip ${selectedVariant?.idVariant === v.idVariant ? 'active' : ''}`}>
-                    <input type="radio" name="size" onChange={() => setSelectedVariant(v)} checked={selectedVariant?.idVariant === v.idVariant} />
-                    <span className="size-name">{v.name}</span>
-                    <span className="plus-price">+{v.extraPrice.toLocaleString('vi-VN')}đ</span>
-                  </label>
-                ))}
+
+            <p className="modern-description tet-desc">{product.description}</p>
+            
+            <div className="benefit-icons tet-benefits">           
+              <div className="icon-item"><Clock size={16}/> 15-25 phút giao thần tốc</div>
+              <div className="icon-item"><ShieldCheck size={16}/> Chuẩn ATVSTP</div>
+              <div className="icon-item"><Award size={16}/> Vị Ngon 5 Sao</div>
+            </div>
+
+            <div className="divider tet-divider" />
+
+            {/* SELECTION VARIANTS */}
+            {product.productVariantDTOs?.length > 0 && (
+              <div className="variant-box tet-variant-box">
+                <h3>Chọn kích cỡ / Khẩu phần:</h3>
+                <div className="modern-variants tet-variants-list">
+                  {product.productVariantDTOs.map(v => (
+                    <label key={v.idVariant} className={`variant-chip tet-chip ${selectedVariant?.idVariant === v.idVariant ? 'active' : ''}`}>
+                      <input type="radio" name="size" onChange={() => setSelectedVariant(v)} checked={selectedVariant?.idVariant === v.idVariant} />
+                      <span className="size-name">{v.name}</span>
+                      <span className="plus-price">+{v.extraPrice.toLocaleString('vi-VN')}đ</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="action-bar">
-              <div className="modern-counter">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}><Minus/></button>
+            )}
+
+            {/* ACTION BAR */}
+            <div className="action-bar tet-action-bar">
+              <div className="modern-counter tet-counter">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="counter-btn"><Minus size={16}/></button>
                 <span className="count">{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)}><Plus/></button>
+                <button onClick={() => setQuantity(quantity + 1)} className="counter-btn"><Plus size={16}/></button>
               </div>
-              <button className="primary-buy-btn" onClick={handleAddToCart} disabled={isAdding}>
-                {isAdding ? <Loader2 className="spinner" /> : <CartIcon />}
-                <span>{isAdding ? 'Đang xử lý...' : 'Thêm vào giỏ'}</span>
+
+              <button className="primary-buy-btn tet-buy-btn" onClick={handleAddToCart} disabled={isAdding}>
+                {isAdding ? <Loader2 className="spinner" size={20} /> : <CartIcon size={20} />}
+                <span>{isAdding ? 'Đang thêm...' : 'THÊM VÀO GIỎ HÀNG'}</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* SUGGESTIONS SECTION */}
-        <div className="suggestions-section">
-          <div className="section-header">
-            <h2 className="section-title">Gợi ý món ngon đi kèm</h2>
-            <div className="title-underline"></div>
+        {suggestedProducts.length > 0 && (
+          <div className="suggestions-section tet-suggestions">
+            <div className="section-header tet-section-header">
+              <h2 className="section-title tet-sec-title">🌸 Gợi Ý Món Ngon Đi Kèm Mâm Cỗ 🌸</h2>
+              <div className="title-underline tet-underline"></div>
+            </div>
+            
+            <div className="food-grid tet-suggestions-grid">
+              {suggestedProducts.map((item) => (
+                <FoodCard 
+                  key={item.id} 
+                  food={item} 
+                  onAdd={() => navigate(`/detail/${item.id}`)} 
+                />
+              ))}
+            </div>
           </div>
-          <div className="suggestions-grid">
-            {suggestedProducts.map((item) => (
-              <FoodCard 
-                key={item.id} 
-                food={item} 
-                onAdd={() => navigate(`/detail/${item.id}`)} 
-              />
-            ))}
-          </div>
-        </div>
+        )}
       </div> 
     </div>
   );

@@ -21,7 +21,7 @@ export default function ViewListProductFood() {
     const [foods, setFoods] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize] = useState(8);
+    const [pageSize] = useState(12);
     const [searchTerm, setSearchTerm] = useState("");
     const [query, setQuery] = useState("");
     const [totalItems, setTotalItems] = useState(0);
@@ -340,8 +340,8 @@ export default function ViewListProductFood() {
                     <span className="label">Trang Chủ</span>
                 </button>
                 <button className="nav-floating-btn cart" onClick={handleOpenCart}>
-                    <img src={banhTrungImg} alt="Lộc Xuân" className="floating-cart-img" />
-                    <span className="label">Giỏ Hàng</span>
+                    <img src={banhTrungImg} alt="Giỏ món" className="floating-cart-img" />
+                    <span className="label">Giỏ món</span>
                     {cartCount > 0 && <span className="badge">{cartCount}</span>}
                 </button>
             </div>

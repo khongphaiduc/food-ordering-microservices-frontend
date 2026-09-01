@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { UtensilsCrossed } from 'lucide-react';
 import FoodCard from './FoodCard';
 import BrandLogo from './BrandLogo';
 import FireworksEffect from './FireworksEffect';
@@ -9,6 +10,7 @@ import vienTextImg from '../../assets/VienText.png';
 import './home.css';
 
 export default function Home() {
+  const navigate = useNavigate();
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDrawerActive, setIsDrawerActive] = useState(false);
@@ -325,7 +327,10 @@ export default function Home() {
         </Link>
 
         <nav className="nav-links">
-          <Link to="/menu">Thực đơn Tết</Link>
+          <Link to="/menu" className="btn-nav-menu">
+            <UtensilsCrossed size={16} />
+            <span>Thực Đơn Tết 🧧</span>
+          </Link>
 
           {userName ? (
             <div className="user-nav-container">
@@ -501,9 +506,13 @@ export default function Home() {
 
 
       <div className={`fixed-nav-group ${isDrawerActive || showAddressModal ? 'hidden' : ''}`}>
+        <button className="nav-floating-btn menu-btn" onClick={() => navigate('/menu')}>
+          <UtensilsCrossed size={18} />
+          <span className="label">Thực Đơn</span>
+        </button>
         <button className="nav-floating-btn cart" onClick={handleOpenCart} style={{ backgroundColor: '#d32f2f' }}>
-          <img src={banhTrungImg} alt="Lộc Xuân" className="floating-cart-img" />
-          <span className="label">Lộc Xuân</span>
+          <img src={banhTrungImg} alt="Giỏ món" className="floating-cart-img" />
+          <span className="label">Giỏ món</span>
         </button>
       </div>
 
