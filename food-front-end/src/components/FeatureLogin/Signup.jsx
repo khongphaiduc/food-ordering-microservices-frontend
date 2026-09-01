@@ -36,41 +36,15 @@ const Signup = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [wishIndex, setWishIndex] = useState(0);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
-    // Carousel Lời Chúc Tết
-    const wishes = [
-        "🌸 Tân Xuân Như Ý - Vạn Sự Cát Tường",
-        "🧧 Ăn Ngon Đón Tết - Trọn Vẹn Niềm Vui",
-        "✨ Phát Tài Phát Lộc - Mã Đáo Thành Công",
-        "🍊 Phúc Lộc An Khang - Gia Đạo Bình An"
-    ];
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setWishIndex((prev) => (prev + 1) % wishes.length);
-        }, 3500);
-        return () => clearInterval(interval);
-    }, [wishes.length]);
-
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (error) setError('');
     };
-
-    const getPasswordStrength = () => {
-        const pass = formData.Password;
-        if (!pass) return { label: '', color: '', percent: 0 };
-        if (pass.length < 6) return { label: 'Yếu', color: '#ff4d4f', percent: 33 };
-        if (pass.length < 10) return { label: 'Trung bình', color: '#faad14', percent: 66 };
-        return { label: 'Mạnh', color: '#52c41a', percent: 100 };
-    };
-
-    const strength = getPasswordStrength();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -81,31 +55,47 @@ const Signup = () => {
             return;
         }
 
-        if (formData.Password.length < 6) {
-            setError("Mật khẩu phải có ít nhất 6 ký tự!");
+        if (!formData.Password) {
+            setError("Vui lòng nhập mật khẩu!");
             return;
         }
 
         setLoading(true);
 
         try {
-            const apiUrl = import.meta.env.VITE_API_URL;
-            const response = await axios.post(`${apiUrl}/auth/signup`, {
+            const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
+            const payload = {
                 UserName: formData.UserName,
+                username: formData.UserName,
                 Email: formData.Email,
+                emailAdress: formData.Email,
+                emailAddress: formData.Email,
+                EmailAddress: formData.Email,
+                email: formData.Email,
                 Password: formData.Password,
-                ConfirmPassword: formData.ConfirmPassword
-            });
+                password: formData.Password,
+                ConfirmPassword: formData.ConfirmPassword,
+                confirmPassword: formData.ConfirmPassword
+            };
 
-            console.log("Đăng ký thành công:", response.data);
-            setSuccess(true);
+            const response = await axios.post(`${apiUrl}/auth/signup`, payload);
+            const resData = response.data;
 
-            setTimeout(() => {
-                navigate('/login');
-            }, 2500);
+            if (resData?.status === true || resData?.status === "true") {
+                console.log("Đăng ký thành công:", resData);
+                setSuccess(true);
+
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2500);
+            } else {
+                setError(resData?.message || "Đăng ký thất bại, vui lòng thử lại.");
+            }
 
         } catch (err) {
-            setError(err.response?.data?.message || "Đăng ký thất bại, vui lòng thử lại.");
+            console.error("Lỗi Đăng Ký:", err);
+            const serverMsg = err.response?.data?.message || err.response?.data?.title || (typeof err.response?.data === 'string' ? err.response.data : null);
+            setError(serverMsg || "Đăng ký thất bại, vui lòng kiểm tra lại thông tin.");
         } finally {
             setLoading(false);
         }
@@ -118,15 +108,6 @@ const Signup = () => {
                 <Home size={18} />
                 <span>Trở về trang chủ</span>
             </Link>
-
-            {/* Hiệu ứng cánh hoa & bao lì xì rơi nhẹ nhàng */}
-            <div className="falling-petals-container" aria-hidden="true">
-                {[...Array(10)].map((_, i) => (
-                    <div key={i} className="falling-item">
-                        {i % 3 === 0 ? '🌸' : i % 3 === 1 ? '🧧' : '✨'}
-                    </div>
-                ))}
-            </div>
 
             {/* Lồng đèn Tết góc phải màn hình */}
             <img
@@ -169,36 +150,10 @@ const Signup = () => {
                                 <p className="brand-subtitle">Giao Hòa Hương Vị Tết Việt</p>
                             </div>
 
-                            {/* Carousel Lời Chúc */}
-                            <div className="wish-carousel-box">
-                                <p className="wish-text">{wishes[wishIndex]}</p>
-                            </div>
-
-                            {/* Danh sách đặc quyền Tết */}
-                            <div className="tet-benefits-list">
-                                <div className="benefit-item">
-                                    <div className="benefit-icon">🧧</div>
-                                    <div className="benefit-info">
-                                        <strong>Tặng Lì Xì 100.000đ</strong>
-                                        <span>Cộng ngay vào ví Foodly khi đăng ký</span>
-                                    </div>
-                                </div>
-
-                                <div className="benefit-item">
-                                    <div className="benefit-icon">🚚</div>
-                                    <div className="benefit-info">
-                                        <strong>Freeship Đêm Giao Thừa</strong>
-                                        <span>Áp dụng cho toàn bộ đơn hàng khai xuân</span>
-                                    </div>
-                                </div>
-
-                                <div className="benefit-item">
-                                    <div className="benefit-icon">🎁</div>
-                                    <div className="benefit-info">
-                                        <strong>Vòng Quay May Mắn</strong>
-                                        <span>100% trúng voucher quà tặng hấp dẫn</span>
-                                    </div>
-                                </div>
+                            <div className="tet-story-box">
+                                <p className="tet-story-text">
+                                    Tết là những ngày ta trở về bên gia đình, cùng nhau quây quần bên mâm cơm ấm áp, thưởng thức những món ngon quen thuộc và trao nhau những lời chúc tốt lành. Dẫu năm tháng có đổi thay, hương vị ngày Tết vẫn luôn là ký ức thân thương gắn kết mỗi người với mái nhà và những người mình yêu thương.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -237,14 +192,14 @@ const Signup = () => {
                         <form onSubmit={handleSubmit} className="tet-form">
                             {/* Username Input */}
                             <div className="input-group-custom">
-                                <label className="input-label">Tên gia chủ (Username)</label>
+                                <label className="input-label">Tên của bạn</label>
                                 <div className="input-wrapper">
                                     <User className="field-icon" size={18} />
                                     <input
                                         type="text"
                                         name="UserName"
                                         className="form-control-custom"
-                                        placeholder="Ví dụ: NguyenVanAn"
+                                        placeholder="Ví dụ: Phạm Trung Đức"
                                         value={formData.UserName}
                                         onChange={handleChange}
                                         required
@@ -261,7 +216,7 @@ const Signup = () => {
                                         type="email"
                                         name="Email"
                                         className="form-control-custom"
-                                        placeholder="tenban@example.com"
+                                        placeholder="ducdeptraivcl@example.com"
                                         value={formData.Email}
                                         onChange={handleChange}
                                         required
@@ -271,21 +226,14 @@ const Signup = () => {
 
                             {/* Password Input */}
                             <div className="input-group-custom">
-                                <div className="d-flex justify-content-between align-items-center">
-                                    <label className="input-label">Mật khẩu</label>
-                                    {formData.Password && (
-                                        <span className="strength-badge" style={{ color: strength.color }}>
-                                            Độ mạnh: {strength.label}
-                                        </span>
-                                    )}
-                                </div>
+                                <label className="input-label">Mật khẩu</label>
                                 <div className="input-wrapper">
                                     <Lock className="field-icon" size={18} />
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         name="Password"
                                         className="form-control-custom pr-toggle"
-                                        placeholder="Nhập ít nhất 6 ký tự"
+                                        placeholder="Nhập mật khẩu của bạn"
                                         value={formData.Password}
                                         onChange={handleChange}
                                         required
@@ -299,17 +247,6 @@ const Signup = () => {
                                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
-                                {formData.Password && (
-                                    <div className="strength-bar-bg">
-                                        <div
-                                            className="strength-bar-fill"
-                                            style={{
-                                                width: `${strength.percent}%`,
-                                                backgroundColor: strength.color
-                                            }}
-                                        ></div>
-                                    </div>
-                                )}
                             </div>
 
                             {/* Confirm Password Input */}

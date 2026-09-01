@@ -14,13 +14,18 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    
+    const [toast, setToast] = useState({ show: false, message: '' });
+
     const navigate = useNavigate();
 
     const handleGoogleLogin = () => {
-        const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
-        // Điều hướng tới endpoint xử lý Google OAuth trên backend
-        window.location.href = `${apiUrl}/auth/google-login`;
+        setToast({
+            show: true,
+            message: 'Tính năng này đang trong quá trình phát triển, vui lòng thử lại sau!'
+        });
+        setTimeout(() => {
+            setToast({ show: false, message: '' });
+        }, 3200);
     };
 
     const handleSubmit = async (e) => {
@@ -30,7 +35,7 @@ const Login = () => {
 
         try {
             const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
-        
+
             const response = await axios.post(`${apiUrl}/auth/login`, {
                 Email: email,
                 Password: password
@@ -45,7 +50,7 @@ const Login = () => {
                     try {
                         const decoded = jwtDecode(token);
                         console.log("Dữ liệu trong Token:", decoded);
-                        userRole = decoded["role"] 
+                        userRole = decoded["role"]
                             || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
                             || 'User';
                     } catch (decErr) {
@@ -57,7 +62,7 @@ const Login = () => {
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("userId", data.id || data.userId || "");
                 localStorage.setItem("userName", data.email || email);
-                localStorage.setItem("userRole", userRole); 
+                localStorage.setItem("userRole", userRole);
                 if (token) localStorage.setItem("accessToken", token);
                 if (data.refreshToken?.tokenValue) {
                     localStorage.setItem("refreshToken", data.refreshToken.tokenValue);
@@ -68,7 +73,7 @@ const Login = () => {
 
                 // Bắn event thông báo ứng dụng đã đăng nhập
                 window.dispatchEvent(new Event('authChanged'));
-         
+
                 if (userRole === 'Admin' || userRole === 'Staff') {
                     navigate('/management/dashboard');
                 } else {
@@ -87,6 +92,12 @@ const Login = () => {
 
     return (
         <div className="login-wrapper tet-theme">
+            {/* HIỆU ỨNG THÔNG BÁO TOAST TẾT */}
+            <div className={`login-toast-notification ${toast.show ? 'show' : ''}`}>
+                <span className="toast-icon">🏮</span>
+                <span className="toast-text">{toast.message}</span>
+            </div>
+
             {/* Nút Trở về trang chủ */}
             <Link to="/home" className="btn-back-home">
                 <Home size={18} />
@@ -97,7 +108,7 @@ const Login = () => {
             <img src={longdentetImg} alt="Lồng đèn Tết" className="top-right-longden-img" />
 
             <div className="login-card-custom shadow-lg">
-                
+
                 <div className="login-image-section d-none d-md-block">
                     <img src={tetdoanvienImg} alt="Tết Đoàn Viên" />
                     <div className="image-overlay">
@@ -121,24 +132,24 @@ const Login = () => {
                     <form onSubmit={handleSubmit} className="mt-4">
                         <div className="mb-3">
                             <label className="small fw-bold mb-1 text-danger">Email</label>
-                            <input 
-                                type="email" 
-                                className="custom-input w-100" 
-                                placeholder="name@example.com"
+                            <input
+                                type="email"
+                                className="custom-input w-100"
+                                placeholder="ducdepzai102@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                required 
+                                required
                             />
                         </div>
                         <div className="mb-4">
                             <label className="small fw-bold mb-1 text-danger">Mật khẩu</label>
-                            <input 
-                                type="password" 
-                                className="custom-input w-100" 
+                            <input
+                                type="password"
+                                className="custom-input w-100"
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                required 
+                                required
                             />
                         </div>
 
@@ -152,8 +163,8 @@ const Login = () => {
                             <span className="divider-line"></span>
                         </div>
 
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             className="btn-google-login"
                             onClick={handleGoogleLogin}
                         >
@@ -161,7 +172,7 @@ const Login = () => {
                             <span>Đăng nhập bằng Google</span>
                         </button>
                     </form>
-                    
+
                     <div className="text-center mt-4">
                         <small className="text-muted">Chưa có tài khoản? <a href="/signup" className="signup-link fw-bold">Đăng ký hái lộc</a></small>
                     </div>

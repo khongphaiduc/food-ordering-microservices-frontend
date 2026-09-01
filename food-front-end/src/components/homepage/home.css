@@ -20,6 +20,52 @@
 body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-default); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
 .tet-mode { background-color: var(--bg-tet); }
 
+/* KEYFRAME HIỆU ỨNG CÀNH ĐÀO ĐUNG ĐƯA THEO GIÓ XUÂN */
+@keyframes peachBlossomSway {
+    0% {
+        transform: rotate(0deg) translateY(0px);
+    }
+    25% {
+        transform: rotate(4deg) translateY(-5px) scale(1.02);
+    }
+    50% {
+        transform: rotate(-3deg) translateY(2px) scale(0.99);
+    }
+    75% {
+        transform: rotate(5deg) translateY(-3px) scale(1.01);
+    }
+    100% {
+        transform: rotate(0deg) translateY(0px);
+    }
+}
+
+/* ICON HOA ĐÀO TRÁI GÓC DƯỚI BÊN TRÁI HOMEPAGE */
+.homepage-bottom-left-hoadao {
+    position: fixed;
+    bottom: -10px;
+    left: -10px;
+    width: 220px;
+    height: auto;
+    z-index: 990;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+    transform-origin: bottom left; /* Đặt gốc xoay lung lay ngay chân cành đào */
+    animation: peachBlossomSway 5.5s ease-in-out infinite alternate;
+    transition: width 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    .homepage-bottom-left-hoadao {
+        width: 150px;
+    }
+}
+
+@media (max-width: 600px) {
+    .homepage-bottom-left-hoadao {
+        width: 110px;
+    }
+}
+
 /* --- ADDRESS MODAL --- */
 .address-overlay {
     position: fixed;
@@ -988,6 +1034,433 @@ section { padding: 60px 6%; }
     color: #d4af37;
     font-size: 10px;
     opacity: 0.6;
+}
+
+/* ==================== WINDING S-CURVE JOURNEY ROADMAP STYLING (ULTRA-COMPACT) ==================== */
+.tet-winding-map-section {
+    background: radial-gradient(circle at 50% 30%, #7a0000 0%, #4a0000 65%, #250000 100%);
+    padding: 35px 0 45px 0;
+    position: relative;
+    color: #ffffff;
+    border-top: 2px double #ffd700;
+    border-bottom: 2px double #ffd700;
+    overflow: hidden;
+}
+
+.tet-winding-map-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 16px;
+    position: relative;
+    z-index: 10;
+}
+
+/* HEADER */
+.winding-map-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.winding-badge-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #ffd700;
+    padding: 5px 16px;
+    border-radius: 30px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #ffd700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    margin-bottom: 10px;
+}
+
+.winding-main-title {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+    margin: 0 0 6px 0;
+    line-height: 1.25;
+}
+
+.winding-stars {
+    color: #ffd700;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+}
+
+/* TOP STORY INTRO CARD */
+.winding-intro-card {
+    background: linear-gradient(145deg, #fffbf0 0%, #fff4e0 100%);
+    color: #1a1a1a;
+    border-radius: 16px;
+    padding: 20px 22px;
+    border: 1.5px solid #ffd700;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.intro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #8e0000;
+    color: #ffd700;
+    padding: 3px 10px;
+    border-radius: 14px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    border: 1px solid #ffd700;
+}
+
+.seal-icon {
+    font-size: 0.85rem;
+    font-weight: 900;
+}
+
+.intro-lead {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #212121;
+    margin-bottom: 8px;
+}
+
+.gold-text {
+    color: #8e0000;
+    font-weight: 800;
+}
+
+.intro-sub {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #424242;
+    margin-bottom: 12px;
+}
+
+.intro-quote-bar {
+    background: #ffffff;
+    border: 1px solid #ffe0b2;
+    border-left: 3.5px solid #8e0000;
+    padding: 10px 14px;
+    border-radius: 0 12px 12px 0;
+}
+
+.quote-icon {
+    font-size: 1.5rem;
+    color: #8e0000;
+    line-height: 0.8;
+    display: block;
+    margin-bottom: 2px;
+    font-family: serif;
+}
+
+.quote-body {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #8e0000;
+    font-style: italic;
+    margin-bottom: 4px;
+}
+
+.quote-by {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #b8860b;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* WINDING ROADMAP WRAPPER & SVG PATH */
+.winding-road-wrapper {
+    position: relative;
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.winding-svg-path {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.4));
+}
+
+/* WINDING STEP NODES (ZIGZAG STAGGERED LAYOUT) */
+.winding-step-node {
+    position: relative;
+    z-index: 5;
+    width: 58%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.3s ease;
+}
+
+.winding-step-node.node-left {
+    align-self: flex-start;
+}
+
+.winding-step-node.node-right {
+    align-self: flex-end;
+}
+
+.winding-step-node:hover {
+    transform: scale(1.015);
+}
+
+/* MARKER BADGE ON THE ROAD */
+.node-marker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #8e0000 0%, #b71c1c 100%);
+    color: #ffd700;
+    border: 1.5px solid #ffd700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    width: fit-content;
+    box-shadow: 0 4px 12px rgba(142, 0, 0, 0.3);
+}
+
+.marker-icon {
+    font-size: 0.95rem;
+}
+
+.marker-label {
+    letter-spacing: 0.5px;
+}
+
+/* CARD INSIDE STEP NODE */
+.winding-card {
+    background: #ffffff;
+    color: #1a1a1a;
+    border: 1.5px solid #ffd700;
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    position: relative;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.card-step-num {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #8e0000;
+    font-family: serif;
+}
+
+.card-gold-tag {
+    background: #fff8e1;
+    color: #8e0000;
+    border: 1px solid #ffe082;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+.card-title {
+    font-size: 1.02rem;
+    font-weight: 900;
+    color: #8e0000;
+    margin: 0 0 6px 0;
+}
+
+.card-desc {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: #424242;
+    margin: 0 0 10px 0;
+}
+
+.card-footer-badge {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #8e0000;
+    padding-top: 8px;
+    border-top: 1px dashed #ffe0b2;
+}
+
+.footer-tag {
+    background: #8e0000;
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.66rem;
+    font-weight: 800;
+}
+
+/* WINDING DESTINATION NODE (ĐÍCH ĐẾN TẠI MÂM CƠM GIA ĐÌNH) */
+.winding-destination-node {
+    position: relative;
+    z-index: 10;
+    align-self: center;
+    background: linear-gradient(135deg, #8e0000 0%, #670000 100%);
+    border: 2px solid #ffd700;
+    border-radius: 16px;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 12px 30px rgba(255, 215, 0, 0.35);
+    margin-top: 10px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.dest-icon {
+    font-size: 1.6rem;
+}
+
+.dest-text strong {
+    font-size: 0.88rem;
+    color: #ffd700;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.dest-text p {
+    font-size: 0.78rem;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* RESPONSIVE DI ĐỘNG FOR WINDING ROADMAP - MOBILE TITLE-ONLY S-CURVE ROAD */
+@media (max-width: 768px) {
+    .tet-winding-map-container {
+        padding: 0 10px;
+    }
+
+    .winding-main-title {
+        font-size: 1.15rem;
+    }
+
+    /* GIỮ THẺ INTRO SIÊU GỌN CHỈ HIỂN THỊ TIÊU ĐỀ/BADGE */
+    .winding-intro-card {
+        padding: 10px 12px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .intro-badge {
+        margin-bottom: 0;
+        font-size: 0.68rem;
+    }
+
+    .intro-lead, .intro-sub, .intro-quote-bar {
+        display: none;
+    }
+
+    /* ĐƯỜNG ĐI NGOẰN NGOÈO HÌNH CHỮ S HIỂN THỊ TRÊN MOBILE */
+    .winding-road-wrapper {
+        gap: 18px;
+        padding: 10px 0;
+        margin-left: 0;
+        border-left: none;
+    }
+
+    .winding-svg-path {
+        display: block !important;
+    }
+
+    /* BỐ CỤC NÚT TRẠM CHỈ HIỂN THỊ TIÊU ĐỀ SO LE 2 BÊN */
+    .winding-step-node {
+        width: 48% !important;
+    }
+
+    .winding-step-node.node-left {
+        align-self: flex-start !important;
+    }
+
+    .winding-step-node.node-right {
+        align-self: flex-end !important;
+    }
+
+    .node-marker {
+        font-size: 0.62rem;
+        padding: 2px 8px;
+        margin-left: 0;
+    }
+
+    .marker-icon {
+        font-size: 0.8rem;
+    }
+
+    .winding-card {
+        padding: 8px 10px;
+        border-radius: 12px;
+    }
+
+    .card-header {
+        margin-bottom: 4px;
+    }
+
+    .card-step-num {
+        font-size: 0.95rem;
+    }
+
+    .card-gold-tag {
+        font-size: 0.6rem;
+        padding: 1px 6px;
+    }
+
+    .card-title {
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin-bottom: 0;
+        line-height: 1.35;
+    }
+
+    /* ẨN NỘI DUNG DÀI ĐỂ HIỂN THỊ GỌN BẢN ĐỒ NGOẰN NGOÈO */
+    .card-desc,
+    .card-footer-badge {
+        display: none !important;
+    }
+
+    .winding-destination-node {
+        padding: 10px 14px;
+        border-radius: 12px;
+        margin-left: 0;
+        width: 90%;
+        max-width: 280px;
+        gap: 8px;
+        margin-top: 5px;
+    }
+
+    .dest-icon {
+        font-size: 1.3rem;
+    }
+
+    .dest-text strong {
+        font-size: 0.78rem;
+        margin-bottom: 0;
+    }
+
+    .dest-text p {
+        display: none;
+    }
 }
 
 /* --- 2. BRAND FEATURES / CORE VALUES SECTION --- */

@@ -17,6 +17,39 @@
     justify-content: center;
 }
 
+/* HIỆU ỨNG THÔNG BÁO TOAST NỔI */
+.login-toast-notification {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px) scale(0.9);
+    z-index: 9999;
+    background: linear-gradient(135deg, #8e0000 0%, #b71c1c 100%);
+    border: 1.5px solid #ffd700;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 12px 35px rgba(142, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+.login-toast-notification.show {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.login-toast-notification .toast-icon {
+    font-size: 1.2rem;
+}
+
 /* Nút Trở về trang chủ */
 .btn-back-home {
     position: absolute;

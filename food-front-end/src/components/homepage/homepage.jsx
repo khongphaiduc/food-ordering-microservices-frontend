@@ -7,6 +7,7 @@ import FireworksEffect from './FireworksEffect';
 import banhTrungImg from '../../assets/banhtrung.avif';
 import sideLeftImg from '../../assets/sideleft.webp';
 import vienTextImg from '../../assets/VienText.png';
+import hoaDaoTraiImg from '../../assets/hoadaotrai.webp';
 import './home.css';
 
 export default function Home() {
@@ -250,6 +251,9 @@ export default function Home() {
         {[...Array(8)].map((_, i) => <span key={i} className="flower">🌸</span>)}
       </div>
 
+      {/* ICON HOA ĐÀO TRÁI GÓC DƯỚI BÊN TRÁI */}
+      <img src={hoaDaoTraiImg} alt="Hoa Đào Tết Góc Trái Dưới" className="homepage-bottom-left-hoadao" />
+
       {/* 2 KHUNG VIỀN TẾT HOÀNG GIA GÓC TRÊN UỐN MỀM MẠI DÁT VÀNG */}
       <div className="tet-corner-ornaments">
         {/* Góc trên bên trái */}
@@ -262,7 +266,7 @@ export default function Home() {
               <stop offset="100%" stopColor="#8f610d" />
             </linearGradient>
             <filter id="goldGlowCurvedLeft">
-              <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#d4af37" floodOpacity="0.45"/>
+              <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#d4af37" floodOpacity="0.45" />
             </filter>
           </defs>
           <g stroke="url(#goldCurvedGradLeft)" strokeWidth="3.8" strokeLinecap="round" strokeLinejoin="round" filter="url(#goldGlowCurvedLeft)">
@@ -272,7 +276,7 @@ export default function Home() {
 
             {/* Mắt xích mây cuộn hoàng gia mềm mại ở góc */}
             <path d="M 30 70 C 30 45 45 30 70 30 C 95 30 110 45 110 70 C 110 95 90 110 65 105 C 45 100 40 85 45 70 C 50 58 65 52 75 60 C 82 66 80 78 72 82" />
-            
+
             {/* Họa tiết lượn sóng dọc thanh ngang */}
             <path d="M 115 15 Q 130 40 145 15" />
             <path d="M 145 15 C 155 35 170 35 180 15" />
@@ -296,7 +300,7 @@ export default function Home() {
               <stop offset="100%" stopColor="#8f610d" />
             </linearGradient>
             <filter id="goldGlowCurvedRight">
-              <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#d4af37" floodOpacity="0.45"/>
+              <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#d4af37" floodOpacity="0.45" />
             </filter>
           </defs>
           <g stroke="url(#goldCurvedGradRight)" strokeWidth="3.8" strokeLinecap="round" strokeLinejoin="round" filter="url(#goldGlowCurvedRight)">
@@ -306,7 +310,7 @@ export default function Home() {
 
             {/* Mắt xích mây cuộn hoàng gia mềm mại ở góc */}
             <path d="M 170 70 C 170 45 155 30 130 30 C 105 30 90 45 90 70 C 90 95 110 110 135 105 C 155 100 160 85 155 70 C 150 58 135 52 125 60 C 118 66 120 78 128 82" />
-            
+
             {/* Họa tiết lượn sóng dọc thanh ngang */}
             <path d="M 85 15 Q 70 40 55 15" />
             <path d="M 55 15 C 45 35 30 35 20 15" />
@@ -404,100 +408,139 @@ export default function Home() {
             </div>
             <div style={{ textAlign: 'center', marginTop: '50px', marginBottom: '20px' }}>
               <Link to="/menu" className="btn-show-more-link">
-                Xem thêm món ăn 🧧
+                Xem thêm món ăn
               </Link>
             </div>
           </>
         )}
       </section>
 
-      {/* GIỚI THIỆU THƯƠNG HIỆU - THE GRAND 5-STAR CULINARY SHOWCASE */}
-      <section className="grand-culinary-section reveal-on-scroll">
-        <div className="grand-culinary-container">
-          {/* Header Crown Subtitle */}
-          <div className="grand-header">
-            <span className="grand-crest-tag">✦ THE 5-STAR HAUTE CUISINE SUITE ✦</span>
-            <h2 className="grand-main-title">
+      {/* WINDING JOURNEY ROADMAP SECTION (BẢN ĐỒ HÀNH TRÌNH ĐƯỜNG ĐI NGOẰN NGOÈO KHAI XUÂN) */}
+      <section className="tet-winding-map-section reveal-on-scroll">
+        <div className="tet-winding-map-container">
+          {/* Header Banner */}
+          <div className="winding-map-header">
+            <div className="winding-badge-tag">
+              <span> BẢN ĐỒ HÀNH TRÌNH MÂM CỖ TẾT • TRUNGDUCFOODLY </span>
+            </div>
+            <h2 className="winding-main-title">
               Nâng Tầm Trải Nghiệm Mâm Cỗ & Món Ngon Mỗi Ngày
             </h2>
-            <div className="grand-title-ornament">
-              <span className="ornament-line"></span>
-              <span className="ornament-star">★ ★ ★ ★ ★</span>
-              <span className="ornament-line"></span>
+            <div className="winding-stars">★ ★ ★ ★ ★</div>
+          </div>
+
+          {/* Top Story Card (Khởi Đầu Hành Trình) */}
+          <div className="winding-intro-card">
+            <div className="intro-badge">
+              <span className="seal-icon">印</span>
+              <span>ĐIỂM XUẤT PHÁT HÀNH TRÌNH</span>
+            </div>
+            <p className="intro-lead">
+              Được thành lập với tâm huyết mang hương vị ẩm thực đỉnh cao đến từng gia đình, <strong className="gold-text">TRUNGDUCFOODLY</strong> tiên phong kết hợp giữa tinh hoa chế biến truyền thống và nền tảng công nghệ giao vận Microservices thần tốc.
+            </p>
+            <p className="intro-sub">
+              Dù là mâm cỗ Tết sum vầy hay bữa ăn dinh dưỡng hàng ngày, chúng tôi cam kết chất lượng tươi ngon vượt trội, đóng gói giữ nhiệt chuẩn mực và phục vụ tận tâm nhất.
+            </p>
+            <div className="intro-quote-bar">
+              <span className="quote-icon">“</span>
+              <p className="quote-body">Trao vị ngon tròn đượm — Gửi trọn vẹn yêu thương tới từng bữa ăn gia đình.</p>
+              <span className="quote-by">— Hội Đồng Nghệ Nhân TRUNGDUCFOODLY —</span>
             </div>
           </div>
 
-          {/* Asymmetric Split Showcase */}
-          <div className="grand-showcase-grid">
-            {/* Left Column: Editorial Manifesto with Gold Vertical Accent */}
-            <div className="grand-manifesto-box">
-              <div className="manifesto-vertical-accent"></div>
-              <div className="manifesto-body">
-                <p className="manifesto-lead">
-                  Được thành lập với tâm huyết mang hương vị ẩm thực đỉnh cao đến từng gia đình, <strong>TRUNGDUCFOODLY</strong> tiên phong kết hợp giữa tinh hoa chế biến truyền thống và nền tảng công nghệ giao vận Microservices thần tốc.
+          {/* WINDING ROAD CONTAINER WITH SVG ROAD & STAGGERED LEFT-RIGHT NODES */}
+          <div className="winding-road-wrapper">
+            {/* Đường SVG Ngoằn Ngoèo Uốn Lượn */}
+            <svg className="winding-svg-path" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+              <path
+                d="M 400 0 C 750 220, 750 380, 400 520 C 50 660, 50 820, 400 1000"
+                stroke="url(#goldRoadGrad)"
+                strokeWidth="7"
+                strokeDasharray="14 10"
+                strokeLinecap="round"
+              />
+              <defs>
+                <linearGradient id="goldRoadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffd700" />
+                  <stop offset="50%" stopColor="#d32f2f" />
+                  <stop offset="100%" stopColor="#ffd700" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* CHẶNG 01 (BÊN TRÁI ĐƯỜNG NGOẰN NGOÈO) */}
+            <div className="winding-step-node node-left step-1">
+              <div className="node-marker">
+                <span className="marker-icon">🌸</span>
+                <span className="marker-label">CHẶNG 01</span>
+              </div>
+              <div className="winding-card">
+                <div className="card-header">
+                  <span className="card-step-num">01</span>
+                  <span className="card-gold-tag">★ 5-STAR QUALITY</span>
+                </div>
+                <h3 className="card-title">Tinh Hoa Ẩm Thực Nghệ Nhân</h3>
+                <p className="card-desc">
+                  Nguyên liệu VietGAP tuyển chọn từ sương sớm, chế biến không chất bảo quản theo công thức bí truyền của nghệ nhân ẩm thực Việt.
                 </p>
-                <p className="manifesto-text">
-                  Dù là mâm cỗ Tết sum vầy hay bữa ăn dinh dưỡng hàng ngày, chúng tôi cam kết chất lượng tươi ngon vượt trội, đóng gói giữ nhiệt chuẩn mực và phục vụ tận tâm nhất.
+                <div className="card-footer-badge">
+                  <span>50,000+ Mâm Cỗ Hoàn Hảo</span>
+                  <span className="footer-tag">VietGAP 100% Sạch</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CHẶNG 02 (BÊN PHẢI ĐƯỜNG NGOẰN NGOÈO) */}
+            <div className="winding-step-node node-right step-2">
+              <div className="node-marker">
+                <span className="marker-icon">🔥</span>
+                <span className="marker-label">CHẶNG 02</span>
+              </div>
+              <div className="winding-card">
+                <div className="card-header">
+                  <span className="card-step-num">02</span>
+                  <span className="card-gold-tag"> THERMAL SHIELD</span>
+                </div>
+                <h3 className="card-title">Đóng Gói Nhiệt 3 LỚP Thượng Hạng</h3>
+                <p className="card-desc">
+                  Công nghệ giữ nhiệt độc quyền 3 lớp bảo lưu độ nóng bốc khói nguyên bản, giữ nguyên vẹn độ giòn ngon đậm vị như vừa ra khỏi bếp.
                 </p>
-                <div className="manifesto-signature-block">
-                  <span className="sig-quote">“</span>
-                  <p className="sig-text">Trao vị ngon tròn đượm — Gửi trọn vẹn yêu thương tới từng bữa ăn gia đình.</p>
-                  <span className="sig-author">— Hội Đồng Nghệ Nhân TRUNGDUCFOODLY —</span>
+                <div className="card-footer-badge">
+                  <span>30+ Món Đặc Sản Khai Xuân</span>
+                  <span className="footer-tag">Bảo Lưu 100% Độ Nóng</span>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: 3 Layered Luxury Service Pillars */}
-            <div className="grand-pillars-stack">
-              <div className="grand-pillar-item">
-                <div className="pillar-index">01</div>
-                <div className="pillar-info">
-                  <h4>Tinh Hoa Ẩm Thực Nghệ Nhân</h4>
-                  <p>Nguyên liệu VietGAP tuyển chọn từ sương sớm, chế biến không chất bảo quản.</p>
-                </div>
-                <div className="pillar-gold-badge">5-STAR QUALITY</div>
+            {/* CHẶNG 03 (BÊN TRÁI ĐƯỜNG NGOẰN NGOÈO) */}
+            <div className="winding-step-node node-left step-3">
+              <div className="node-marker">
+                <span className="marker-icon">🚚</span>
+                <span className="marker-label">CHẶNG 03</span>
               </div>
-
-              <div className="grand-pillar-item">
-                <div className="pillar-index">02</div>
-                <div className="pillar-info">
-                  <h4>Đóng Gói Nhiệt 3 LỚP Thượng Hạng</h4>
-                  <p>Công nghệ giữ nhiệt độc quyền bảo lưu độ nóng bốc khói nguyên bản.</p>
+              <div className="winding-card">
+                <div className="card-header">
+                  <span className="card-step-num">03</span>
+                  <span className="card-gold-tag">⚡ EXPRESS 15M</span>
                 </div>
-                <div className="pillar-gold-badge">THERMAL SHIELD</div>
-              </div>
-
-              <div className="grand-pillar-item">
-                <div className="pillar-index">03</div>
-                <div className="pillar-info">
-                  <h4>Giao Vận Microservices Tốc Biến</h4>
-                  <p>Thuật toán tuyến đường tối ưu đảm bảo bữa ăn trao tận tay chỉ trong 15 phút.</p>
+                <h3 className="card-title">Món ngon trao tay</h3>
+                <p className="card-desc">
+                  Thuật toán tuyến đường tối ưu Microservices đảm bảo bữa ăn thơm ngon nóng hổi được trao tận tay gia đình chỉ trong 15 phút.
+                </p>
+                <div className="card-footer-badge">
+                  <span>15 Phút Thời Gian Giao</span>
+                  <span className="footer-tag">99.8% Đánh Giá 5 Sao</span>
                 </div>
-                <div className="pillar-gold-badge">EXPRESS 15M</div>
               </div>
             </div>
-          </div>
 
-          {/* Bottom Luxury Metric Ribbon Bar */}
-          <div className="grand-metric-ribbon">
-            <div className="metric-ribbon-item">
-              <span className="metric-num">50,000+</span>
-              <span className="metric-lbl">Đơn Hàng Hoàn Tảo</span>
-            </div>
-            <div className="metric-divider">◆</div>
-            <div className="metric-ribbon-item">
-              <span className="metric-num">30+</span>
-              <span className="metric-lbl">Món Đặc Sản Thượng Hạng</span>
-            </div>
-            <div className="metric-divider">◆</div>
-            <div className="metric-ribbon-item">
-              <span className="metric-num">15 Phút</span>
-              <span className="metric-lbl">Thời Gian Giao Trung Bình</span>
-            </div>
-            <div className="metric-divider">◆</div>
-            <div className="metric-ribbon-item">
-              <span className="metric-num">99.8%</span>
-              <span className="metric-lbl">Đánh Giá 5 Sao Tuyệt Đối</span>
+            {/* ĐÍCH ĐẾN HÀNH TRÌNH */}
+            <div className="winding-destination-node">
+              <span className="dest-icon">🚩</span>
+              <div className="dest-text">
+                <strong>ĐÍCH ĐẾN HÀNH TRÌNH TẾT SUM VẦY</strong>
+                <p>Mâm cỗ thơm ngon nóng hổi trao trọn yêu thương tới mâm cơm gia đình bạn!</p>
+              </div>
             </div>
           </div>
         </div>
