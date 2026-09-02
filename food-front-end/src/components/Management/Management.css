@@ -15,7 +15,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Header Styles */
+/* Header Styles Light Theme */
 .mgmt-header {
   height: 64px;
   background-color: #ffffff;
@@ -25,27 +25,28 @@
   justify-content: space-between;
   padding: 0 1.5rem;
   z-index: 10;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.03);
   gap: 2rem;
 }
 
-/* Hiệu ứng chữ chạy (Marquee) */
+/* Hiệu ứng chữ chạy (Marquee Tết) */
 .marquee-container {
   flex: 1;
   overflow: hidden;
-  background-color: #fff7ed; /* Màu nền cam nhạt */
-  padding: 8px 0;
-  border-radius: 8px;
+  background-color: #fef2f2; /* Màu nền đỏ nhạt Tết */
+  border: 1px solid #fca5a5;
+  padding: 6px 0;
+  border-radius: 10px;
   white-space: nowrap;
 }
 
 .marquee-text {
   display: inline-block;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #ea580c; /* Màu cam thương hiệu */
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #dc2626; /* Màu đỏ thương hiệu Tết */
   padding-left: 100%;
-  animation: marquee-scroll 15s linear infinite;
+  animation: marquee-scroll 18s linear infinite;
 }
 
 @keyframes marquee-scroll {
@@ -79,15 +80,15 @@
 }
 
 .notification-btn:hover {
-  background-color: #f1f5f9;
-  color: #f97316;
+  background-color: #fef2f2;
+  color: #dc2626;
 }
 
 .notification-badge {
   position: absolute;
   top: 6px;
   right: 6px;
-  background-color: #ef4444;
+  background-color: #dc2626;
   color: white;
   font-size: 10px;
   font-weight: bold;
@@ -129,8 +130,8 @@
 
 .profile-name {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #1e293b;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .profile-role {
@@ -142,12 +143,13 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border: 2px solid #fde68a;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
 }
 
 /* Main Area */
@@ -156,6 +158,7 @@
   overflow-y: auto;
   padding: 1.5rem;
   scroll-behavior: smooth;
+  background-color: #f8fafc;
 }
 
 .mgmt-page-content {
@@ -171,4 +174,4 @@
 .mgmt-main::-webkit-scrollbar-thumb {
   background-color: #cbd5e1;
   border-radius: 10px;
-}
+}

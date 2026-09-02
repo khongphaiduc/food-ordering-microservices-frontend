@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Boxes, Calendar, Filter, Search, RefreshCw, 
   AlertCircle, ShieldAlert, PackageOpen, CheckCircle2, 
   Eye, ArrowUpDown, ChevronLeft, ChevronRight, PlusCircle,
-  TrendingUp, X
+  TrendingUp, X, Sparkles, Package
 } from 'lucide-react';
 import './InventoryManagement.css';
 
@@ -138,11 +138,11 @@ const InventoryManagement = () => {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
-    setCurrentPage(1); // Reset về trang đầu khi thay đổi bộ lọc
+    setCurrentPage(1);
   };
 
   // Tính toán các chỉ số thống kê từ danh sách hiện tại
-  const stats = React.useMemo(() => {
+  const stats = useMemo(() => {
     let totalProducts = inventoryList.length;
     let totalInitial = 0;
     let totalSold = 0;
@@ -162,7 +162,7 @@ const InventoryManagement = () => {
   }, [inventoryList]);
 
   // Lọc danh sách sản phẩm cục bộ theo chuỗi tìm kiếm
-  const filteredInventory = React.useMemo(() => {
+  const filteredInventory = useMemo(() => {
     return inventoryList.filter(item => {
       const nameMatch = item.productName?.toLowerCase().includes(searchQuery.toLowerCase());
       const catMatch = item.categoryName?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -171,11 +171,11 @@ const InventoryManagement = () => {
     });
   }, [inventoryList, searchQuery]);
 
-  // Hiển thị giao diện khi bị chặn quyền truy cập (401/403)
+  // Giao diện khi bị chặn quyền truy cập (401/403)
   if (error === "Bạn không có quyền truy cập tính năng này.") {
     return (
       <div className="access-denied-container">
-        <ShieldAlert size={64} color="#ef4444" />
+        <ShieldAlert size={64} color="#dc2626" />
         <h2>Truy cập bị từ chối</h2>
         <p>{error}</p>
         <button onClick={() => window.history.back()}>Quay lại</button>
@@ -184,7 +184,32 @@ const InventoryManagement = () => {
   }
 
   return (
-    <div className="inventory-page-container">
+    <div className="inventory-page-container tet-inventory-theme">
+      
+      {/* 1. HEADER SECTION */}
+      <div className="inventory-page-header">
+        <div className="header-title-box">
+          <div className="header-icon-badge">
+            <Boxes size={24} />
+          </div>
+          <div>
+            <h2>Quản Lý Tồn Kho & Vật Tư</h2>
+            <p>Điều hành tồn kho ban đầu, lượng tiêu thụ và nhập bổ sung sản phẩm hàng ngày</p>
+          </div>
+        </div>
+
+        <div className="header-action-group">
+          <button className="btn-refresh-inv" onClick={loadInventoryData} title="Làm mới dữ liệu">
+            <RefreshCw size={16} className={loading ? "spin-animation" : ""} />
+            <span>Cập nhật</span>
+          </button>
+          <button className="btn-create-inv-main" onClick={() => navigate('/management/inventory/create')}>
+            <PlusCircle size={18} />
+            <span>Tạo tồn kho mới</span>
+          </button>
+        </div>
+      </div>
+
       {/* ERROR BANNER */}
       {error && (
         <div className="error-banner">
@@ -194,209 +219,200 @@ const InventoryManagement = () => {
         </div>
       )}
 
-      {/* STATS CARDS GRID */}
-      <div className="stats-grid-layout">
-        {/* Thẻ 1: Tổng số sản phẩm */}
-        <div className="stat-item-card">
-          <div className="stat-icon bg-blue"><PackageOpen size={24} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Sản phẩm theo dõi</span>
-            <h2 className="stat-main-value">{stats.totalProducts} món</h2>
-            <p className="stat-sub">Đang hiển thị</p>
+      {/* 2. STATS OVERVIEW CARDS GRID */}
+      <div className="inv-stats-grid">
+        <div className="inv-kpi-card total">
+          <div className="kpi-info">
+            <span className="kpi-label">SẢN PHẨM THEO DÕI</span>
+            <span className="kpi-value">{stats.totalProducts}</span>
+            <span className="kpi-sub">Đang kiểm kho trong ngày</span>
+          </div>
+          <div className="kpi-icon-box blue">
+            <PackageOpen size={22} />
           </div>
         </div>
 
-        {/* Thẻ 2: Tổng tồn kho ban đầu */}
-        <div className="stat-item-card">
-          <div className="stat-icon bg-orange"><Boxes size={24} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Tổng tồn kho (Initial)</span>
-            <h2 className="stat-main-value">{stats.totalInitial}</h2>
-            <p className="stat-sub">Khởi tạo trong ngày</p>
+        <div className="inv-kpi-card initial">
+          <div className="kpi-info">
+            <span className="kpi-label">TỔNG TỒN KHO (INITIAL)</span>
+            <span className="kpi-value">{stats.totalInitial}</span>
+            <span className="kpi-sub">Khởi tạo đầu ngày</span>
+          </div>
+          <div className="kpi-icon-box orange">
+            <Boxes size={22} />
           </div>
         </div>
 
-        {/* Thẻ 3: Tổng sản phẩm đã bán */}
-        <div className="stat-item-card">
-          <div className="stat-icon bg-green"><CheckCircle2 size={24} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Đã tiêu thụ (Sold)</span>
-            <h2 className="stat-main-value">{stats.totalSold}</h2>
-            <p className="stat-sub">Hiệu suất: {stats.totalInitial > 0 ? ((stats.totalSold / stats.totalInitial) * 100).toFixed(1) : 0}%</p>
+        <div className="inv-kpi-card sold">
+          <div className="kpi-info">
+            <span className="kpi-label">ĐÃ TIÊU THỤ (SOLD)</span>
+            <span className="kpi-value">{stats.totalSold}</span>
+            <span className="kpi-sub">Tỷ lệ: {stats.totalInitial > 0 ? ((stats.totalSold / stats.totalInitial) * 100).toFixed(1) : 0}%</span>
+          </div>
+          <div className="kpi-icon-box green">
+            <CheckCircle2 size={22} />
           </div>
         </div>
 
-        {/* Thẻ 4: Sản phẩm hết hàng */}
-        <div className={`stat-item-card ${stats.outOfStock > 0 ? 'alert-border' : ''}`}>
-          <div className={`stat-icon ${stats.outOfStock > 0 ? 'bg-red' : 'bg-slate'}`}><AlertCircle size={24} /></div>
-          <div className="stat-info">
-            <span className="stat-label">Hết hàng / Cần nhập</span>
-            <h2 className="stat-main-value" style={{ color: stats.outOfStock > 0 ? '#ef4444' : 'inherit' }}>
-              {stats.outOfStock} món
-            </h2>
-            <p className="stat-sub">Mức tồn kho = 0</p>
+        <div className={`inv-kpi-card alert ${stats.outOfStock > 0 ? 'card-alert-red' : ''}`}>
+          <div className="kpi-info">
+            <span className="kpi-label">HẾT HÀNG / CẦN NHẬP</span>
+            <span className="kpi-value text-red">{stats.outOfStock}</span>
+            <span className="kpi-sub">Sản phẩm mức tồn = 0</span>
           </div>
-        </div>
-      </div>
-
-      {/* FILTER & TOOLBAR CARD */}
-      <div className="filter-card">
-        <div className="filter-grid">
-          <div className="filter-group">
-            <label>Ngày kiểm kho</label>
-            <div className="input-with-icon">
-              <Calendar size={16} className="input-icon" />
-              <input 
-                type="date" 
-                name="date" 
-                value={filters.date} 
-                onChange={handleFilterChange} 
-                className="filter-input-field" 
-              />
-            </div>
-          </div>
-
-          <div className="filter-group">
-            <label>Danh mục</label>
-            <div className="input-with-icon">
-              <Filter size={16} className="input-icon" />
-              <select 
-                name="categoryId" 
-                value={filters.categoryId} 
-                onChange={handleFilterChange} 
-                className="filter-input-field"
-              >
-                <option value="">Tất cả danh mục</option>
-                {categories.map(cat => (
-                  <option key={cat.idCategory} value={cat.idCategory}>
-                    {cat.nameCategory}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="filter-group search-group">
-            <label>Tìm kiếm sản phẩm</label>
-            <div className="input-with-icon">
-              <Search size={16} className="input-icon" />
-              <input 
-                type="text" 
-                value={searchQuery} 
-                onChange={e => setSearchQuery(e.target.value)} 
-                placeholder="Nhập tên, ID hoặc danh mục..." 
-                className="filter-input-field"
-              />
-            </div>
-          </div>
-
-          <div className="filter-group refresh-btn-group">
-            <label>&nbsp;</label>
-            <button className="refresh-button" onClick={loadInventoryData} disabled={loading}>
-              <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
-              Làm mới
-            </button>
-          </div>
-
-          <div className="filter-group refresh-btn-group">
-            <label>&nbsp;</label>
-            <button className="create-inventory-btn" onClick={() => navigate('/management/inventory/create')}>
-              <PlusCircle size={18} />
-              Tạo tồn kho mới
-            </button>
+          <div className={`kpi-icon-box ${stats.outOfStock > 0 ? 'red-pulse' : 'slate'}`}>
+            <AlertCircle size={22} />
           </div>
         </div>
       </div>
 
-      {/* INVENTORY TABLE SECTION */}
-      <div className="table-container">
-        <table className="custom-table">
-          <thead>
-            <tr>
-              <th>ID sản phẩm</th>
-              <th>Tên sản phẩm</th>
-              <th>Danh mục</th>
-              <th>Ngày</th>
-              <th className="text-center">Ban đầu</th>
-              <th className="text-center">Đã bán</th>
-              <th className="text-center">Còn lại</th>
-              <th>Trạng thái hoạt động</th>
-              <th className="text-right">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="9" className="loading-state-cell">
-                  <div className="table-spinner-loader">
-                    <RefreshCw className="animate-spin" size={24} />
-                    <span>Đang tải dữ liệu hàng tồn kho...</span>
-                  </div>
-                </td>
-              </tr>
-            ) : filteredInventory.length === 0 ? (
-              <tr>
-                <td colSpan="9" className="empty-state-cell">
-                  Không tìm thấy sản phẩm nào trong kho khớp với điều kiện.
-                </td>
-              </tr>
-            ) : (
-              filteredInventory.map(item => {
-                const isOutOfStock = (item.remainingQuantity || 0) <= 0;
-                const isLowStock = !isOutOfStock && (item.remainingQuantity || 0) <= 10;
-                
-                return (
-                  <tr key={item.productId} className={isOutOfStock ? "row-out-of-stock" : ""}>
-                    <td className="font-bold font-mono text-small">
-                      #{item.productId?.substring(0, 8)}
-                    </td>
-                    <td>
-                      <span className="product-name-txt">{item.productName}</span>
-                    </td>
-                    <td>
-                      <span className="category-tag">{item.categoryName || 'Chưa phân loại'}</span>
-                    </td>
-                    <td>
-                      <span className="date-txt">{item.inventoryDate}</span>
-                    </td>
-                    <td className="text-center font-bold">{item.initialQuantity}</td>
-                    <td className="text-center font-bold text-green-color">{item.soldQuantity}</td>
-                    <td className="text-center">
-                      <span className={`remaining-badge ${isOutOfStock ? 'badge-out' : isLowStock ? 'badge-low' : 'badge-good'}`}>
-                        {item.remainingQuantity}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`status-indicator ${item.isAvailable ? 'available' : 'unavailable'}`}>
-                        {item.isAvailable ? '● Đang bán' : '● Tạm ngưng'}
-                      </span>
-                    </td>
-                    <td className="text-right" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', borderBottom: 'inherit' }}>
-                      <button 
-                        className="action-restock-btn" 
-                        onClick={() => {
-                          setRestockItem(item);
-                          setRestockQuantity(50);
-                          setRestockError(null);
-                          setRestockSuccess(false);
-                        }}
-                        title="Nhập thêm hàng (Restock)"
-                      >
-                        <TrendingUp size={14} />
-                        <span>Nhập thêm</span>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
+      {/* 3. TOOLBAR CARD (SEARCH & FILTERS) */}
+      <div className="inv-toolbar-card">
+        <div className="toolbar-left-group">
+          <div className="search-input-box">
+            <Search size={16} className="search-icon" />
+            <input 
+              type="text" 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+              placeholder="Tìm theo tên sản phẩm, mã ID hoặc danh mục..." 
+              className="toolbar-search-input"
+            />
+            {searchQuery && (
+              <button className="clear-search" onClick={() => setSearchQuery('')}>×</button>
             )}
-          </tbody>
-        </table>
+          </div>
+        </div>
 
-        {/* PHÂN TRANG */}
-        <div className="pagination">
+        <div className="toolbar-right-group">
+          <div className="filter-item">
+            <Calendar size={15} className="filter-icon" />
+            <input 
+              type="date" 
+              name="date" 
+              value={filters.date} 
+              onChange={handleFilterChange} 
+              className="toolbar-select-date" 
+            />
+          </div>
+
+          <div className="filter-item">
+            <Filter size={15} className="filter-icon" />
+            <select 
+              name="categoryId" 
+              value={filters.categoryId} 
+              onChange={handleFilterChange} 
+              className="toolbar-select-cat"
+            >
+              <option value="">Tất cả danh mục</option>
+              {categories.map(cat => (
+                <option key={cat.idCategory} value={cat.idCategory}>
+                  {cat.nameCategory}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. INVENTORY DATA TABLE SECTION */}
+      <div className="inv-table-container">
+        <div className="table-top-bar">
+          <div className="table-title">
+            <Package size={18} className="text-red" />
+            <span>Danh sách kho hàng ({filteredInventory.length} sản phẩm)</span>
+          </div>
+        </div>
+
+        <div className="responsive-table-wrapper">
+          <table className="custom-table inv-table">
+            <thead>
+              <tr>
+                <th>MÃ SP</th>
+                <th>TÊN SẢN PHẨM</th>
+                <th>DANH MỤC</th>
+                <th>NGÀY KIỂM</th>
+                <th className="text-center">BAN ĐẦU</th>
+                <th className="text-center">ĐÃ BÁN</th>
+                <th className="text-center">CÒN LẠI</th>
+                <th>TRẠNG THÁI</th>
+                <th className="text-right">THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="9" className="loading-state-cell">
+                    <div className="table-spinner-loader">
+                      <RefreshCw className="animate-spin" size={24} />
+                      <span>Đang tải dữ liệu hàng tồn kho...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredInventory.length === 0 ? (
+                <tr>
+                  <td colSpan="9" className="empty-state-cell">
+                    🧧 Không tìm thấy sản phẩm nào trong kho khớp với bộ lọc.
+                  </td>
+                </tr>
+              ) : (
+                filteredInventory.map(item => {
+                  const isOutOfStock = (item.remainingQuantity || 0) <= 0;
+                  const isLowStock = !isOutOfStock && (item.remainingQuantity || 0) <= 10;
+                  
+                  return (
+                    <tr key={item.productId} className={isOutOfStock ? "row-out-of-stock" : ""}>
+                      <td className="font-mono font-bold text-code">
+                        #{item.productId?.substring(0, 8)}
+                      </td>
+                      <td>
+                        <span className="product-name-txt">{item.productName}</span>
+                      </td>
+                      <td>
+                        <span className="category-tag">{item.categoryName || 'Chưa phân loại'}</span>
+                      </td>
+                      <td>
+                        <span className="date-txt">📅 {item.inventoryDate}</span>
+                      </td>
+                      <td className="text-center font-bold">{item.initialQuantity}</td>
+                      <td className="text-center font-bold text-green-color">{item.soldQuantity}</td>
+                      <td className="text-center">
+                        <span className={`remaining-badge ${isOutOfStock ? 'badge-out' : isLowStock ? 'badge-low' : 'badge-good'}`}>
+                          {item.remainingQuantity}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`status-indicator ${item.isAvailable ? 'available' : 'unavailable'}`}>
+                          {item.isAvailable ? '● Đang bán' : '● Tạm ngưng'}
+                        </span>
+                      </td>
+                      <td className="text-right">
+                        <button 
+                          className="action-restock-btn" 
+                          onClick={() => {
+                            setRestockItem(item);
+                            setRestockQuantity(50);
+                            setRestockError(null);
+                            setRestockSuccess(false);
+                          }}
+                          title="Nhập thêm hàng (Restock)"
+                        >
+                          <TrendingUp size={14} />
+                          <span>Nhập thêm</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* 5. PHÂN TRANG FOOTER */}
+        <div className="pagination inv-pagination">
           <p className="page-text">
-            Trang <b>{currentPage}</b> / {Math.ceil(totalProduct / pageSize) || 1} (Tổng cộng: <b>{totalProduct}</b> sản phẩm)
+            Đang xem trang <b>{currentPage}</b> / {Math.ceil(totalProduct / pageSize) || 1} (Tổng: <b>{totalProduct}</b> sản phẩm)
           </p>
           <div className="page-btns">
             <button 
@@ -446,7 +462,7 @@ const InventoryManagement = () => {
                   onClick={() => {
                     setRestockItem(null);
                     setRestockSuccess(false);
-                    loadInventoryData(); // Tải lại dữ liệu tồn kho để thấy số lượng mới
+                    loadInventoryData();
                   }}
                 >
                   Hoàn tất
@@ -464,7 +480,7 @@ const InventoryManagement = () => {
                 <div className="modal-info-grid">
                   <div className="info-item">
                     <span className="info-label">Tên sản phẩm</span>
-                    <strong className="info-value text-orange">{restockItem.productName}</strong>
+                    <strong className="info-value text-red">{restockItem.productName}</strong>
                   </div>
                   <div className="info-item">
                     <span className="info-label">Ngày kiểm kho</span>
@@ -491,7 +507,7 @@ const InventoryManagement = () => {
                     autoFocus
                     className="modal-input"
                   />
-                  <span className="input-tip">Số lượng phải lớn hơn hoặc bằng 1.</span>
+                  <span className="input-tip">Số lượng nhập bổ sung tối thiểu là 1.</span>
                 </div>
 
                 <footer className="modal-footer-btns">
@@ -528,3 +544,4 @@ const InventoryManagement = () => {
 };
 
 export default InventoryManagement;
+

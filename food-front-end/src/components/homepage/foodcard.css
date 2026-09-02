@@ -180,3 +180,30 @@
     border-radius: 14px;
   }
 }
+
+/* Nhãn hiển thị số lượng xuất còn lại trong ngày */
+.food-stock-badge-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin: 4px 0 10px 0;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(234, 88, 12, 0.06);
+}
+
+.food-stock-badge-large strong {
+  color: #dc2626;
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+

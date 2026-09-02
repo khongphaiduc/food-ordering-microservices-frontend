@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Thêm useNavigate
+import { useNavigate } from 'react-router-dom';
 import * as signalR from '@microsoft/signalr';
 import { 
     ClipboardCheck, Clock, CheckCircle2, XCircle, 
-    Search, ChevronLeft, ChevronRight, Eye, Bell
+    Search, ChevronLeft, ChevronRight, Eye, Bell,
+    Sparkles, RefreshCw, Filter, ShoppingBag, Flame,
+    SlidersHorizontal, Layers
 } from 'lucide-react';
 import './OrderManagement.css';
 
@@ -26,11 +28,12 @@ const PAYMENT_STATUS_MAP = {
 const PAYMENT_METHOD_MAP = { 1: "PayOS", 2: "Tiền mặt", 3: "VNPay" };
 
 const OrderManagement = () => {
-    const navigate = useNavigate(); // Hook để điều hướng
+    const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [stats, setStats] = useState({ confirmation: 0, preparing: 0, completed: 0, cancelled: 0 });
     const [loading, setLoading] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
     
     const [filters, setFilters] = useState({
         orderCode: '', orderStatus: '', paymentMethod: '',
@@ -106,11 +109,10 @@ const OrderManagement = () => {
             setOrders(prev => prev.map(o => o.idOrder === orderId ? { ...o, orderStatus: newStatus } : o));
             fetchOrders(); 
         } catch (error) {
-            alert("Lỗi cập nhật trạng thái!");
+            alert("Lỗi cập nhật trạng thái đơn hàng!");
         }
     };
 
-    // Sửa logic Click hàng: Đánh dấu đã xem và chuyển trang
     const handleRowClick = (orderId) => {
         setOrders(prev => prev.map(o => o.idOrder === orderId ? { ...o, isNew: false } : o));
         navigate(`/management/orders/${orderId}`);
@@ -121,167 +123,331 @@ const OrderManagement = () => {
         setFilters(prev => ({ ...prev, [name]: value, currentPage: 1 }));
     };
 
+    const handleTabChange = (statusValue) => {
+        setFilters(prev => ({ ...prev, orderStatus: statusValue, currentPage: 1 }));
+    };
+
+    const handleResetFilters = () => {
+        setFilters({
+            orderCode: '', orderStatus: '', paymentMethod: '',
+            fromDate: '', toDate: '', currentPage: 1, pageSize: 10
+        });
+    };
+
+    const statusTabs = [
+        { key: '', label: 'Tất cả đơn', count: null },
+        { key: '0', label: 'Chờ xử lý', count: stats.preparing },
+        { key: '1', label: 'Đã xác nhận', count: stats.confirmation },
+        { key: '2', label: 'Đang chuẩn bị', count: null },
+        { key: '3', label: 'Đang giao', count: null },
+        { key: '4', label: 'Hoàn thành', count: stats.completed },
+        { key: '5', label: 'Đã hủy', count: stats.cancelled },
+    ];
+
     return (
-        <div className="order-container">
-            {/* TOAST NOTIFICATION */}
+        <div className="order-container tet-order-theme">
+            {/* TOAST NOTIFICATION TET THEME */}
             {showToast && (
-                <div className="order-toast">
+                <div className="order-toast tet-toast">
                     <div className="toast-body">
-                        <div className="toast-icon-wrapper"><Bell size={20} color="#fff" /></div>
+                        <div className="toast-icon-wrapper tet-toast-icon">
+                            <Bell size={22} className="bell-ring" />
+                        </div>
                         <div className="toast-content">
-                            <span className="toast-title">Đơn hàng mới!</span>
-                            <span className="toast-desc">👋 Bạn vừa có một đơn hàng mới.</span>
+                            <span className="toast-title">🧧 ĐƠN HÀNG MỚI KHAI XUÂN!</span>
+                            <span className="toast-desc">🎉 Vừa phát sinh 1 đơn hàng mới trong hệ thống.</span>
                         </div>
                         <button className="toast-close" onClick={() => setShowToast(false)}>×</button>
                     </div>
-                    <div className="toast-progress-bar"></div>
+                    <div className="toast-progress-bar tet-progress"></div>
                 </div>
             )}
 
-            {/* STATS GRID */}
+            {/* TOOLBAR ACTIONS HEADER & SIGNALR */}
+
+
+            {/* STATS GRID (BỐ CỤC 1: KPI CARDS TỔNG QUAN) */}
             <div className="stats-grid">
-                <div className="stat-card blue">
+                <div 
+                    className={`stat-card blue tet-stat-card ${filters.orderStatus === '1' ? 'active-stat' : ''}`}
+                    onClick={() => handleTabChange('1')}
+                    title="Click để lọc đơn đã xác nhận"
+                >
                     <div className="stat-inner">
-                        <div className="stat-info"><span className="stat-label">Đã xác nhận</span><span className="stat-value">{stats.confirmation}</span></div>
-                        <div className="stat-icon-box"><ClipboardCheck size={24} /></div>
+                        <div className="stat-info">
+                            <span className="stat-label">ĐÃ XÁC NHẬN</span>
+                            <span className="stat-value">{stats.confirmation}</span>
+                            <span className="stat-sublabel">🧧 Đơn đã duyệt</span>
+                        </div>
+                        <div className="stat-icon-box">
+                            <ClipboardCheck size={24} />
+                        </div>
                     </div>
                 </div>
-                <div className="stat-card orange">
+
+                <div 
+                    className={`stat-card orange tet-stat-card ${filters.orderStatus === '0' ? 'active-stat' : ''}`}
+                    onClick={() => handleTabChange('0')}
+                    title="Click để lọc đơn chờ xác nhận"
+                >
                     <div className="stat-inner">
-                        <div className="stat-info"><span className="stat-label">Chờ xác nhận</span><span className="stat-value">{stats.preparing}</span></div>
-                        <div className="stat-icon-box"><Clock size={24} /></div>
+                        <div className="stat-info">
+                            <span className="stat-label">CHỜ XÁC NHẬN</span>
+                            <span className="stat-value">{stats.preparing}</span>
+                            <span className="stat-sublabel">🌸 Cần xử lý ngay</span>
+                        </div>
+                        <div className="stat-icon-box">
+                            <Clock size={24} />
+                        </div>
                     </div>
                 </div>
-                <div className="stat-card green">
+
+                <div 
+                    className={`stat-card green tet-stat-card ${filters.orderStatus === '4' ? 'active-stat' : ''}`}
+                    onClick={() => handleTabChange('4')}
+                    title="Click để lọc đơn hoàn thành"
+                >
                     <div className="stat-inner">
-                        <div className="stat-info"><span className="stat-label">Hoàn thành</span><span className="stat-value">{stats.completed}</span></div>
-                        <div className="stat-icon-box"><CheckCircle2 size={24} /></div>
+                        <div className="stat-info">
+                            <span className="stat-label">HOÀN THÀNH</span>
+                            <span className="stat-value">{stats.completed}</span>
+                            <span className="stat-sublabel">🎉 Khai xuân phát tài</span>
+                        </div>
+                        <div className="stat-icon-box">
+                            <CheckCircle2 size={24} />
+                        </div>
                     </div>
                 </div>
-                <div className="stat-card red">
+
+                <div 
+                    className={`stat-card red tet-stat-card ${filters.orderStatus === '5' ? 'active-stat' : ''}`}
+                    onClick={() => handleTabChange('5')}
+                    title="Click để lọc đơn đã hủy"
+                >
                     <div className="stat-inner">
-                        <div className="stat-info"><span className="stat-label">Đã hủy</span><span className="stat-value">{stats.cancelled}</span></div>
-                        <div className="stat-icon-box"><XCircle size={24} /></div>
+                        <div className="stat-info">
+                            <span className="stat-label">ĐÃ HỦY</span>
+                            <span className="stat-value">{stats.cancelled}</span>
+                            <span className="stat-sublabel">❌ Đơn hủy bỏ</span>
+                        </div>
+                        <div className="stat-icon-box">
+                            <XCircle size={24} />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* FILTER SECTION */}
-            <div className="filter-card">
-                <div className="filter-grid">
-                    <div className="filter-group">
-                        <label>Mã đơn hàng</label>
-                        <input name="orderCode" value={filters.orderCode} className="filter-input" placeholder="ORD123..." onChange={handleFilterChange} />
+            {/* MAIN DASHBOARD CONTENT AREA */}
+            <div className="dashboard-content-card">
+                
+                {/* BỐ CỤC 2: THANH LỌC NHANH DẠNG TAB (QUICK STATUS TABS) */}
+                <div className="status-tabs-container">
+                    <div className="tabs-list">
+                        {statusTabs.map(tab => {
+                            const isActive = filters.orderStatus === tab.key;
+                            return (
+                                <button
+                                    key={tab.key}
+                                    className={`tab-item ${isActive ? 'tab-active' : ''}`}
+                                    onClick={() => handleTabChange(tab.key)}
+                                >
+                                    <span>{tab.label}</span>
+                                    {tab.count !== null && tab.count > 0 && (
+                                        <span className="tab-badge">{tab.count}</span>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
-                    <div className="filter-group">
-                        <label>Trạng thái</label>
-                        <select name="orderStatus" value={filters.orderStatus} className="filter-input" onChange={handleFilterChange}>
-                            <option value="">Tất cả</option>
-                            {Object.entries(ORDER_STATUS_CONFIG).map(([key, val]) => (
-                                <option key={key} value={key}>{val.label}</option>
-                            ))}
-                        </select>
+                </div>
+
+                {/* BỐ CỤC 3: TOOLBAR (SEARCH BAR & ADVANCED FILTER TOGGLE) */}
+                <div className="table-toolbar">
+                    <div className="search-bar-wrapper">
+                        <Search size={16} className="search-input-icon" />
+                        <input 
+                            name="orderCode" 
+                            value={filters.orderCode} 
+                            className="toolbar-search-input" 
+                            placeholder="Tìm kiếm mã đơn ORD..., tên khách hàng..." 
+                            onChange={handleFilterChange} 
+                        />
+                        {filters.orderCode && (
+                            <button className="toolbar-clear-btn" onClick={() => setFilters(prev => ({...prev, orderCode: ''}))}>×</button>
+                        )}
                     </div>
-                    <div className="filter-group">
-                        <label>Phương thức</label>
-                        <select name="paymentMethod" value={filters.paymentMethod} className="filter-input" onChange={handleFilterChange}>
-                            <option value="">Tất cả</option>
+
+                    <div className="toolbar-actions-group">
+                        <select 
+                            name="paymentMethod" 
+                            value={filters.paymentMethod} 
+                            className="toolbar-select" 
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">Tất cả phương thức TT</option>
                             {Object.entries(PAYMENT_METHOD_MAP).map(([key, val]) => (
                                 <option key={key} value={key}>{val}</option>
                             ))}
                         </select>
-                    </div>
-                    <div className="filter-group">
-                        <label>Từ ngày</label>
-                        <input type="date" name="fromDate" value={filters.fromDate} className="filter-input" onChange={handleFilterChange} />
-                    </div>
-                    <div className="filter-group">
-                        <label>Đến ngày</label>
-                        <input type="date" name="toDate" value={filters.toDate} className="filter-input" onChange={handleFilterChange} />
-                    </div>
-                    <button className="btn-search-main" onClick={fetchOrders}>
-                        <Search size={18} /><span>Tìm kiếm</span>
-                    </button>
-                </div>
-            </div>
 
-            {/* TABLE SECTION */}
-            <div className="table-container">
-                <table className="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Mã đơn</th><th>Khách hàng</th><th>Phương thức</th><th>Thanh toán</th><th>Trạng thái</th><th>Tổng tiền</th><th className="text-right">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan="7" className="loading-state">Đang tải dữ liệu...</td></tr>
-                        ) : orders.length === 0 ? (
-                            <tr><td colSpan="7" className="loading-state">Không tìm thấy đơn hàng nào.</td></tr>
-                        ) : (
-                            orders.map(order => (
-                                <tr key={order.idOrder} 
-                                    className={`clickable-row ${order.isNew ? "row-flashing" : ""}`} 
-                                    onClick={() => handleRowClick(order.idOrder)}
-                                >
-                                    <td className="font-bold text-blue-600">#{order.orderCode}</td>
-                                    <td>
-                                        <div className="cust-cell">
-                                            <span className="cust-name">{order.nameCustomer || "Khách lẻ"}</span>
-                                            <span className="cust-date">{new Date(order.createAt).toLocaleString('vi-VN')}</span>
+                        <button 
+                            className={`btn-toggle-advanced ${showAdvancedFilter ? 'active' : ''}`}
+                            onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}
+                            title="Lọc theo ngày"
+                        >
+                            <SlidersHorizontal size={16} />
+                            <span>{showAdvancedFilter ? "Ẩn lọc ngày" : "Lọc theo ngày"}</span>
+                        </button>
+
+                        <button className="btn-refresh-orders toolbar-btn-refresh" onClick={fetchOrders} title="Làm mới dữ liệu">
+                            <RefreshCw size={15} className={loading ? "spin-animation" : ""} />
+                            <span>Cập nhật</span>
+                        </button>
+
+                        <div className="signalr-live-pill toolbar-signalr" title="Kết nối SignalR Realtime">
+                            <span className="pulse-green-dot"></span>
+                            <span>Live</span>
+                        </div>
+
+                        {(filters.orderCode || filters.orderStatus || filters.paymentMethod || filters.fromDate || filters.toDate) && (
+                            <button className="btn-reset-toolbar" onClick={handleResetFilters}>
+                                <span>Đặt lại</span>
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* ADVANCED DATE FILTER COLLAPSIBLE PANEL */}
+                {showAdvancedFilter && (
+                    <div className="advanced-filter-panel">
+                        <div className="date-filter-group">
+                            <label>Từ ngày:</label>
+                            <input type="date" name="fromDate" value={filters.fromDate} className="date-input" onChange={handleFilterChange} />
+                        </div>
+                        <div className="date-filter-group">
+                            <label>Đến ngày:</label>
+                            <input type="date" name="toDate" value={filters.toDate} className="date-input" onChange={handleFilterChange} />
+                        </div>
+                        <button className="btn-apply-date" onClick={fetchOrders}>
+                            <Search size={15} /><span>Áp dụng lọc</span>
+                        </button>
+                    </div>
+                )}
+
+                {/* BỐ CỤC 4: BẢNG DỮ LIỆU ĐƠN HÀNG (ORDER TABLE) */}
+                <div className="responsive-table-wrapper">
+                    <table className="custom-table tet-table">
+                        <thead>
+                            <tr>
+                                <th>MÃ ĐƠN</th>
+                                <th>KHÁCH HÀNG & THỜI GIAN</th>
+                                <th>PHƯƠNG THỨC</th>
+                                <th>THANH TOÁN</th>
+                                <th>TRẠNG THÁI XỬ LÝ</th>
+                                <th>TỔNG TIỀN</th>
+                                <th className="text-right">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="7" className="loading-state">
+                                        <div className="loading-flex">
+                                            <RefreshCw size={20} className="spin-animation" />
+                                            <span>Đang tải dữ liệu đơn hàng Tết...</span>
                                         </div>
                                     </td>
-                                    <td><span className="method-tag">{PAYMENT_METHOD_MAP[order.paymentMethod]}</span></td>
-                                    <td>
-                                        <span className={`pay-status ${PAYMENT_STATUS_MAP[order.orderStatusPayment]?.class}`}>
-                                            {PAYMENT_STATUS_MAP[order.orderStatusPayment]?.label}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <select 
-                                            className={`status-dropdown ${ORDER_STATUS_CONFIG[order.orderStatus]?.class}`}
-                                            value={order.orderStatus}
-                                            onChange={(e) => handleUpdateStatus(e, order.idOrder, e.target.value)}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            {Object.entries(ORDER_STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                                        </select>
-                                    </td>
-                                    <td className="font-extrabold">{order.totalAmount?.toLocaleString()}đ</td>
-                                    <td className="text-right">
-                                        <button className="action-view" onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleRowClick(order.idOrder);
-                                        }}>
-                                            <Eye size={16} /><span>Chi tiết</span>
-                                        </button>
+                                </tr>
+                            ) : orders.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="loading-state empty-state">
+                                        <span>🧧 Không tìm thấy đơn hàng phù hợp với bộ lọc.</span>
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : (
+                                orders.map(order => (
+                                    <tr key={order.idOrder} 
+                                        className={`clickable-row ${order.isNew ? "row-flashing" : ""}`} 
+                                        onClick={() => handleRowClick(order.idOrder)}
+                                    >
+                                        <td className="order-code-cell">
+                                            <span className="order-code-text">#{order.orderCode}</span>
+                                            {order.isNew && <span className="new-order-badge">MỚI!</span>}
+                                        </td>
+                                        <td>
+                                            <div className="cust-cell">
+                                                <span className="cust-name">{order.nameCustomer || "Khách Vãng Lai"}</span>
+                                                <span className="cust-date">
+                                                    📅 {new Date(order.createAt).toLocaleString('vi-VN')}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className="method-tag tet-method-tag">
+                                                {PAYMENT_METHOD_MAP[order.paymentMethod] || 'Chưa xác định'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span className={`pay-status ${PAYMENT_STATUS_MAP[order.orderStatusPayment]?.class}`}>
+                                                {PAYMENT_STATUS_MAP[order.orderStatusPayment]?.label}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <select 
+                                                className={`status-dropdown ${ORDER_STATUS_CONFIG[order.orderStatus]?.class}`}
+                                                value={order.orderStatus}
+                                                onChange={(e) => handleUpdateStatus(e, order.idOrder, e.target.value)}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                {Object.entries(ORDER_STATUS_CONFIG).map(([k, v]) => (
+                                                    <option key={k} value={k}>{v.label}</option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                        <td className="total-amount-cell">
+                                            {order.totalAmount?.toLocaleString()}đ
+                                        </td>
+                                        <td className="text-right">
+                                            <button className="action-view tet-btn-action" onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRowClick(order.idOrder);
+                                            }}>
+                                                <Eye size={15} /><span>Chi tiết</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
-                {/* PAGINATION */}
-                <div className="pagination">
-                    <p className="page-text">Trang <b>{filters.currentPage}</b></p>
+                {/* PAGINATION FOOTER */}
+                <div className="pagination tet-pagination">
+                    <p className="page-text">
+                        Đang hiển thị <b>{orders.length}</b> đơn hàng • Trang <span className="page-number-highlight">{filters.currentPage}</span>
+                    </p>
                     <div className="page-btns">
                         <button 
                             disabled={filters.currentPage === 1} 
                             onClick={(e) => { e.stopPropagation(); setFilters({...filters, currentPage: filters.currentPage - 1}) }}
+                            title="Trang trước"
                         >
                             <ChevronLeft size={18} />
                         </button>
                         <button 
                             onClick={(e) => { e.stopPropagation(); setFilters({...filters, currentPage: filters.currentPage + 1}) }}
+                            title="Trang tiếp"
                         >
                             <ChevronRight size={18} />
                         </button>
                     </div>
                 </div>
+
             </div>
         </div>
     );
 };
 
 export default OrderManagement;
+

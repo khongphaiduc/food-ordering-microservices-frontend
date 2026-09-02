@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  ShoppingCart as CartIcon, ArrowLeft, Plus, Minus, Loader2, 
+import {
+  ShoppingCart as CartIcon, ArrowLeft, Plus, Minus, Loader2,
   Star, Clock, ShieldCheck, ChevronLeft, ChevronRight, Sparkles, Award
 } from 'lucide-react';
 
@@ -26,7 +26,7 @@ const ProductDetail = () => {
   const [showToast, setShowToast] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
-  
+
   // --- LOGIC CHUYỂN ẢNH TỰ ĐỘNG CHO SẢN PHẨM CHÍNH ---
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -72,7 +72,7 @@ const ProductDetail = () => {
   const trackUserAction = async (eventType, productId) => {
     const sessionId = localStorage.getItem("sessionId");
     const currentUserId = localStorage.getItem("userId");
-    
+
     const today = new Date();
     const day = today.getDate().toString().padStart(2, '0');
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -84,7 +84,7 @@ const ProductDetail = () => {
     const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
     const newEvent = {
-      EventType: eventType, 
+      EventType: eventType,
       IdProduct: productId,
       CreateAt: formattedDate
     };
@@ -95,8 +95,8 @@ const ProductDetail = () => {
 
     if (trackingQueue.length >= 5) {
       const payload = {
-        IdSession: sessionId || "", 
-        IdUser: currentUserId || null, 
+        IdSession: sessionId || "",
+        IdUser: currentUserId || null,
         PayLoad: trackingQueue
       };
 
@@ -118,7 +118,7 @@ const ProductDetail = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         const productRes = await axios.get(`${apiUrl}/products/${id}`);
         const productData = productRes.data;
         setProduct(productData);
@@ -135,7 +135,7 @@ const ProductDetail = () => {
           try {
             const suggestedRes = await axios.get(`${apiUrl}/products/recommendation/${productData.idCategory}`);
             const rawList = suggestedRes.data || [];
-            
+
             if (Array.isArray(rawList)) {
               const mappedSuggestions = rawList
                 .filter(item => item.id !== id)
@@ -143,9 +143,10 @@ const ProductDetail = () => {
                   id: item.id,
                   name: item.name,
                   price: item.price,
-                  img: item.imageFoods?.find(img => img.isMain)?.urlImage 
-                       || item.imageFoods?.[0]?.urlImage 
-                       || 'https://via.placeholder.com/300',
+                  img: item.imageFoods?.find(img => img.isMain)?.urlImage
+                    || item.imageFoods?.[0]?.urlImage
+                    || 'https://via.placeholder.com/300',
+                  quantity: item.quality ?? item.quantity ?? item.stock ?? 0,
                   desc: item.decriptions || "Món ngon đãi tiệc Tết"
                 }));
               setSuggestedProducts(mappedSuggestions.slice(0, 6));
@@ -173,9 +174,24 @@ const ProductDetail = () => {
 
   // --- THÊM VÀO GIỎ HÀNG ---
   const handleAddToCart = async () => {
+
     if (!userId || !token) {
       alert("Vui lòng đăng nhập để thêm món vào giỏ hàng nhé!");
       navigate('/login');
+      return;
+    }
+
+    const availableStock = product?.quality ?? product?.quantity ?? product?.stock ?? 0;
+
+    // 1. Kiểm tra nếu sản phẩm đã hết hàng
+    if (availableStock <= 0) {
+      alert("Rất tiếc, món ăn này hiện đã HẾT HÀNG trong ngày!");
+      return;
+    }
+
+    // 2. Kiểm tra số lượng người dùng chọn mua có vượt quá tồn kho không
+    if (quantity > availableStock) {
+      alert(`Rất tiếc! Số lượng bạn chọn (${quantity} suất) vượt quá số lượng còn lại trong ngày (${availableStock} suất).`);
       return;
     }
 
@@ -184,14 +200,23 @@ const ProductDetail = () => {
       const cartRes = await axios.get(`${apiUrl}/cart/user-cart/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       const idCart = cartRes.data.idCart;
       let currentItems = cartRes.data.cartItems || [];
       const vId = selectedVariant?.idVariant || null;
       const existingIndex = currentItems.findIndex(it => it.idProduct === (product.idProduct || id) && it.idVariant === vId);
 
+      const currentQtyInCart = existingIndex > -1 ? currentItems[existingIndex].quantity : 0;
+      const newTotalQty = currentQtyInCart + quantity;
+
+      // 3. Kiểm tra tổng số lượng trong giỏ hàng + số lượng thêm mới
+      if (newTotalQty > availableStock) {
+        alert(`Không thể thêm! Giỏ hàng của bạn đã có ${currentQtyInCart} suất. Tổng số lượng (${newTotalQty} suất) sẽ vượt quá số lượng xuất còn lại trong ngày (${availableStock} suất).`);
+        return;
+      }
+
       if (existingIndex > -1) {
-        currentItems[existingIndex].quantity += quantity;
+        currentItems[existingIndex].quantity = newTotalQty;
       } else {
         currentItems.push({ idProduct: product.idProduct || id, idVariant: vId, quantity: quantity });
       }
@@ -208,7 +233,7 @@ const ProductDetail = () => {
       await axios.post(`${apiUrl}/cart/update-cart`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       trackUserAction(3, product.idProduct || id);
 
       window.dispatchEvent(new Event('cartUpdated'));
@@ -218,7 +243,7 @@ const ProductDetail = () => {
 
     } catch (error) {
       console.error("Lỗi thêm vào giỏ hàng:", error);
-      if(error.response?.status === 401) navigate('/login');
+      if (error.response?.status === 401) navigate('/login');
       else alert("Không thể thêm món vào giỏ hàng!");
     } finally { setIsAdding(false); }
   };
@@ -227,6 +252,7 @@ const ProductDetail = () => {
   if (!product) return <div className="error-container tet-error">Món ăn không tồn tại!</div>;
 
   const totalPrice = (product.price + (selectedVariant?.extraPrice || 0)) * quantity;
+  const productQuantity = product.quality ?? product.quantity ?? product.stock ?? 0;
 
   return (
     <div className="modern-detail-wrapper tet-detail-mode">
@@ -263,18 +289,18 @@ const ProductDetail = () => {
 
             <div className="slideshow-container tet-slideshow">
               {product.productImageDTOs?.map((img, index) => (
-                <img 
-                  key={index} 
-                  src={img.urlImage} 
-                  alt="food" 
-                  className={`hero-image ${index === currentImageIndex ? 'active' : ''}`} 
+                <img
+                  key={index}
+                  src={img.urlImage}
+                  alt="food"
+                  className={`hero-image ${index === currentImageIndex ? 'active' : ''}`}
                 />
               ))}
 
               {product.productImageDTOs?.length > 1 && (
                 <>
-                  <button className="slide-nav-btn prev tet-slide-btn" onClick={prevImage}><ChevronLeft size={20}/></button>
-                  <button className="slide-nav-btn next tet-slide-btn" onClick={nextImage}><ChevronRight size={20}/></button>
+                  <button className="slide-nav-btn prev tet-slide-btn" onClick={prevImage}><ChevronLeft size={20} /></button>
+                  <button className="slide-nav-btn next tet-slide-btn" onClick={nextImage}><ChevronRight size={20} /></button>
                   <div className="slide-indicators">
                     {product.productImageDTOs.map((_, idx) => (
                       <div key={idx} className={`dot ${idx === currentImageIndex ? 'active' : ''}`} onClick={() => setCurrentImageIndex(idx)} />
@@ -296,7 +322,7 @@ const ProductDetail = () => {
             </div>
 
             <h1 className="modern-title tet-product-title">{product.name}</h1>
-            
+
             <div className="price-tag-wrapper tet-price-wrapper">
               <span className="amount tet-amount">{totalPrice.toLocaleString('vi-VN')}</span>
               <span className="currency tet-currency">đ</span>
@@ -304,14 +330,27 @@ const ProductDetail = () => {
             </div>
 
             <p className="modern-description tet-desc">{product.description}</p>
-            
-            <div className="benefit-icons tet-benefits">           
-              <div className="icon-item"><Clock size={16}/> 15-25 phút giao thần tốc</div>
-              <div className="icon-item"><ShieldCheck size={16}/> Chuẩn ATVSTP</div>
-              <div className="icon-item"><Award size={16}/> Vị Ngon 5 Sao</div>
+
+            <div className="benefit-icons tet-benefits">
+              <div className="icon-item"><Clock size={16} /> 15-25 phút giao thần tốc</div>
+              <div className="icon-item"><ShieldCheck size={16} /> Chuẩn ATVSTP</div>
+              <div className="icon-item"><Award size={16} /> Vị Ngon 5 Sao</div>
             </div>
 
             <div className="divider tet-divider" />
+
+            {/* THÔNG TIN SỐ LƯỢNG SUẤT CÒN LẠI */}
+            <div className="stock-info-variant-wrapper">
+              {productQuantity > 0 ? (
+                <span className="stock-tag-tet">
+                  🔥 Số lượng còn lại: <strong>{productQuantity}</strong> suất hôm nay
+                </span>
+              ) : (
+                <span className="stock-tag-tet out-of-stock">
+                  ❌ Đã hết hàng trong ngày
+                </span>
+              )}
+            </div>
 
             {/* SELECTION VARIANTS */}
             {product.productVariantDTOs?.length > 0 && (
@@ -332,39 +371,50 @@ const ProductDetail = () => {
             {/* ACTION BAR */}
             <div className="action-bar tet-action-bar">
               <div className="modern-counter tet-counter">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="counter-btn"><Minus size={16}/></button>
-                <span className="count">{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)} className="counter-btn"><Plus size={16}/></button>
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="counter-btn" disabled={productQuantity <= 0}><Minus size={16} /></button>
+                <span className="count">{productQuantity <= 0 ? 0 : quantity}</span>
+                <button onClick={() => setQuantity(Math.min(productQuantity, quantity + 1))} className="counter-btn" disabled={productQuantity <= 0 || quantity >= productQuantity}><Plus size={16} /></button>
               </div>
 
-              <button className="primary-buy-btn tet-buy-btn" onClick={handleAddToCart} disabled={isAdding}>
+              <button 
+                className="primary-buy-btn tet-buy-btn" 
+                onClick={handleAddToCart} 
+                disabled={isAdding || productQuantity <= 0}
+              >
                 {isAdding ? <Loader2 className="spinner" size={20} /> : <CartIcon size={20} />}
-                <span>{isAdding ? 'Đang thêm...' : 'THÊM VÀO GIỎ HÀNG'}</span>
+                <span>
+                  {isAdding 
+                    ? 'Đang thêm...' 
+                    : productQuantity <= 0 
+                      ? 'HẾT HÀNG HÔM NAY' 
+                      : 'THÊM VÀO GIỎ HÀNG'}
+                </span>
               </button>
             </div>
           </div>
         </div>
 
         {/* SUGGESTIONS SECTION */}
+
         {suggestedProducts.length > 0 && (
           <div className="suggestions-section tet-suggestions">
             <div className="section-header tet-section-header">
               <h2 className="section-title tet-sec-title">🌸 Gợi Ý Món Ngon Đi Kèm Mâm Cỗ 🌸</h2>
               <div className="title-underline tet-underline"></div>
             </div>
-            
+
             <div className="food-grid tet-suggestions-grid">
               {suggestedProducts.map((item) => (
-                <FoodCard 
-                  key={item.id} 
-                  food={item} 
-                  onAdd={() => navigate(`/detail/${item.id}`)} 
+                <FoodCard
+                  key={item.id}
+                  food={item}
+                  onAdd={() => navigate(`/detail/${item.id}`)}
                 />
               ))}
             </div>
           </div>
         )}
-      </div> 
+      </div>
     </div>
   );
 };

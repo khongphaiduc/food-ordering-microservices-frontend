@@ -12,9 +12,14 @@ export default function FoodCard({ food }) {
       <div className="food-card-body">
         <h3 className="food-card-title">{food.name}</h3>
         <div className="food-card-price">{food.price?.toLocaleString('vi-VN')}đ</div>
-        <p className="food-card-desc">{food.desc}</p>
+        
+        <div className="food-stock-badge-large">
+          🔥 Còn lại: <strong>{food.quantity ?? 0}</strong> suất
+        </div>
+
         
         <div className="food-card-actions">
+
           <Link to={`/detail/${food.id}`} className="btn-outline">
             <span className="btn-text-pc">Xem chi tiết món ăn</span>
             <span className="btn-text-mobile">Xem Chi Tiết</span>
@@ -23,4 +28,4 @@ export default function FoodCard({ food }) {
       </div>
     </div>
   );
-}
+}
