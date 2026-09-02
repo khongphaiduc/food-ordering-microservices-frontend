@@ -1,4 +1,3 @@
-
 FROM node:20-alpine AS build
 
 WORKDIR /app
@@ -14,6 +13,9 @@ RUN npm run build
 FROM nginx:stable-alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy cấu hình Nginx có try_files để định tuyến React Router
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

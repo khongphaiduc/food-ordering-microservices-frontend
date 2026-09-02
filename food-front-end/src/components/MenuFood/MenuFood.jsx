@@ -100,8 +100,9 @@ export default function ViewListProductFood() {
                         || images[0]?.urlImage
                         || "https://via.placeholder.com/300";
 
-                    // Thuộc tính quality/quantity (Số lượng xuất còn lại trong ngày từ API)
-                    const qty = f.quality ?? f.quantity ?? f.stock ?? 0;
+                    // Thuộc tính quantity/quality (Số lượng xuất còn lại trong ngày từ API)
+                    const qty = f.quantity ?? f.quality ?? f.stock ?? 0;
+
 
                     return {
                         id: f.id || f.idProduct,

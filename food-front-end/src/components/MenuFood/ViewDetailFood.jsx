@@ -146,7 +146,7 @@ const ProductDetail = () => {
                   img: item.imageFoods?.find(img => img.isMain)?.urlImage
                     || item.imageFoods?.[0]?.urlImage
                     || 'https://via.placeholder.com/300',
-                  quantity: item.quality ?? item.quantity ?? item.stock ?? 0,
+                  quantity: item.quantity ?? item.quality ?? item.stock ?? 0,
                   desc: item.decriptions || "Món ngon đãi tiệc Tết"
                 }));
               setSuggestedProducts(mappedSuggestions.slice(0, 6));
@@ -181,7 +181,7 @@ const ProductDetail = () => {
       return;
     }
 
-    const availableStock = product?.quality ?? product?.quantity ?? product?.stock ?? 0;
+    const availableStock = product?.quantity ?? product?.quality ?? product?.stock ?? 0;
 
     // 1. Kiểm tra nếu sản phẩm đã hết hàng
     if (availableStock <= 0) {
@@ -252,7 +252,8 @@ const ProductDetail = () => {
   if (!product) return <div className="error-container tet-error">Món ăn không tồn tại!</div>;
 
   const totalPrice = (product.price + (selectedVariant?.extraPrice || 0)) * quantity;
-  const productQuantity = product.quality ?? product.quantity ?? product.stock ?? 0;
+  const productQuantity = product.quantity ?? product.quality ?? product.stock ?? 0;
+
 
   return (
     <div className="modern-detail-wrapper tet-detail-mode">

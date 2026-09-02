@@ -85,24 +85,30 @@ export default function Home() {
 
         const data = await response.json();
 
-        if (data?.list && Array.isArray(data.list)) {
-          const mappedFoods = data.list.map(f => {
+        const rawList = Array.isArray(data) ? data : (data?.list || data?.products || []);
+
+        if (Array.isArray(rawList)) {
+          const mappedFoods = rawList.map(f => {
             // Lấy URL ảnh chính từ mảng imageFoods
             const mainImg = f.imageFoods?.find(img => img.isMain)?.urlImage
               || f.imageFoods?.[0]?.urlImage
               || 'https://via.placeholder.com/300';
 
+            const stockQty = f.quantity ?? f.quality ?? f.stock ?? 0;
+
             return {
-              id: f.id,
+              id: f.id || f.idProduct,
               name: f.name,
-              desc: f.decriptions, // Map đúng key 'decriptions' từ API
+              desc: f.decriptions || f.description || "Món ngon đãi tiệc",
               price: f.price || 0,
+              quantity: stockQty,
               img: mainImg,
-              featured: f.price >= 100000 // Ví dụ: Gán nhãn Nổi bật cho món > 100k
+              featured: f.price >= 100000
             };
           });
           setFoods(mappedFoods);
         }
+
       } catch (err) {
         console.error("Lỗi kết nối API:", err);
       } finally {
