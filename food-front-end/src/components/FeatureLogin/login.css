@@ -201,10 +201,12 @@
 .custom-input {
     width: 100%;
     padding: 12px 15px;
+    font-size: 1rem;
     border: 2px solid #fce4ec;
     border-radius: 12px;
     outline: none;
     transition: all 0.3s ease;
+    touch-action: manipulation;
 }
 
 .custom-input:focus {
@@ -333,17 +335,79 @@
 }
 
 @media (max-width: 768px) {
+    .custom-input {
+        font-size: 16px !important;
+    }
     .login-image-section { display: none; }
-    .login-card-custom { height: auto; margin: 20px; }
-    .login-form-section { padding: 30px; }
+    .login-card-custom { height: auto; margin: 15px; }
+    .login-form-section { padding: 30px 24px; }
     .top-right-longden-img {
-        width: 220px;
+        width: 180px;
         right: 0;
         top: 0;
+        opacity: 0.8;
     }
     .hoadaotrai-bottom-img {
-        width: 220px;
+        width: 180px;
         bottom: -10px;
         left: -10px;
+        opacity: 0.8;
+    }
+}
+
+@media (max-width: 576px) {
+    .tet-theme {
+        padding: 65px 12px 25px 12px;
+    }
+
+    .btn-back-home {
+        top: 14px;
+        left: 14px;
+        padding: 7px 14px;
+        font-size: 0.8rem;
+    }
+
+    .login-card-custom {
+        margin: 0;
+        width: 100%;
+        border-radius: 20px;
+    }
+
+    .login-form-section {
+        padding: 24px 18px;
+    }
+
+    .login-logo {
+        font-size: 2.2rem;
+    }
+
+    .tet-greeting {
+        font-size: 0.82rem;
+        padding: 6px 14px;
+        gap: 8px;
+    }
+
+    .greeting-hoadaotrai-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .top-right-longden-img {
+        width: 130px;
+        right: 0;
+        top: 0;
+        opacity: 0.7;
+    }
+
+    .hoadaotrai-bottom-img {
+        width: 130px;
+        bottom: -10px;
+        left: -10px;
+        opacity: 0.7;
+    }
+
+    .btn-foodly {
+        padding: 14px;
+        font-size: 0.95rem;
     }
 }

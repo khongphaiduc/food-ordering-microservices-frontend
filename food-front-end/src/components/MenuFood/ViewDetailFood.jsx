@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 
 import FoodCard from '../homepage/FoodCard';
+import Swal from 'sweetalert2';
 import banhTrungImg from '../../assets/banhtrung.avif';
 import hoadaotraiImg from '../../assets/hoadaotrai.webp';
 import longdentetImg from '../../assets/longdentet.png';
@@ -176,8 +177,21 @@ const ProductDetail = () => {
   const handleAddToCart = async () => {
 
     if (!userId || !token) {
-      alert("Vui lòng đăng nhập để thêm món vào giỏ hàng nhé!");
-      navigate('/login');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Chưa đăng nhập',
+        text: 'Vui lòng đăng nhập để thêm món vào giỏ hàng nhé!',
+        confirmButtonText: 'Đăng nhập ngay',
+        confirmButtonColor: '#e11d48',
+        showCancelButton: true,
+        cancelButtonText: 'Để sau',
+        timer: 3000,
+        timerProgressBar: true,
+      }).then((result) => {
+        if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
+          navigate('/login');
+        }
+      });
       return;
     }
 
@@ -185,13 +199,23 @@ const ProductDetail = () => {
 
     // 1. Kiểm tra nếu sản phẩm đã hết hàng
     if (availableStock <= 0) {
-      alert("Rất tiếc, món ăn này hiện đã HẾT HÀNG trong ngày!");
+      Swal.fire({
+        icon: 'info',
+        title: 'Thông báo',
+        text: 'Rất tiếc, món ăn này hiện đã HẾT HÀNG trong ngày!',
+        confirmButtonColor: '#e11d48',
+      });
       return;
     }
 
     // 2. Kiểm tra số lượng người dùng chọn mua có vượt quá tồn kho không
     if (quantity > availableStock) {
-      alert(`Rất tiếc! Số lượng bạn chọn (${quantity} suất) vượt quá số lượng còn lại trong ngày (${availableStock} suất).`);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vượt quá số lượng',
+        text: `Rất tiếc! Số lượng bạn chọn (${quantity} suất) vượt quá số lượng còn lại trong ngày (${availableStock} suất).`,
+        confirmButtonColor: '#e11d48',
+      });
       return;
     }
 
@@ -211,7 +235,12 @@ const ProductDetail = () => {
 
       // 3. Kiểm tra tổng số lượng trong giỏ hàng + số lượng thêm mới
       if (newTotalQty > availableStock) {
-        alert(`Không thể thêm! Giỏ hàng của bạn đã có ${currentQtyInCart} suất. Tổng số lượng (${newTotalQty} suất) sẽ vượt quá số lượng xuất còn lại trong ngày (${availableStock} suất).`);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Vượt quá số lượng',
+          text: `Không thể thêm! Giỏ hàng của bạn đã có ${currentQtyInCart} suất. Tổng số lượng (${newTotalQty} suất) sẽ vượt quá số lượng xuất còn lại trong ngày (${availableStock} suất).`,
+          confirmButtonColor: '#e11d48',
+        });
         return;
       }
 
@@ -243,8 +272,21 @@ const ProductDetail = () => {
 
     } catch (error) {
       console.error("Lỗi thêm vào giỏ hàng:", error);
-      if (error.response?.status === 401) navigate('/login');
-      else alert("Không thể thêm món vào giỏ hàng!");
+      if (error.response?.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Phiên đăng nhập hết hạn',
+          text: 'Vui lòng đăng nhập lại.',
+          confirmButtonColor: '#e11d48',
+        }).then(() => navigate('/login'));
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: 'Không thể thêm món vào giỏ hàng!',
+          confirmButtonColor: '#e11d48',
+        });
+      }
     } finally { setIsAdding(false); }
   };
 

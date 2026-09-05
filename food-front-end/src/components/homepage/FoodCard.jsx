@@ -8,16 +8,16 @@ export default function FoodCard({ food }) {
       <div className="food-card-img-container">
         <img src={food.img} alt={food.name} className="food-card-img" />
       </div>
-      
+
       <div className="food-card-body">
         <h3 className="food-card-title">{food.name}</h3>
         <div className="food-card-price">{food.price?.toLocaleString('vi-VN')}đ</div>
-        
+
         <div className="food-stock-badge-large">
-          🔥 Còn lại: <strong>{food.quantity ?? 0}</strong> suất
+          Còn lại: <strong>{food.quantity ?? 0}</strong> suất
         </div>
 
-        
+
         <div className="food-card-actions">
 
           <Link to={`/detail/${food.id}`} className="btn-outline">
@@ -28,4 +28,4 @@ export default function FoodCard({ food }) {
       </div>
     </div>
   );
-}
+}

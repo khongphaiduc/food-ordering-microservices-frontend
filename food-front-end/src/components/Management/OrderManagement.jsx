@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import * as signalR from '@microsoft/signalr';
-import { 
-    ClipboardCheck, Clock, CheckCircle2, XCircle, 
+import {
+    ClipboardCheck, Clock, CheckCircle2, XCircle,
     Search, ChevronLeft, ChevronRight, Eye, Bell,
     Sparkles, RefreshCw, Filter, ShoppingBag, Flame,
     SlidersHorizontal, Layers
@@ -34,13 +34,13 @@ const OrderManagement = () => {
     const [loading, setLoading] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
-    
+
     const [filters, setFilters] = useState({
         orderCode: '', orderStatus: '', paymentMethod: '',
         fromDate: '', toDate: '', currentPage: 1, pageSize: 10
     });
 
-    const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:7264/api'; 
+    const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:7264/api';
     const HUB_URL = 'https://localhost:7264/ordersHub';
 
     const getAuthToken = () => localStorage.getItem("accessToken");
@@ -102,12 +102,12 @@ const OrderManagement = () => {
     }, [filters.pageSize]);
 
     const handleUpdateStatus = async (e, orderId, newStatusValue) => {
-        e.stopPropagation(); 
+        e.stopPropagation();
         const newStatus = parseInt(newStatusValue);
         try {
             await api.patch(`/orders`, { idOrder: orderId, status: newStatus });
             setOrders(prev => prev.map(o => o.idOrder === orderId ? { ...o, orderStatus: newStatus } : o));
-            fetchOrders(); 
+            fetchOrders();
         } catch (error) {
             alert("Lỗi cập nhật trạng thái đơn hàng!");
         }
@@ -154,8 +154,8 @@ const OrderManagement = () => {
                             <Bell size={22} className="bell-ring" />
                         </div>
                         <div className="toast-content">
-                            <span className="toast-title">🧧 ĐƠN HÀNG MỚI KHAI XUÂN!</span>
-                            <span className="toast-desc">🎉 Vừa phát sinh 1 đơn hàng mới trong hệ thống.</span>
+                            <span className="toast-title"> ĐƠN HÀNG MỚI KHAI XUÂN!</span>
+                            <span className="toast-desc"> Vừa phát sinh 1 đơn hàng mới trong hệ thống.</span>
                         </div>
                         <button className="toast-close" onClick={() => setShowToast(false)}>×</button>
                     </div>
@@ -168,7 +168,7 @@ const OrderManagement = () => {
 
             {/* STATS GRID (BỐ CỤC 1: KPI CARDS TỔNG QUAN) */}
             <div className="stats-grid">
-                <div 
+                <div
                     className={`stat-card blue tet-stat-card ${filters.orderStatus === '1' ? 'active-stat' : ''}`}
                     onClick={() => handleTabChange('1')}
                     title="Click để lọc đơn đã xác nhận"
@@ -177,7 +177,7 @@ const OrderManagement = () => {
                         <div className="stat-info">
                             <span className="stat-label">ĐÃ XÁC NHẬN</span>
                             <span className="stat-value">{stats.confirmation}</span>
-                            <span className="stat-sublabel">🧧 Đơn đã duyệt</span>
+                            <span className="stat-sublabel"> Đơn đã duyệt</span>
                         </div>
                         <div className="stat-icon-box">
                             <ClipboardCheck size={24} />
@@ -185,7 +185,7 @@ const OrderManagement = () => {
                     </div>
                 </div>
 
-                <div 
+                <div
                     className={`stat-card orange tet-stat-card ${filters.orderStatus === '0' ? 'active-stat' : ''}`}
                     onClick={() => handleTabChange('0')}
                     title="Click để lọc đơn chờ xác nhận"
@@ -194,7 +194,7 @@ const OrderManagement = () => {
                         <div className="stat-info">
                             <span className="stat-label">CHỜ XÁC NHẬN</span>
                             <span className="stat-value">{stats.preparing}</span>
-                            <span className="stat-sublabel">🌸 Cần xử lý ngay</span>
+                            <span className="stat-sublabel"> Cần xử lý ngay</span>
                         </div>
                         <div className="stat-icon-box">
                             <Clock size={24} />
@@ -202,7 +202,7 @@ const OrderManagement = () => {
                     </div>
                 </div>
 
-                <div 
+                <div
                     className={`stat-card green tet-stat-card ${filters.orderStatus === '4' ? 'active-stat' : ''}`}
                     onClick={() => handleTabChange('4')}
                     title="Click để lọc đơn hoàn thành"
@@ -219,7 +219,7 @@ const OrderManagement = () => {
                     </div>
                 </div>
 
-                <div 
+                <div
                     className={`stat-card red tet-stat-card ${filters.orderStatus === '5' ? 'active-stat' : ''}`}
                     onClick={() => handleTabChange('5')}
                     title="Click để lọc đơn đã hủy"
@@ -239,7 +239,7 @@ const OrderManagement = () => {
 
             {/* MAIN DASHBOARD CONTENT AREA */}
             <div className="dashboard-content-card">
-                
+
                 {/* BỐ CỤC 2: THANH LỌC NHANH DẠNG TAB (QUICK STATUS TABS) */}
                 <div className="status-tabs-container">
                     <div className="tabs-list">
@@ -265,23 +265,23 @@ const OrderManagement = () => {
                 <div className="table-toolbar">
                     <div className="search-bar-wrapper">
                         <Search size={16} className="search-input-icon" />
-                        <input 
-                            name="orderCode" 
-                            value={filters.orderCode} 
-                            className="toolbar-search-input" 
-                            placeholder="Tìm kiếm mã đơn ORD..., tên khách hàng..." 
-                            onChange={handleFilterChange} 
+                        <input
+                            name="orderCode"
+                            value={filters.orderCode}
+                            className="toolbar-search-input"
+                            placeholder="Tìm kiếm mã đơn ORD..., tên khách hàng..."
+                            onChange={handleFilterChange}
                         />
                         {filters.orderCode && (
-                            <button className="toolbar-clear-btn" onClick={() => setFilters(prev => ({...prev, orderCode: ''}))}>×</button>
+                            <button className="toolbar-clear-btn" onClick={() => setFilters(prev => ({ ...prev, orderCode: '' }))}>×</button>
                         )}
                     </div>
 
                     <div className="toolbar-actions-group">
-                        <select 
-                            name="paymentMethod" 
-                            value={filters.paymentMethod} 
-                            className="toolbar-select" 
+                        <select
+                            name="paymentMethod"
+                            value={filters.paymentMethod}
+                            className="toolbar-select"
                             onChange={handleFilterChange}
                         >
                             <option value="">Tất cả phương thức TT</option>
@@ -290,7 +290,7 @@ const OrderManagement = () => {
                             ))}
                         </select>
 
-                        <button 
+                        <button
                             className={`btn-toggle-advanced ${showAdvancedFilter ? 'active' : ''}`}
                             onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}
                             title="Lọc theo ngày"
@@ -366,8 +366,8 @@ const OrderManagement = () => {
                                 </tr>
                             ) : (
                                 orders.map(order => (
-                                    <tr key={order.idOrder} 
-                                        className={`clickable-row ${order.isNew ? "row-flashing" : ""}`} 
+                                    <tr key={order.idOrder}
+                                        className={`clickable-row ${order.isNew ? "row-flashing" : ""}`}
                                         onClick={() => handleRowClick(order.idOrder)}
                                     >
                                         <td className="order-code-cell">
@@ -393,7 +393,7 @@ const OrderManagement = () => {
                                             </span>
                                         </td>
                                         <td>
-                                            <select 
+                                            <select
                                                 className={`status-dropdown ${ORDER_STATUS_CONFIG[order.orderStatus]?.class}`}
                                                 value={order.orderStatus}
                                                 onChange={(e) => handleUpdateStatus(e, order.idOrder, e.target.value)}
@@ -428,15 +428,15 @@ const OrderManagement = () => {
                         Đang hiển thị <b>{orders.length}</b> đơn hàng • Trang <span className="page-number-highlight">{filters.currentPage}</span>
                     </p>
                     <div className="page-btns">
-                        <button 
-                            disabled={filters.currentPage === 1} 
-                            onClick={(e) => { e.stopPropagation(); setFilters({...filters, currentPage: filters.currentPage - 1}) }}
+                        <button
+                            disabled={filters.currentPage === 1}
+                            onClick={(e) => { e.stopPropagation(); setFilters({ ...filters, currentPage: filters.currentPage - 1 }) }}
                             title="Trang trước"
                         >
                             <ChevronLeft size={18} />
                         </button>
-                        <button 
-                            onClick={(e) => { e.stopPropagation(); setFilters({...filters, currentPage: filters.currentPage + 1}) }}
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setFilters({ ...filters, currentPage: filters.currentPage + 1 }) }}
                             title="Trang tiếp"
                         >
                             <ChevronRight size={18} />
@@ -450,4 +450,4 @@ const OrderManagement = () => {
 };
 
 export default OrderManagement;
-
+

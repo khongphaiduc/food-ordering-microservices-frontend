@@ -3,18 +3,18 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { QRCodeCanvas } from 'qrcode.react';
 import * as signalR from '@microsoft/signalr';
-import { 
-    MapPin, 
-    ShoppingBag, 
-    ArrowLeft, 
-    Check, 
-    Plus, 
-    Minus, 
-    Trash2, 
-    Sparkles, 
-    PartyPopper, 
-    CreditCard, 
-    AlertTriangle, 
+import {
+    MapPin,
+    ShoppingBag,
+    ArrowLeft,
+    Check,
+    Plus,
+    Minus,
+    Trash2,
+    Sparkles,
+    PartyPopper,
+    CreditCard,
+    AlertTriangle,
     Loader2
 } from 'lucide-react';
 
@@ -291,7 +291,7 @@ export default function ConfirmMenu() {
                     </button>
 
                     <div className="confirm-title-block">
-                        <h1>🏮 XÁC NHẬN ĐƠN HÀNG TẾT 🏮</h1>
+                        <h1> XÁC NHẬN ĐƠN HÀNG TẾT </h1>
                         <p className="confirm-subtitle">Mâm Cỗ Khai Xuân • Đong Đầy Hương Vị Tết Việt</p>
                     </div>
 
@@ -465,7 +465,7 @@ export default function ConfirmMenu() {
                                 <p style={{ color: '#616161', fontSize: '0.88rem' }}>
                                     🔔 Hệ thống tự động xác nhận sau khi chuyển khoản thành công...
                                 </p>
-                                <button 
+                                <button
                                     className="btn-confirm-next-tet"
                                     onClick={() => {
                                         setShowQRModal(false);

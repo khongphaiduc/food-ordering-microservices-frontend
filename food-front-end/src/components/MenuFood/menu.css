@@ -521,3 +521,8 @@
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 10px 25px rgba(142, 0, 0, 0.35);
 }
+
+/* SweetAlert2 Modal Z-Index override to ensure popups stay above mobile sidebar drawer */
+.swal2-container {
+    z-index: 999999 !important;
+}

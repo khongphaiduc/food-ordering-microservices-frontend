@@ -174,7 +174,7 @@ const Login = () => {
                     </form>
 
                     <div className="text-center mt-4">
-                        <small className="text-muted">Chưa có tài khoản? <a href="/signup" className="signup-link fw-bold">Đăng ký tải khoản mới</a></small>
+                        <small className="text-muted">Chưa có tài khoản? <Link to="/signup" className="signup-link fw-bold">Đăng ký tài khoản mới</Link></small>
                     </div>
                 </div>
             </div>

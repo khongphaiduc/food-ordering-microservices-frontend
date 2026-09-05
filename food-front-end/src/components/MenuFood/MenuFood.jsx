@@ -10,6 +10,7 @@ import {
     Home
 } from 'lucide-react';
 import FoodCard from '../homepage/FoodCard';
+import Swal from 'sweetalert2';
 import BrandLogo from '../homepage/BrandLogo';
 import banhTrungImg from '../../assets/banhtrung.avif';
 import hoadaotraiImg from '../../assets/hoadaotrai.webp';
@@ -37,6 +38,26 @@ export default function ViewListProductFood() {
     const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7150";
     const userName = localStorage.getItem("userName");
     const userId = localStorage.getItem("userId") || "9f3c2e7a-4b8d-4a6f-9c21-6f8d2a1b7c54";
+
+    const handleLogout = async () => {
+        setShowMobileMenu(false);
+        setShowUserMenu(false);
+        const result = await Swal.fire({
+            title: 'Xác nhận đăng xuất',
+            text: 'Bạn có chắc chắn muốn đăng xuất không?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d32f2f',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đăng xuất',
+            cancelButtonText: 'Hủy'
+        });
+
+        if (result.isConfirmed) {
+            localStorage.clear();
+            window.location.reload();
+        }
+    };
 
     // 1. CẬP NHẬT BADGE GIỎ HÀNG
     const updateCartBadge = useCallback(async () => {
@@ -221,7 +242,7 @@ export default function ViewListProductFood() {
                                     <Link to="/profile" className="dropdown-link">👤 Hồ sơ cá nhân</Link>
                                     <Link to="/orders" className="dropdown-link">🛍️ Đơn của bạn</Link>
                                     <div className="divider"></div>
-                                    <button onClick={() => { localStorage.clear(); window.location.reload(); }} className="btn-logout-item">
+                                    <button onClick={handleLogout} className="btn-logout-item">
                                         🚪 Thoát tài khoản
                                     </button>
                                 </div>
@@ -409,7 +430,7 @@ export default function ViewListProductFood() {
 
                             {userName ? (
                                 <button
-                                    onClick={() => { localStorage.clear(); window.location.reload(); }}
+                                    onClick={handleLogout}
                                     className="btn-mobile-logout-tet"
                                 >
                                     🚪 Thoát tài khoản

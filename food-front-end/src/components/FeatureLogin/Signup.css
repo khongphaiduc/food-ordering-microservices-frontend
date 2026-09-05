@@ -480,8 +480,8 @@
 
 .form-control-custom {
     width: 100%;
-    padding: 11px 14px 11px 44px;
-    font-size: 0.9rem;
+    padding: 12px 14px 12px 44px;
+    font-size: 1rem; /* 16px chuẩn để ngăn mobile browser tự động phóng to (auto-zoom) khi focus */
     font-family: inherit;
     border: 1.5px solid #e0e0e0;
     border-radius: 12px;
@@ -489,6 +489,7 @@
     color: #333333;
     outline: none;
     transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    touch-action: manipulation;
 }
 
 .form-control-custom.pr-toggle {
@@ -754,19 +755,33 @@
     }
 }
 
+@media (max-width: 768px) {
+    /* Đảm bảo ô input luôn giữ kích thước font tối thiểu 16px trên màn hình di động để ngăn Safari/Chrome tự động phóng to (auto-zoom) khi nhấp vào ô nhập liệu */
+    .form-control-custom {
+        font-size: 16px !important;
+    }
+}
+
 @media (max-width: 576px) {
     .tet-signup-wrapper {
-        padding: 15px 10px;
+        padding: 65px 12px 25px 12px;
+    }
+
+    .btn-back-home {
+        top: 14px;
+        left: 14px;
+        padding: 7px 14px;
+        font-size: 0.8rem;
     }
 
     .tet-top-ribbon {
-        font-size: 0.72rem;
-        letter-spacing: 0.5px;
+        font-size: 0.7rem;
+        letter-spacing: 0.3px;
         padding: 6px 10px;
     }
 
     .tet-form-section {
-        padding: 25px 20px;
+        padding: 24px 18px;
     }
 
     .logo-text {
@@ -774,7 +789,11 @@
     }
 
     .signup-title {
-        font-size: 1.45rem;
+        font-size: 1.35rem;
+    }
+
+    .signup-subtitle {
+        font-size: 0.8rem;
     }
 
     .gift-options {
@@ -782,14 +801,16 @@
     }
 
     .top-right-lantern {
-        width: 180px;
+        width: 140px;
         top: -5px;
         right: -5px;
+        opacity: 0.7;
     }
 
     .bottom-left-peach-branch {
-        width: 170px;
-        bottom: -15px;
-        left: -15px;
+        width: 140px;
+        bottom: -10px;
+        left: -10px;
+        opacity: 0.7;
     }
 }

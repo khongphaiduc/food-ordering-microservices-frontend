@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UtensilsCrossed } from 'lucide-react';
+import Swal from 'sweetalert2';
 import FoodCard from './FoodCard';
 import BrandLogo from './BrandLogo';
 import FireworksEffect from './FireworksEffect';
@@ -32,6 +33,26 @@ export default function Home() {
   const userName = localStorage.getItem("userName");
   const token = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId");
+
+  const handleLogout = async () => {
+    setShowMobileMenu(false);
+    setShowUserMenu(false);
+    const result = await Swal.fire({
+      title: 'Xác nhận đăng xuất',
+      text: 'Bạn có chắc chắn muốn đăng xuất không?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#d32f2f',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Đăng xuất',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
 
   // Đóng dropdown khi click ra ngoài
   useEffect(() => {
@@ -356,7 +377,7 @@ export default function Home() {
                   <Link to="/profile" className="dropdown-link">👤 Hồ sơ cá nhân</Link>
                   <Link to="/orders" className="dropdown-link">🛍️ Đơn của bạn</Link>
                   <div className="divider"></div>
-                  <button onClick={() => { localStorage.clear(); window.location.reload(); }} className="btn-logout-item">
+                  <button onClick={handleLogout} className="btn-logout-item">
                     🚪 Thoát tài khoản
                   </button>
                 </div>
@@ -483,7 +504,7 @@ export default function Home() {
             {/* CHẶNG 01 (BÊN TRÁI ĐƯỜNG NGOẰN NGOÈO) */}
             <div className="winding-step-node node-left step-1">
               <div className="node-marker">
-                <span className="marker-icon">🌸</span>
+
                 <span className="marker-label">CHẶNG 01</span>
               </div>
               <div className="winding-card">
@@ -505,7 +526,7 @@ export default function Home() {
             {/* CHẶNG 02 (BÊN PHẢI ĐƯỜNG NGOẰN NGOÈO) */}
             <div className="winding-step-node node-right step-2">
               <div className="node-marker">
-                <span className="marker-icon">🔥</span>
+
                 <span className="marker-label">CHẶNG 02</span>
               </div>
               <div className="winding-card">
@@ -527,17 +548,17 @@ export default function Home() {
             {/* CHẶNG 03 (BÊN TRÁI ĐƯỜNG NGOẰN NGOÈO) */}
             <div className="winding-step-node node-left step-3">
               <div className="node-marker">
-                <span className="marker-icon">🚚</span>
+
                 <span className="marker-label">CHẶNG 03</span>
               </div>
               <div className="winding-card">
                 <div className="card-header">
                   <span className="card-step-num">03</span>
-                  <span className="card-gold-tag">⚡ EXPRESS 15M</span>
+                  <span className="card-gold-tag"> EXPRESS 15M</span>
                 </div>
                 <h3 className="card-title">Món ngon trao tay</h3>
                 <p className="card-desc">
-                  Thuật toán tuyến đường tối ưu Microservices đảm bảo bữa ăn thơm ngon nóng hổi được trao tận tay gia đình chỉ trong 15 phút.
+                  Giao món cực nhanh, đảm bảo nóng hổi, thơm ngon như vừa ra khỏi bếp
                 </p>
                 <div className="card-footer-badge">
                   <span>15 Phút Thời Gian Giao</span>
@@ -595,13 +616,13 @@ export default function Home() {
 
               <nav className="mobile-nav-group-tet">
                 <Link to="/home" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet active">
-                  <span className="link-icon-tet">🏡</span>
+
                   <span className="link-text-tet">Trang chủ Đoàn Viên</span>
                   <span className="link-arrow-tet">›</span>
                 </Link>
 
                 <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
-                  <span className="link-icon-tet">🧧</span>
+
                   <span className="link-text-tet">Thực Đơn Tết 2026</span>
                   <span className="link-arrow-tet">›</span>
                 </Link>
@@ -609,13 +630,13 @@ export default function Home() {
                 {userName && (
                   <>
                     <Link to="/profile" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
-                      <span className="link-icon-tet">👤</span>
+
                       <span className="link-text-tet">Hồ sơ cá nhân</span>
                       <span className="link-arrow-tet">›</span>
                     </Link>
 
                     <Link to="/orders" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
-                      <span className="link-icon-tet">🛍️</span>
+
                       <span className="link-text-tet">Đơn hàng của bạn</span>
                       <span className="link-arrow-tet">›</span>
                     </Link>
@@ -627,19 +648,19 @@ export default function Home() {
 
               {userName ? (
                 <button
-                  onClick={() => { localStorage.clear(); window.location.reload(); }}
+                  onClick={handleLogout}
                   className="btn-mobile-logout-tet"
                 >
-                  🚪 Thoát tài khoản
+                  Thoát tài khoản
                 </button>
               ) : (
                 <Link to="/login" onClick={() => setShowMobileMenu(false)} className="btn-mobile-login-tet">
-                  🔑 ĐĂNG NHẬP KHAI XUÂN
+                  ĐĂNG NHẬP KHAI XUÂN
                 </Link>
               )}
 
               <div className="mobile-drawer-greeting-box">
-                <span>🏮 CHÚC MỪNG NĂM MỚI 🏮</span>
+                <span> CHÚC MỪNG NĂM MỚI </span>
                 <p>Vạn Sự Như Ý • Đại Cát Đại Lộc</p>
               </div>
             </div>

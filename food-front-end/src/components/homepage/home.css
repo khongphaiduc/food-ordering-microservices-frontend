@@ -319,6 +319,11 @@ section { padding: 60px 6%; }
     transform: scale(0.9);
 }
 
+/* SweetAlert2 Modal Z-Index override to ensure popups stay above mobile sidebar drawer */
+.swal2-container {
+    z-index: 999999 !important;
+}
+
 /* ==================== TET MOBILE SIDEBAR DRAWER ==================== */
 .mobile-menu-overlay {
     position: fixed;
