@@ -170,12 +170,22 @@ const AddProduct = () => {
             return;
         }
 
+        if (!formData.name?.trim()) {
+            showNotification("Vui lòng nhập tên món ăn!", "warning");
+            return;
+        }
+
+        if (!formData.price || Number(formData.price) <= 0) {
+            showNotification("Vui lòng nhập giá niêm yết hợp lệ (> 0)!", "warning");
+            return;
+        }
+
         setLoading(true);
         const data = new FormData();
         data.append('IdCategory', formData.idCategory);
-        data.append('Name', formData.name);
+        data.append('Name', formData.name.trim());
         data.append('Price', formData.price);
-        data.append('Description', formData.description);
+        data.append('Description', formData.description || '');
 
         if (mainImage) {
             data.append('MainImage.image', mainImage);
@@ -188,16 +198,36 @@ const AddProduct = () => {
         });
 
         try {
-            const response = await axios.post(`${apiUrl}/admin/products`, data, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            showNotification("Thêm món ăn thành công!", "success");
+            const token = localStorage.getItem("accessToken") || localStorage.getItem("AccessToken");
+            const headers = {
+                'Content-Type': 'multipart/form-data',
+                ...(token && token !== "null" && token !== "undefined" ? { Authorization: `Bearer ${token}` } : {})
+            };
+
+            const response = await axios.post(`${apiUrl}/admin/products`, data, { headers });
+            showNotification(response.data?.message || "Thêm món ăn mới thành công!", "success");
             setTimeout(() => {
                 navigate('/management/menu');
             }, 1200);
         } catch (error) {
-            console.error("Error:", error);
-            showNotification("Lỗi khi gửi dữ liệu lên server.", "error");
+            console.error("Error creating product:", error);
+            const errorData = error.response?.data;
+            let errorMsg = "Lỗi khi gửi dữ liệu lên server.";
+
+            if (errorData?.errors) {
+                const validationErrors = Object.values(errorData.errors).flat().join(" | ");
+                errorMsg = validationErrors || errorData.title || errorMsg;
+            } else if (errorData?.message || errorData?.Message) {
+                errorMsg = errorData.message || errorData.Message;
+            } else if (typeof errorData === 'string') {
+                errorMsg = errorData;
+            } else if (error.response?.status === 401) {
+                errorMsg = "Phiên làm việc hết hạn. Vui lòng đăng nhập lại!";
+            } else if (error.response?.status === 403) {
+                errorMsg = "Bạn không có quyền quản trị để tạo sản phẩm!";
+            }
+
+            showNotification(errorMsg, "error");
         } finally {
             setLoading(false);
         }
@@ -273,10 +303,10 @@ const AddProduct = () => {
                                 <option value="">-- Chọn danh mục --</option>
                                 {categories && categories.length > 0 ? (
                                     categories.map((cat, index) => {
-                                        const catId = cat.idCategory || cat.id || cat.categoryId || cat.id_category || index;
+                                        const catId = cat.idCategory || cat.id || cat.categoryId || cat.id_category;
                                         const catName = cat.nameCategory || cat.name || cat.categoryName || `Danh mục #${index + 1}`;
                                         return (
-                                            <option key={catId} value={catId}>
+                                            <option key={catId || index} value={catId || ''}>
                                                 {catName}
                                             </option>
                                         );

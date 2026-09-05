@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { 
     ArrowLeft, Upload, Loader2, X, Images, 
     CheckCircle2, Trash2, Tag, Info, DollarSign, Plus, Star
@@ -48,7 +49,12 @@ const ProductDetailManagement = () => {
                 }
             } catch (err) {
                 console.error("Lỗi tải chi tiết:", err);
-                alert("Không thể tải thông tin sản phẩm!");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể tải thông tin sản phẩm!',
+                    confirmButtonColor: '#e11d48'
+                });
             } finally {
                 setLoading(false);
             }
@@ -73,8 +79,19 @@ const ProductDetailManagement = () => {
         setProduct(prev => ({ ...prev, newFiles: prev.newFiles.filter((_, i) => i !== index) }));
     };
 
-    const removeOldImage = (idImage) => {
-        if (window.confirm("Xóa ảnh này khỏi hệ thống?")) {
+    const removeOldImage = async (idImage) => {
+        const result = await Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: 'Bạn có chắc chắn muốn xóa ảnh này khỏi hệ thống?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d32f2f',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        });
+
+        if (result.isConfirmed) {
             setProduct(prev => ({
                 ...prev,
                 oldImages: prev.oldImages.filter(img => img.idImage !== idImage),
@@ -94,8 +111,19 @@ const ProductDetailManagement = () => {
         setProduct(prev => ({ ...prev, variants: [...prev.variants, newV] }));
     };
 
-    const removeVariant = (item) => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa biến thể này?")) {
+    const removeVariant = async (item) => {
+        const result = await Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: 'Bạn có chắc chắn muốn xóa biến thể này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d32f2f',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        });
+
+        if (result.isConfirmed) {
             setProduct(prev => {
                 const newState = { ...prev };
                 if (item.idVariant) {
@@ -161,14 +189,33 @@ const ProductDetailManagement = () => {
         product.variantsToDelete.forEach(vId => formData.append('DeleteVariant', vId));
 
         try {
-           await axios.put(`${apiUrl}/admin/products`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-});
-            alert("Cập nhật sản phẩm thành công!");
-            navigate('/management/menu');
+            const token = localStorage.getItem("accessToken") || localStorage.getItem("AccessToken");
+            const headers = {
+                'Content-Type': 'multipart/form-data',
+                ...(token && token !== "null" && token !== "undefined" ? { Authorization: `Bearer ${token}` } : {})
+            };
+
+            await axios.put(`${apiUrl}/admin/products`, formData, { headers });
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Cập nhật thành công!',
+                text: 'Thông tin sản phẩm đã được lưu thành công.',
+                confirmButtonColor: '#e11d48',
+                timer: 2000,
+                timerProgressBar: true
+            }).then(() => {
+                navigate('/management/menu');
+            });
         } catch (err) {
             console.error("Lỗi cập nhật:", err);
-            alert("Lỗi: " + (err.response?.data?.message || "Không thể lưu dữ liệu!"));
+            const errorMsg = err.response?.data?.message || err.response?.data?.Message || "Không thể lưu dữ liệu!";
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi cập nhật',
+                text: errorMsg,
+                confirmButtonColor: '#e11d48'
+            });
         } finally {
             setSaving(false);
         }
