@@ -126,7 +126,7 @@ export default function ViewListProductFood() {
 
 
                     return {
-                        id: f.id || f.idProduct,
+                        id: f.id || f.idProduct || f.productId || f.IdProduct || f.id_product,
                         name: f.name,
                         desc: f.description || f.decriptions || "Mỹ vị ngày Tết",
                         price: f.price || 0,
@@ -298,12 +298,15 @@ export default function ViewListProductFood() {
                             />
                             {showSuggestions && suggestions.length > 0 && (
                                 <ul className="suggestion-dropdown">
-                                    {suggestions.map((item, index) => (
-                                        <li key={index} onClick={() => { setSearchTerm(item); setQuery(item); setCurrentPage(1); setShowSuggestions(false); }}>
-                                            <span className="s-icon">🌸</span>
-                                            <span className="s-text">{item}</span>
-                                        </li>
-                                    ))}
+                                    {suggestions.map((item, index) => {
+                                        const text = typeof item === 'object' ? (item.name || item.text || item.title) : item;
+                                        return (
+                                            <li key={index} onClick={() => { setSearchTerm(text); setQuery(text); setCurrentPage(1); setShowSuggestions(false); }}>
+                                                <span className="s-icon">🌸</span>
+                                                <span className="s-text">{text}</span>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             )}
                         </div>

@@ -19,7 +19,7 @@ export default function OrderHistory() {
     const [paymentError, setPaymentError] = useState(null);
     const [paymentOrderCode, setPaymentOrderCode] = useState("");
 
- const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_API_URL;
     const userId = localStorage.getItem("userId") || "22EBC352-0CA9-4CB6-AC82-3CEA7C8099B2";
     const token = localStorage.getItem("accessToken");
 
@@ -36,34 +36,34 @@ export default function OrderHistory() {
 
         fetch(`${apiUrl}/payments/qrcode/${orderCode}`, {
             method: 'GET',
-            headers: { 
+            headers: {
                 'Authorization': token ? `Bearer ${token}` : ''
             }
         })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error("Không thể tạo mã QR thanh toán.");
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (data && data.qrCode) {
-                setQrCodeValue(data.qrCode);
-            } else {
-                throw new Error("Không nhận được mã QR hợp lệ từ hệ thống.");
-            }
-        })
-        .catch(err => {
-            console.error("Lỗi tạo QR:", err);
-            setPaymentError(err.message || "Đã xảy ra lỗi khi tạo mã QR.");
-        })
-        .finally(() => {
-            setIsGeneratingQR(false);
-        });
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Không thể tạo mã QR thanh toán.");
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data && data.qrCode) {
+                    setQrCodeValue(data.qrCode);
+                } else {
+                    throw new Error("Không nhận được mã QR hợp lệ từ hệ thống.");
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi tạo QR:", err);
+                setPaymentError(err.message || "Đã xảy ra lỗi khi tạo mã QR.");
+            })
+            .finally(() => {
+                setIsGeneratingQR(false);
+            });
     };
 
     const getOrderStatus = (status) => {
-        switch(status) {
+        switch (status) {
             case 0: return { text: "Chờ xác nhận", class: "order-pending" };
             case 1: return { text: "Đã xác nhận", class: "order-confirmed" };
             case 2: return { text: "Đang chế biến", class: "order-preparing" };
@@ -75,7 +75,7 @@ export default function OrderHistory() {
     };
 
     const getPaymentStatus = (status) => {
-        switch(status) {
+        switch (status) {
             case 1: return { text: "Chờ thanh toán", class: "pay-pending" };
             case 2: return { text: "Đã thanh toán", class: "pay-paid" };
             case 3: return { text: "Đã hủy", class: "pay-cancelled" };
@@ -89,36 +89,36 @@ export default function OrderHistory() {
 
         fetch(`${apiUrl}/orders/histories`, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token ? `Bearer ${token}` : ''
             },
             body: JSON.stringify({ IdUser: userId, PageIndex: page })
         })
-        .then(res => res.json())
-        .then(data => {
-            setOrders(data.orderHistory || []);
-            setTotalPages(data.totalPages || 1);
-        })
-        .catch(err => console.error("Lỗi tải đơn hàng:", err))
-        .finally(() => {
-            setInitialLoading(false);
-            setIsPageChanging(false);
-        });
+            .then(res => res.json())
+            .then(data => {
+                setOrders(data.orderHistory || []);
+                setTotalPages(data.totalPages || 1);
+            })
+            .catch(err => console.error("Lỗi tải đơn hàng:", err))
+            .finally(() => {
+                setInitialLoading(false);
+                setIsPageChanging(false);
+            });
     };
 
     const handleViewDetail = (orderId) => {
         fetch(`${apiUrl}/orders/detail`, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token ? `Bearer ${token}` : ''
             },
             body: JSON.stringify({ IdUser: userId, IdOrder: orderId })
         })
-        .then(res => res.json())
-        .then(data => setSelectedOrder(data))
-        .catch(err => console.error(err));
+            .then(res => res.json())
+            .then(data => setSelectedOrder(data))
+            .catch(err => console.error(err));
     };
 
     return (
@@ -130,10 +130,10 @@ export default function OrderHistory() {
             <main className="tet-order-frame-wrapper">
                 <img src={khungOrderImg} alt="Khung đơn hàng" className="tet-order-frame-bg" />
                 <div className="tet-order-frame-content">
-                    <h2 className="section-title-tet">🧧 LỊCH SỬ ĐƠN HÀNG 🧧</h2>
+                    <h2 className="section-title-tet"> LỊCH SỬ ĐƠN HÀNG </h2>
 
                     {initialLoading ? (
-                        <div className="loading-state">🌸 Đang tải danh sách đơn hàng...</div>
+                        <div className="loading-state"> Đang tải danh sách đơn hàng...</div>
                     ) : (
                         <div className={`table-responsive ${isPageChanging ? 'changing-page' : ''}`}>
                             {isPageChanging && (
@@ -154,7 +154,7 @@ export default function OrderHistory() {
                                 </thead>
                                 <tbody>
                                     {orders.map((order) => (
-                                        <tr 
+                                        <tr
                                             key={order.idOrder}
                                             className="order-row-clickable"
                                             onClick={() => handleViewDetail(order.idOrder)}
@@ -178,11 +178,11 @@ export default function OrderHistory() {
                                             <td className="col-action">
                                                 <div className="action-buttons-cell">
                                                     <button className="view-detail-btn desktop-only" onClick={(e) => { e.stopPropagation(); handleViewDetail(order.idOrder); }}>
-                                                        Xem chi tiết 📜
+                                                        Xem chi tiết
                                                     </button>
                                                     {order.orderStatusPayment === 1 && (
                                                         <button className="pay-btn" onClick={(e) => { e.stopPropagation(); handlePayAgain(order.orderCode); }}>
-                                                            Thanh toán 💳
+                                                            Thanh toán
                                                         </button>
                                                     )}
                                                 </div>
@@ -211,10 +211,10 @@ export default function OrderHistory() {
                             <h3>HÓA ĐƠN CHI TIẾT</h3>
                             <button className="modal-close-x" onClick={() => setSelectedOrder(null)}>✕</button>
                         </div>
-                        
+
                         <div className="modal-body-fixed">
                             <div className="modal-order-code">#{selectedOrder.orderCode}</div>
-                            
+
                             <div className="modal-status-grid">
                                 <div className="status-item-fixed">
                                     <label>ĐƠN HÀNG</label>
@@ -237,7 +237,7 @@ export default function OrderHistory() {
                             </div>
 
                             <div className="modal-section-fixed">
-                                <h4>🥐 Chi tiết món</h4>
+                                <h4> Chi tiết món</h4>
                                 {selectedOrder.orderItems?.map((item, i) => (
                                     <div key={i} className="item-row-fixed">
                                         <span>{item.productName} x{item.quantity}</span>
@@ -256,14 +256,14 @@ export default function OrderHistory() {
 
                         <div className="modal-footer-fixed flex-footer">
                             {selectedOrder.orderStatusPayments === 1 && (
-                                <button 
-                                    className="btn-pay-now" 
+                                <button
+                                    className="btn-pay-now"
                                     onClick={() => {
                                         setSelectedOrder(null);
                                         handlePayAgain(selectedOrder.orderCode);
                                     }}
                                 >
-                                    THANH TOÁN LẠI 💳
+                                    THANH TOÁN LẠI
                                 </button>
                             )}
                             <button className="btn-close-final" onClick={() => setSelectedOrder(null)}>ĐÓNG</button>
@@ -279,7 +279,7 @@ export default function OrderHistory() {
                         <button className="modal-close-x-fixed" onClick={() => setShowQRModal(false)}>×</button>
                         <h2>Quét mã thanh toán</h2>
                         <p className="qr-subtitle">Đơn hàng: #{paymentOrderCode}</p>
-                        
+
                         <div className="qr-code-wrapper-fixed">
                             {isGeneratingQR ? (
                                 <div className="qr-spinner-container-fixed">
@@ -295,10 +295,10 @@ export default function OrderHistory() {
                                 qrCodeValue && <QRCodeCanvas value={qrCodeValue} size={220} />
                             )}
                         </div>
-                        
+
                         <p className="qr-instruction-fixed">🔔 Sử dụng ứng dụng ngân hàng hoặc ví điện tử để quét mã</p>
-                        
-                        <button 
+
+                        <button
                             className="btn-confirm-next-fixed"
                             onClick={() => {
                                 setShowQRModal(false);

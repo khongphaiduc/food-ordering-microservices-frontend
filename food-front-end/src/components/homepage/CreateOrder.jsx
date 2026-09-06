@@ -92,8 +92,8 @@ export default function ConfirmMenu() {
 
     // --- 2. Khởi tạo SignalR ---
     useEffect(() => {
-        const paymentServiceUrl = "https://localhost:7251";
-        const orderServiceUrl = "https://localhost:7264";
+        const paymentServiceUrl = apiUrl;
+        const orderServiceUrl = apiUrl;
 
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl(`${paymentServiceUrl}/notificationPayOS`, {
@@ -124,7 +124,7 @@ export default function ConfirmMenu() {
             if (newQrConnection) newQrConnection.stop();
             if (newOrderUserConnection) newOrderUserConnection.stop();
         };
-    }, [token]);
+    }, [token, apiUrl]);
 
     useEffect(() => {
         if (connection) {

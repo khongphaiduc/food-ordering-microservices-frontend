@@ -30,22 +30,27 @@ const ProductDetail = () => {
 
   // --- LOGIC CHUYỂN ẢNH TỰ ĐỘNG CHO SẢN PHẨM CHÍNH ---
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const productImages = product?.productImageDTOs || product?.imageFoods || product?.productImageInternalDTOs || [];
 
   useEffect(() => {
-    if (product?.productImageDTOs?.length > 1) {
+    if (productImages.length > 1) {
       const timer = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % product.productImageDTOs.length);
+        setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
       }, 4000);
       return () => clearInterval(timer);
     }
-  }, [product]);
+  }, [productImages.length]);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product.productImageDTOs.length);
+    if (productImages.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+    }
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + product.productImageDTOs.length) % product.productImageDTOs.length);
+    if (productImages.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
+    }
   };
 
   // --- GIỎ HÀNG & BADGE ---
@@ -132,23 +137,27 @@ const ProductDetail = () => {
         const productIdToTrack = productData.idProduct || id;
         trackUserAction(1, productIdToTrack);
 
-        if (productData.idCategory) {
+        const categoryId = productData.idCategory || productData.categoryId || productData.idCatalog;
+        if (categoryId) {
           try {
-            const suggestedRes = await axios.get(`${apiUrl}/products/recommendation/${productData.idCategory}`);
+            const suggestedRes = await axios.get(`${apiUrl}/products/recommendation/${categoryId}`);
             const rawList = suggestedRes.data || [];
 
             if (Array.isArray(rawList)) {
               const mappedSuggestions = rawList
-                .filter(item => item.id !== id)
+                .filter(item => (item.id || item.idProduct || item.productId) !== id)
                 .map(item => ({
-                  id: item.id,
+                  id: item.id || item.idProduct || item.productId || item.IdProduct,
                   name: item.name,
-                  price: item.price,
+                  price: item.price || 0,
                   img: item.imageFoods?.find(img => img.isMain)?.urlImage
                     || item.imageFoods?.[0]?.urlImage
+                    || item.productImageDTOs?.find(img => img.isMain)?.urlImage
+                    || item.productImageDTOs?.[0]?.urlImage
+                    || item.productImageInternalDTOs?.[0]?.urlImage
                     || 'https://via.placeholder.com/300',
                   quantity: item.quantity ?? item.quality ?? item.stock ?? 0,
-                  desc: item.decriptions || "Món ngon đãi tiệc Tết"
+                  desc: item.decriptions || item.description || "Món ngon đãi tiệc Tết"
                 }));
               setSuggestedProducts(mappedSuggestions.slice(0, 6));
             }
@@ -228,7 +237,8 @@ const ProductDetail = () => {
       const idCart = cartRes.data.idCart;
       let currentItems = cartRes.data.cartItems || [];
       const vId = selectedVariant?.idVariant || null;
-      const existingIndex = currentItems.findIndex(it => it.idProduct === (product.idProduct || id) && it.idVariant === vId);
+      const targetProductId = product.idProduct || product.id || product.productId || id;
+      const existingIndex = currentItems.findIndex(it => it.idProduct === targetProductId && it.idVariant === vId);
 
       const currentQtyInCart = existingIndex > -1 ? currentItems[existingIndex].quantity : 0;
       const newTotalQty = currentQtyInCart + quantity;
@@ -247,7 +257,7 @@ const ProductDetail = () => {
       if (existingIndex > -1) {
         currentItems[existingIndex].quantity = newTotalQty;
       } else {
-        currentItems.push({ idProduct: product.idProduct || id, idVariant: vId, quantity: quantity });
+        currentItems.push({ idProduct: targetProductId, idVariant: vId, quantity: quantity });
       }
 
       const payload = {
@@ -291,7 +301,25 @@ const ProductDetail = () => {
   };
 
   if (loading) return <div className="modern-loader tet-loader"><Loader2 className="spinner" size={48} /><p>Đang chuẩn bị mâm cỗ Tết...</p></div>;
-  if (!product) return <div className="error-container tet-error">Món ăn không tồn tại!</div>;
+  if (!product) return (
+    <div className="error-container tet-error" style={{ textAlign: 'center', padding: '60px 20px', maxWidth: '600px', margin: '40px auto' }}>
+      <h2 style={{ color: '#d32f2f', marginBottom: '12px' }}>Không thể tải thông tin món ăn!</h2>
+      <p style={{ color: '#555', fontSize: '0.95rem', lineHeight: '1.6' }}>
+        Món ăn không tồn tại hoặc kết nối đến máy chủ API (<code>{apiUrl}</code>) bị chặn.
+      </p>
+      <div style={{ background: '#fff9e6', border: '1px solid #ffe0b2', borderRadius: '8px', padding: '16px', margin: '20px 0', textAlign: 'left', fontSize: '0.88rem', color: '#5d4037' }}>
+        <strong>💡 Lưu ý nếu bạn đang sử dụng Google Chrome:</strong>
+        <ol style={{ paddingLeft: '20px', margin: '8px 0 0 0' }}>
+          <li>Mở tab mới trên Chrome và truy cập: <a href={apiUrl} target="_blank" rel="noreferrer" style={{ color: '#d32f2f', fontWeight: 'bold' }}>{apiUrl}</a></li>
+          <li>Nếu thấy cảnh báo <em>"Kết nối của bạn không phải là liên kết riêng tư"</em>, bấm <strong>Nâng cao (Advanced)</strong> &rarr; chọn <strong>Tiếp tục truy cập (Proceed to localhost)</strong>.</li>
+          <li>Quay lại đây và làm mới trang (F5).</li>
+        </ol>
+      </div>
+      <button onClick={() => navigate('/menu')} className="btn-back-tet" style={{ padding: '10px 24px', cursor: 'pointer' }}>
+        Quay lại Thực đơn
+      </button>
+    </div>
+  );
 
   const totalPrice = (product.price + (selectedVariant?.extraPrice || 0)) * quantity;
   const productQuantity = product.quantity ?? product.quality ?? product.stock ?? 0;
@@ -331,21 +359,29 @@ const ProductDetail = () => {
             </div>
 
             <div className="slideshow-container tet-slideshow">
-              {product.productImageDTOs?.map((img, index) => (
+              {productImages.length > 0 ? (
+                productImages.map((img, index) => (
+                  <img
+                    key={index}
+                    src={img.urlImage || img.url || img}
+                    alt={product.name || "food"}
+                    className={`hero-image ${index === currentImageIndex ? 'active' : ''}`}
+                  />
+                ))
+              ) : (
                 <img
-                  key={index}
-                  src={img.urlImage}
-                  alt="food"
-                  className={`hero-image ${index === currentImageIndex ? 'active' : ''}`}
+                  src="https://via.placeholder.com/500x350?text=Hình+ảnh+món+ăn"
+                  alt={product.name || "food"}
+                  className="hero-image active"
                 />
-              ))}
+              )}
 
-              {product.productImageDTOs?.length > 1 && (
+              {productImages.length > 1 && (
                 <>
                   <button className="slide-nav-btn prev tet-slide-btn" onClick={prevImage}><ChevronLeft size={20} /></button>
                   <button className="slide-nav-btn next tet-slide-btn" onClick={nextImage}><ChevronRight size={20} /></button>
                   <div className="slide-indicators">
-                    {product.productImageDTOs.map((_, idx) => (
+                    {productImages.map((_, idx) => (
                       <div key={idx} className={`dot ${idx === currentImageIndex ? 'active' : ''}`} onClick={() => setCurrentImageIndex(idx)} />
                     ))}
                   </div>
@@ -372,7 +408,7 @@ const ProductDetail = () => {
               <span className="freeship-tag-tet">Freeship Khai Xuân 0đ</span>
             </div>
 
-            <p className="modern-description tet-desc">{product.description}</p>
+            <p className="modern-description tet-desc">{product.description || product.decriptions || product.desc || "Món ăn đặc sắc ngập tràn hương vị Tết Việt."}</p>
 
             <div className="benefit-icons tet-benefits">
               <div className="icon-item"><Clock size={16} /> 15-25 phút giao thần tốc</div>
