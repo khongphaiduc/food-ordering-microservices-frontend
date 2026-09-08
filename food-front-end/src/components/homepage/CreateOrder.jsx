@@ -54,9 +54,6 @@ export default function ConfirmMenu() {
     const [showQRModal, setShowQRModal] = useState(false);
     const [showCashSuccess, setShowCashSuccess] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
-    const [connection, setConnection] = useState(null);
-    const [qrConnection, setQrConnection] = useState(null);
-    const [orderUserConnection, setOrderUserConnection] = useState(null);
     const [checkoutError, setCheckoutError] = useState(null);
 
     // --- State lưu Idempotency Key ---
@@ -92,68 +89,73 @@ export default function ConfirmMenu() {
 
     // --- 2. Khởi tạo SignalR ---
     useEffect(() => {
-        const paymentServiceUrl = apiUrl;
-        const orderServiceUrl = apiUrl;
+        const cleanBaseUrl = apiUrl.replace(/\/+$/, '');
 
-        const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(`${paymentServiceUrl}/notificationPayOS`, {
-                accessTokenFactory: () => token
-            })
-            .withAutomaticReconnect()
-            .build();
-        setConnection(newConnection);
+        const payOSHubUrl = import.meta.env.VITE_PAYOS_HUB_URL || `${cleanBaseUrl}/notificationPayOS`;
+        const qrHubUrl = import.meta.env.VITE_QR_HUB_URL || `${cleanBaseUrl}/QRCodeOrder`;
+        const orderUserHubUrl = import.meta.env.VITE_ORDER_USER_HUB_URL || `${cleanBaseUrl}/orderofuser`;
 
-        const newQrConnection = new signalR.HubConnectionBuilder()
-            .withUrl(`${paymentServiceUrl}/QRCodeOrder`, {
-                accessTokenFactory: () => token
-            })
-            .withAutomaticReconnect()
-            .build();
-        setQrConnection(newQrConnection);
+        let isMounted = true;
+        const activeConnections = [];
 
-        const newOrderUserConnection = new signalR.HubConnectionBuilder()
-            .withUrl(`${orderServiceUrl}/orderofuser`, {
-                accessTokenFactory: () => token
-            })
-            .withAutomaticReconnect()
-            .build();
-        setOrderUserConnection(newOrderUserConnection);
+        const startHubConnection = async (url, listeners, logName) => {
+            const conn = new signalR.HubConnectionBuilder()
+                .withUrl(url, {
+                    accessTokenFactory: () => localStorage.getItem("accessToken") || token || ""
+                })
+                .withAutomaticReconnect()
+                .build();
 
-        return () => {
-            if (newConnection) newConnection.stop();
-            if (newQrConnection) newQrConnection.stop();
-            if (newOrderUserConnection) newOrderUserConnection.stop();
-        };
-    }, [token, apiUrl]);
-
-    useEffect(() => {
-        if (connection) {
-            connection.on("mynofication", () => {
-                setIsPaid(true);
+            Object.entries(listeners).forEach(([evt, fn]) => {
+                conn.on(evt, fn);
             });
-            connection.start().catch(err => console.error("❌ [SignalR PayOS] Lỗi kết nối:", err));
-        }
-    }, [connection]);
 
-    useEffect(() => {
-        if (qrConnection) {
-            qrConnection.on("ViewQRCodeOrderMethod", (qrCode) => {
+            try {
+                await conn.start();
+                if (!isMounted) {
+                    await conn.stop();
+                } else {
+                    activeConnections.push(conn);
+                    console.log(`✅ [SignalR ${logName}] Kết nối thành công`);
+                }
+            } catch (err) {
+                if (isMounted) {
+                    console.warn(`⚠️ [SignalR ${logName}] Không thể kết nối (${url}):`, err?.message || err);
+                }
+            }
+        };
+
+        // PayOS Notification Hub
+        startHubConnection(payOSHubUrl, {
+            "mynofication": () => setIsPaid(true)
+        }, "PayOS");
+
+        // QR Code Hub
+        startHubConnection(qrHubUrl, {
+            "ViewQRCodeOrderMethod": (qrCode) => {
+                console.log("⚡ [SignalR QR Received]:", qrCode);
                 setQrCodeValue(qrCode);
                 setShowQRModal(true);
-            });
-            qrConnection.start().catch(err => console.error("❌ [SignalR QR] Lỗi kết nối:", err));
-        }
-    }, [qrConnection]);
+            }
+        }, "QR");
 
-    useEffect(() => {
-        if (orderUserConnection) {
-            orderUserConnection.on("OrderPaySuccessfully", (message) => {
-                console.log("💰 [SignalR OrderPaySuccessfully]:", message);
+        // Order User Hub
+        startHubConnection(orderUserHubUrl, {
+            "OrderPaySuccessfully": (msg) => {
+                console.log("💰 [SignalR OrderPaySuccessfully]:", msg);
                 setIsPaid(true);
+            }
+        }, "OrderOfUser");
+
+        return () => {
+            isMounted = false;
+            activeConnections.forEach(conn => {
+                if (conn.state !== signalR.HubConnectionState.Disconnected) {
+                    conn.stop().catch(() => {});
+                }
             });
-            orderUserConnection.start().catch(err => console.error("❌ [SignalR OrderOfUser] Lỗi kết nối:", err));
-        }
-    }, [orderUserConnection]);
+        };
+    }, [token, apiUrl]);
 
     // --- 3. Hàm cập nhật số lượng ---
     const updateQuantity = async (productId, variantId, newQuantity) => {
@@ -224,8 +226,13 @@ export default function ConfirmMenu() {
             if (response.status === 200) {
                 setCurrentIdempotencyKey(null);
 
+                const data = response.data;
+                const qrFromRes = data?.qrCode || data?.qrData || data?.checkoutUrl || data?.qrCodeUrl || data?.data?.qrCode || data?.data?.qrData;
+
                 if (paymentMethod === 1) {
-                    setQrCodeValue("");
+                    if (qrFromRes) {
+                        setQrCodeValue(qrFromRes);
+                    }
                     setIsPaid(false);
                     setShowQRModal(true);
                     window.dispatchEvent(new Event('cartUpdated'));
@@ -469,7 +476,7 @@ export default function ConfirmMenu() {
                                     className="btn-confirm-next-tet"
                                     onClick={() => {
                                         setShowQRModal(false);
-                                        navigate('/');
+                                        navigate('/orders');
                                     }}
                                 >
                                     TÔI ĐÃ THANH TOÁN KHAI XUÂN

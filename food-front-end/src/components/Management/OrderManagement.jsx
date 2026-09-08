@@ -40,8 +40,8 @@ const OrderManagement = () => {
         fromDate: '', toDate: '', currentPage: 1, pageSize: 10
     });
 
-    const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:7264/api';
-    const HUB_URL = 'https://localhost:7264/ordersHub';
+    const API_URL = import.meta.env.VITE_API_URL ? (import.meta.env.VITE_API_URL.endsWith('/api') ? import.meta.env.VITE_API_URL : `${import.meta.env.VITE_API_URL}/api`) : 'https://localhost:7264/api';
+    const HUB_URL = import.meta.env.VITE_ORDER_HUB_URL || (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/api$/, '')}/ordersHub` : 'https://localhost:7264/ordersHub');
 
     const getAuthToken = () => localStorage.getItem("accessToken");
     const api = axios.create({ baseURL: API_URL });
