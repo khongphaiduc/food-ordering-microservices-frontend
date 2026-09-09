@@ -273,12 +273,12 @@ export default function ConfirmMenu() {
     if (!cartData || !cartData.cartItems || cartData.cartItems.length === 0) {
         return (
             <div className="confirm-empty-tet">
-                <div className="empty-icon">🧧</div>
+                <div className="empty-icon">🛒</div>
                 <h2>Mâm cỗ giỏ hàng đang trống</h2>
-                <p style={{ color: '#666', marginBottom: '20px' }}>Hãy quay lại thực đơn Tết để chọn món ngon đãi tiệc nhé!</p>
+                <p style={{ color: '#666', marginBottom: '20px' }}>Hãy quay lại thực đơn để chọn món ngon đãi tiệc nhé!</p>
                 <button className="btn-back-tet" onClick={() => navigate('/menu')}>
                     <ArrowLeft size={18} />
-                    <span>Quay lại Thực Đơn Tết</span>
+                    <span>Quay lại Thực Đơn</span>
                 </button>
             </div>
         );
@@ -503,7 +503,7 @@ export default function ConfirmMenu() {
                 <div className="qr-modal-overlay">
                     <div className="qr-modal-content-tet">
                         <PartyPopper size={50} style={{ color: '#2e7d32', marginBottom: '15px' }} />
-                        <h2 style={{ color: '#2e7d32', fontWeight: '800' }}>Đặt Hàng Thành Công! 🧧</h2>
+                        <h2 style={{ color: '#2e7d32', fontWeight: '800' }}>Đặt Hàng Thành Công! 🎉</h2>
                         <p style={{ color: '#555', fontSize: '0.92rem', margin: '10px 0 20px 0' }}>
                             Mâm cỗ Tết của bạn đã được ghi nhận. Vui lòng chuẩn bị tiền mặt khi shipper giao tới.
                         </p>

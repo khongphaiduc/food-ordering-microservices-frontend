@@ -162,7 +162,7 @@ export default function Home() {
       });
       if (response.ok) {
         setShowAddressModal(false);
-        alert("Cập nhật địa chỉ thành công! Chúc mừng năm mới 🧧");
+        alert("Cập nhật địa chỉ thành công! Chúc mừng năm mới 🌸");
       }
     } catch (err) {
       alert("Lỗi kết nối server!");
@@ -362,13 +362,13 @@ export default function Home() {
         <nav className="nav-links">
           <Link to="/menu" className="btn-nav-menu">
             <UtensilsCrossed size={16} />
-            <span>Thực Đơn Tết 🧧</span>
+            <span>Thực Đơn</span>
           </Link>
 
           {userName ? (
             <div className="user-nav-container">
               <div className={`user-badge-main ${showUserMenu ? 'active' : ''}`} onClick={() => setShowUserMenu(!showUserMenu)}>
-                <span>Chào Duc, <strong>{userName}</strong> 🧧</span>
+                <span>Chào Duc, <strong>{userName}</strong></span>
                 <span className={`arrow ${showUserMenu ? 'up' : ''}`}>▾</span>
               </div>
 
@@ -606,7 +606,7 @@ export default function Home() {
             <div className="mobile-menu-body tet-drawer-body">
               {userName && (
                 <div className="mobile-user-card-tet">
-                  <div className="user-avatar-tet">🧧</div>
+                  <div className="user-avatar-tet">👤</div>
                   <div className="user-text-tet">
                     <div className="user-greeting-tet">Chào xuân, <strong>{userName}</strong> 🌸</div>
                     <div className="user-sub-tet">Chúc Bạn Năm Mới An Khang!</div>
@@ -623,7 +623,7 @@ export default function Home() {
 
                 <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet">
 
-                  <span className="link-text-tet">Thực Đơn Tết 2026</span>
+                  <span className="link-text-tet">Thực Đơn</span>
                   <span className="link-arrow-tet">›</span>
                 </Link>
 
@@ -695,7 +695,7 @@ export default function Home() {
               <h4>KHÁM PHÁ & HỖ TRỢ</h4>
               <ul className="footer-links-list">
                 <li><Link to="/">Trang Chủ Đoàn Viên</Link></li>
-                <li><Link to="/menu">Thực Đơn Tết 2026</Link></li>
+                <li><Link to="/menu">Thực Đơn</Link></li>
                 <li><Link to="/orders">Theo Dõi Đơn Hàng</Link></li>
                 <li><a href="#privacy">Bảo Mật & Điều Khoản</a></li>
               </ul>

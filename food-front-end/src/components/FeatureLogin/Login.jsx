@@ -94,7 +94,7 @@ const Login = () => {
         <div className="login-wrapper tet-theme">
             {/* HIỆU ỨNG THÔNG BÁO TOAST TẾT */}
             <div className={`login-toast-notification ${toast.show ? 'show' : ''}`}>
-                <span className="toast-icon">🏮</span>
+                <span className="toast-icon">🔔</span>
                 <span className="toast-text">{toast.message}</span>
             </div>
 

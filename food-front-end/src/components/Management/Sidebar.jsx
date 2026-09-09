@@ -26,7 +26,7 @@ const Sidebar = ({ role: roleProp = 'admin', isCollapsed, setIsCollapsed }) => {
 
   const handleLogout = async () => {
     const result = await Swal.fire({
-      title: '🧧 Đăng xuất khỏi hệ thống?',
+      title: 'Đăng xuất khỏi hệ thống?',
       text: 'Chúc bạn một năm mới An Khang Thịnh Vượng! Bạn muốn đăng xuất?',
       icon: 'question',
       showCancelButton: true,

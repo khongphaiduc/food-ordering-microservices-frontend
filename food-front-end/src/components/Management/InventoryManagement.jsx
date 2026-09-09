@@ -352,7 +352,7 @@ const InventoryManagement = () => {
               ) : filteredInventory.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="empty-state-cell">
-                    🧧 Không tìm thấy sản phẩm nào trong kho khớp với bộ lọc.
+                    Không tìm thấy sản phẩm nào trong kho khớp với bộ lọc.
                   </td>
                 </tr>
               ) : (

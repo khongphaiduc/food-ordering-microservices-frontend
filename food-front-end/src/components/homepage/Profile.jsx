@@ -46,7 +46,7 @@ export default function Profile() {
       if (res.ok) {
         setShowModal(false);
         fetchProfile();
-        alert("Thêm địa chỉ thành công! 🧧");
+        alert("Thêm địa chỉ thành công!");
       }
     } catch (err) {
       alert("Lỗi kết nối server!");
@@ -64,7 +64,7 @@ export default function Profile() {
         
         <div className="profile-card">
           <div className="user-info-section">
-            <div className="avatar-circle">🧧</div>
+            <div className="avatar-circle">👤</div>
             <h2>{userData?.name || "Người dùng Foodly"}</h2>
             <p className="user-email">{userData?.email}</p>
             <div className="user-meta-tags">
@@ -131,7 +131,7 @@ export default function Profile() {
               <div className="modal-footer-actions">
                 <button type="button" className="btn-cancel" onClick={() => setShowModal(false)}>Hủy</button>
                 <button type="submit" className="btn-submit" disabled={submitting}>
-                  {submitting ? "Đang lưu..." : "Lưu địa chỉ 🧧"}
+                  {submitting ? "Đang lưu..." : "Lưu địa chỉ"}
                 </button>
               </div>
             </form>

@@ -333,7 +333,7 @@ const ProductDetail = () => {
 
       {/* TOAST THÔNG BÁO */}
       <div className={`simple-mini-toast tet-mini-toast ${showToast ? 'show' : ''}`}>
-        <span>🧧 Đã thêm vào mâm cỗ Tết!</span>
+        <span>Đã thêm vào mâm cỗ Tết!</span>
       </div>
 
       {/* FLOATING NAVIGATION GROUP (QUAY VỀ THỰC ĐƠN + GIỎ MÓN) */}
@@ -393,7 +393,7 @@ const ProductDetail = () => {
           {/* INFO SECTION */}
           <div className="info-section tet-info-section">
             <div className="header-meta">
-              <span className="category-tag tet-category-tag">🏮 Khai Xuân Mỹ Vị</span>
+              <span className="category-tag tet-category-tag">Khai Xuân Mỹ Vị</span>
               <div className="rating tet-rating">
                 <Star size={16} fill="#FFD700" color="#FFD700" />
                 <span>4.9 (150+ đánh giá)</span>

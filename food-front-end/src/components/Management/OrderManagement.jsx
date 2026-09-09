@@ -361,7 +361,7 @@ const OrderManagement = () => {
                             ) : orders.length === 0 ? (
                                 <tr>
                                     <td colSpan="7" className="loading-state empty-state">
-                                        <span>🧧 Không tìm thấy đơn hàng phù hợp với bộ lọc.</span>
+                                        <span>Không tìm thấy đơn hàng phù hợp với bộ lọc.</span>
                                     </td>
                                 </tr>
                             ) : (

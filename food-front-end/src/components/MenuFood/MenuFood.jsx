@@ -228,12 +228,12 @@ export default function ViewListProductFood() {
 
                 <nav className="nav-links">
                     <Link to="/home">Trang chủ</Link>
-                    <Link to="/menu" className="active-nav">Thực đơn Tết 🧧</Link>
+                    <Link to="/menu" className="active-nav">Thực đơn</Link>
 
                     {userName ? (
                         <div className="user-nav-container" ref={userMenuRef}>
                             <div className={`user-badge-main ${showUserMenu ? 'active' : ''}`} onClick={() => setShowUserMenu(!showUserMenu)}>
-                                <span>Chào, <strong>{userName}</strong> 🧧</span>
+                                <span>Chào, <strong>{userName}</strong></span>
                                 <span className={`arrow ${showUserMenu ? 'up' : ''}`}>▾</span>
                             </div>
 
@@ -279,7 +279,7 @@ export default function ViewListProductFood() {
                         <div className="tet-tag-badge">
                             <Sparkles size={15} /> <span>HÔM NAY BẠN ĂN GÌ </span> <Sparkles size={15} />
                         </div>
-                        <h1 className="page-title">🏮 Xuân Về – Bếp Ấm, Nhà Vui</h1>
+                        <h1 className="page-title">Xuân Về – Bếp Ấm, Nhà Vui</h1>
 
                     </div>
 
@@ -391,7 +391,7 @@ export default function ViewListProductFood() {
                         <div className="mobile-menu-body tet-drawer-body">
                             {userName && (
                                 <div className="mobile-user-card-tet">
-                                    <div className="user-avatar-tet">🧧</div>
+                                    <div className="user-avatar-tet">👤</div>
                                     <div className="user-text-tet">
                                         <div className="user-greeting-tet">Chào xuân, <strong>{userName}</strong> 🌸</div>
                                         <div className="user-sub-tet">Chúc Bạn Năm Mới An Khang!</div>
@@ -407,8 +407,8 @@ export default function ViewListProductFood() {
                                 </Link>
 
                                 <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="mobile-menu-link-tet active">
-                                    <span className="link-icon-tet">🧧</span>
-                                    <span className="link-text-tet">Thực Đơn Tết 2026</span>
+                                    <span className="link-icon-tet">🍲</span>
+                                    <span className="link-text-tet">Thực Đơn</span>
                                     <span className="link-arrow-tet">›</span>
                                 </Link>
 
@@ -445,7 +445,7 @@ export default function ViewListProductFood() {
                             )}
 
                             <div className="mobile-drawer-greeting-box">
-                                <span>🏮 CHÚC MỪNG NĂM MỚI 🏮</span>
+                                <span>CHÚC MỪNG NĂM MỚI</span>
                                 <p>Vạn Sự Như Ý • Đại Cát Đại Lộc</p>
                             </div>
                         </div>
@@ -471,7 +471,7 @@ export default function ViewListProductFood() {
                             <h4>KHÁM PHÁ & HỖ TRỢ</h4>
                             <ul className="footer-links-list">
                                 <li><Link to="/home">Trang Chủ Đoàn Viên</Link></li>
-                                <li><Link to="/menu">Thực Đơn Tết 2026</Link></li>
+                                <li><Link to="/menu">Thực Đơn</Link></li>
                                 <li><Link to="/orders">Theo Dõi Đơn Hàng</Link></li>
                             </ul>
                         </div>

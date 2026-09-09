@@ -1,4 +1,4 @@
-/* FOODLY - TET EDITION 2026 🧧 */
+/* FOODLY - TET EDITION 2026 */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
 
 :root {
@@ -1643,7 +1643,7 @@ section { padding: 60px 6%; }
 }
 
 .brand-commitment-banner::after {
-    content: '🧧';
+    content: '';
     position: absolute;
     right: -20px;
     bottom: -30px;
