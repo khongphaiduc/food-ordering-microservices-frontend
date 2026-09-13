@@ -9,6 +9,7 @@ import Signup from "./components/FeatureLogin/Signup";
 import CreateOrder from "./components/homepage/CreateOrder";
 import Profile from "./components/homepage/Profile";
 import OrderHistory from "./components/homepage/OrderHistory"; 
+import Maintenance from "./components/Maintenance/Maintenance";
 
 // Import Management
 import ManagementLayout from "./components/Management/ManagementLayout";
@@ -17,16 +18,15 @@ import MenuManagement from "./components/Management/MenuManagement";
 import ProductDetailManagement from "./components/Management/ProductDetailManagement"; 
 import AddProduct from "./components/Management/AddProduct";
 import StaffManagement from "./components/Management/StaffManagement"; 
-
-// IMPORT THÊM QUẢN LÝ HÓA ĐƠN
 import OrderManagement from "./components/Management/OrderManagement"; 
 import OrderDetail from "./components/Management/OrderDetail";
 import InventoryManagement from "./components/Management/InventoryManagement";
 import CreateInventory from "./components/Management/CreateInventory";
+
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   // Thêm /management/orders vào danh sách ẩn giỏ hàng (nếu cần thiết)
-  const hideCartPaths = ["/login", "/signup", "/confirm-menu", "/orders"];
+  const hideCartPaths = ["/login", "/signup", "/confirm-menu", "/orders", "/maintenance"];
   
   // Kiểm tra nếu là đường dẫn quản lý thì không hiện Giỏ hàng
   const isManagementPath = location.pathname.startsWith("/management");
@@ -55,6 +55,7 @@ function App() {
           <Route path="/confirm-menu" element={<CreateOrder />} /> 
           <Route path="/menu" element={<ViewListProductFood />} />
           <Route path="/detail/:id" element={<ProductDetail />} />
+          <Route path="/maintenance" element={<Maintenance />} />
 
           {/* GIAO DIỆN QUẢN LÝ */}
           <Route path="/management" element={

@@ -12,6 +12,7 @@ import {
 import FoodCard from '../homepage/FoodCard';
 import Swal from 'sweetalert2';
 import BrandLogo from '../homepage/BrandLogo';
+import Maintenance from '../Maintenance/Maintenance';
 import banhTrungImg from '../../assets/banhtrung.avif';
 import hoadaotraiImg from '../../assets/hoadaotrai.webp';
 import longdentetImg from '../../assets/longdentet.png';
@@ -21,6 +22,7 @@ export default function ViewListProductFood() {
     const navigate = useNavigate();
     const [foods, setFoods] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isMaintenance, setIsMaintenance] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize] = useState(12);
     const [searchTerm, setSearchTerm] = useState("");
@@ -140,10 +142,18 @@ export default function ViewListProductFood() {
 
                 setFoods(mappedFoods);
                 setTotalItems(total);
+                if (mappedFoods.length === 0 && !query.trim()) {
+                    setIsMaintenance(true);
+                } else {
+                    setIsMaintenance(false);
+                }
             }
         } catch (err) {
             console.error("Lỗi Fetch:", err);
-            if (isMounted) setFoods([]);
+            if (isMounted) {
+                setFoods([]);
+                if (!query.trim()) setIsMaintenance(true);
+            }
         } finally {
             if (isMounted) setLoading(false);
         }
@@ -213,6 +223,10 @@ export default function ViewListProductFood() {
         }
         return pages;
     };
+
+    if (!loading && isMaintenance) {
+        return <Maintenance onRetry={() => fetchData(true)} apiUrl={apiUrl} />;
+    }
 
     return (
         <div className="menu-page-wrapper tet-mode">

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UtensilsCrossed } from 'lucide-react';
 import Swal from 'sweetalert2';
 import FoodCard from './FoodCard';
 import BrandLogo from './BrandLogo';
 import FireworksEffect from './FireworksEffect';
+import Maintenance from '../Maintenance/Maintenance';
 import banhTrungImg from '../../assets/banhtrung.avif';
 import sideLeftImg from '../../assets/sideleft.webp';
 import vienTextImg from '../../assets/VienText.png';
@@ -17,6 +18,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMaintenance, setIsMaintenance] = useState(false);
   const [isDrawerActive, setIsDrawerActive] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -90,54 +92,61 @@ export default function Home() {
     checkUserAddress();
   }, [token, userId]);
 
-  // 2. Lấy danh sách sản phẩm (Đã sửa theo payload mới)
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/products/ai`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : ''
-          }
-        });
+  // 2. Lấy danh sách sản phẩm
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      setIsMaintenance(false);
 
-        if (!response.ok) throw new Error("API Error");
-
-        const data = await response.json();
-
-        const rawList = Array.isArray(data) ? data : (data?.list || data?.products || []);
-
-        if (Array.isArray(rawList)) {
-          const mappedFoods = rawList.map(f => {
-            // Lấy URL ảnh chính từ mảng imageFoods
-            const mainImg = f.imageFoods?.find(img => img.isMain)?.urlImage
-              || f.imageFoods?.[0]?.urlImage
-              || 'https://via.placeholder.com/300';
-
-            const stockQty = f.quantity ?? f.quality ?? f.stock ?? 0;
-
-            return {
-              id: f.id || f.idProduct,
-              name: f.name,
-              desc: f.decriptions || f.description || "Món ngon đãi tiệc",
-              price: f.price || 0,
-              quantity: stockQty,
-              img: mainImg,
-              featured: f.price >= 100000
-            };
-          });
-          setFoods(mappedFoods);
+      const response = await fetch(`${apiUrl}/products/ai`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
         }
+      });
 
-      } catch (err) {
-        console.error("Lỗi kết nối API:", err);
-      } finally {
-        setLoading(false);
+      if (!response.ok) throw new Error("API Error");
+
+      const data = await response.json();
+      const rawList = Array.isArray(data) ? data : (data?.list || data?.products || []);
+
+      if (Array.isArray(rawList) && rawList.length > 0) {
+        const mappedFoods = rawList.map(f => {
+          const mainImg = f.imageFoods?.find(img => img.isMain)?.urlImage
+            || f.imageFoods?.[0]?.urlImage
+            || 'https://via.placeholder.com/300';
+
+          const stockQty = f.quantity ?? f.quality ?? f.stock ?? 0;
+
+          return {
+            id: f.id || f.idProduct,
+            name: f.name,
+            desc: f.decriptions || f.description || "Món ngon đãi tiệc",
+            price: f.price || 0,
+            quantity: stockQty,
+            img: mainImg,
+            featured: f.price >= 100000
+          };
+        });
+        setFoods(mappedFoods);
+        setIsMaintenance(false);
+      } else {
+        // Backend không trả về danh sách món ăn (mảng rỗng hoặc format không hợp lệ)
+        setIsMaintenance(true);
       }
-    };
+
+    } catch (err) {
+      console.error("Lỗi kết nối API:", err);
+      setIsMaintenance(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiUrl, token]);
+
+  useEffect(() => {
     fetchProducts();
-  }, [token]);
+  }, [fetchProducts]);
 
   // 3. Xử lý cập nhật địa chỉ
   const handleUpdateAddress = async (e) => {
@@ -244,6 +253,10 @@ export default function Home() {
   };
 
   const featuredFoods = foods.filter(f => f.featured);
+
+  if (!loading && (isMaintenance || foods.length === 0)) {
+    return <Maintenance onRetry={fetchProducts} apiUrl={apiUrl} />;
+  }
 
   return (
     <div className="page-root tet-mode">
