@@ -23,6 +23,8 @@ import OrderDetail from "./components/Management/OrderDetail";
 import InventoryManagement from "./components/Management/InventoryManagement";
 import CreateInventory from "./components/Management/CreateInventory";
 
+import ChatBot from "./components/ChatBot/ChatBot";
+
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   // Thêm /management/orders vào danh sách ẩn giỏ hàng (nếu cần thiết)
@@ -35,6 +37,7 @@ const LayoutWrapper = ({ children }) => {
   return (
     <>
       {showCart && <ShoppingCart />}
+      {!isManagementPath && <ChatBot />}
       {children}
     </>
   );
