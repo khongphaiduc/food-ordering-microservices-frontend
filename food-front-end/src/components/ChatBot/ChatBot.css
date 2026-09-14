@@ -656,29 +656,181 @@
   }
 }
 
-/* Mobile responsive styles */
-@media (max-width: 480px) {
-  .chatbot-container {
-    bottom: 20px;
-    right: 12px;
-    left: 12px;
-    width: auto;
-    max-width: none;
-    height: calc(100vh - 100px);
-    border-radius: 20px;
-  }
-  
+/* =========================================================
+   MOBILE RESPONSIVE STYLES (SCREEN WIDTH <= 600px & 380px)
+   ========================================================= */
+
+@media (max-width: 600px) {
+  /* Mobile Floating Launcher Button */
   .chatbot-launcher {
-    bottom: 135px;
+    bottom: 125px;
     right: 16px;
-    width: 62px;
-    height: 62px;
+    width: 64px;
+    height: 64px;
+  }
+
+  /* Mobile Proactive Bubble */
+  .chatbot-proactive-bubble {
+    bottom: 135px;
+    right: 86px;
+    font-size: 12px;
+    padding: 8px 28px 8px 12px;
+    max-width: calc(100vw - 110px);
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  .chatbot-proactive-bubble::after {
+    bottom: -7px;
+    right: 16px;
+  }
+
+  /* Mobile Chat Window Container (BottomSheet Style) */
+  .chatbot-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 85vh;
+    max-height: 85vh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+    z-index: 10002;
+    animation: chatbotMobileSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .chatbot-container.expanded {
+    width: 100%;
+    height: 94vh;
+    max-height: 94vh;
+  }
+
+  @keyframes chatbotMobileSlideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* Mobile Header Adjustments */
+  .chatbot-header {
+    padding: 14px 16px;
+  }
+
+  .chatbot-avatar-img {
+    width: 40px;
+    height: 48px;
+  }
+
+  .chatbot-title {
+    font-size: 15px;
+  }
+
+  .chatbot-subtitle {
+    font-size: 11px;
+  }
+
+  .chatbot-icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Mobile Body & Messages */
+  .chatbot-body {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  .chatbot-message {
+    max-width: 90%;
+  }
+
+  .chatbot-msg-bubble {
+    padding: 10px 14px;
+    font-size: 13.5px;
+    border-radius: 16px;
+  }
+
+  /* Food Cards on Mobile */
+  .chatbot-food-card {
+    padding: 8px 10px;
+    gap: 10px;
+  }
+
+  .chatbot-food-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+  }
+
+  .chatbot-food-name {
+    font-size: 12px;
+  }
+
+  .chatbot-food-price {
+    font-size: 12px;
+  }
+
+  .chatbot-food-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  /* Mobile Footer & Input Controls */
+  .chatbot-footer {
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .chatbot-input-form {
+    padding: 2px 4px 2px 14px;
+  }
+
+  .chatbot-input {
+    font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+    padding: 6px 0;
+  }
+
+  .chatbot-send-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .chatbot-quick-btn {
+    padding: 4px 9px;
+    font-size: 10.5px;
+  }
+}
+
+/* Extra Small Mobile Screens (Screen Width <= 380px) */
+@media (max-width: 380px) {
+  .chatbot-launcher {
+    width: 58px;
+    height: 58px;
+    bottom: 120px;
+    right: 12px;
   }
 
   .chatbot-proactive-bubble {
-    bottom: 145px;
-    right: 85px;
-    font-size: 12px;
-    padding: 8px 26px 8px 12px;
+    bottom: 128px;
+    right: 74px;
+    font-size: 11px;
+    padding: 6px 24px 6px 10px;
+  }
+
+  .chatbot-chip {
+    padding: 4px 9px;
+    font-size: 11px;
+  }
+
+  .chatbot-container {
+    height: 88vh;
+    max-height: 88vh;
   }
 }
