@@ -332,25 +332,35 @@ const ChatBot = () => {
 
             <div className="chatbot-header-actions">
               <button
+                type="button"
                 className="chatbot-icon-btn"
                 onClick={handleClearChat}
                 title="Làm mới cuộc trò chuyện"
+                aria-label="Làm mới cuộc trò chuyện"
               >
-                <RefreshCw size={15} />
+                <RefreshCw size={15} color="#ffffff" strokeWidth={2.2} />
               </button>
               <button
+                type="button"
                 className="chatbot-icon-btn"
                 onClick={() => setIsExpanded(!isExpanded)}
                 title={isExpanded ? "Thu nhỏ" : "Phóng to"}
+                aria-label={isExpanded ? "Thu nhỏ" : "Phóng to"}
               >
-                {isExpanded ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+                {isExpanded ? (
+                  <Minimize2 size={15} color="#ffffff" strokeWidth={2.2} />
+                ) : (
+                  <Maximize2 size={15} color="#ffffff" strokeWidth={2.2} />
+                )}
               </button>
               <button
+                type="button"
                 className="chatbot-icon-btn"
                 onClick={toggleChat}
                 title="Đóng cửa sổ chat"
+                aria-label="Đóng cửa sổ chat"
               >
-                <X size={18} />
+                <X size={18} color="#ffffff" strokeWidth={2.5} />
               </button>
             </div>
           </div>
